@@ -1,52 +1,101 @@
 # Glenski-Toolkit
 
-**By Glen E. Grant — [glenegrant.com](https://glenegrant.com)**  
-**License:** [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) — share freely, credit appreciated
+**Practical AI tools for creative and technical workflows.**  
+Skills, MCP servers, and prompt guides — built for real use, free to share.
 
-A growing series of practical tools for working with AI — covering design, security, and workflow automation. Built for real-world use, not demos. Each toolkit ships with a human guide and a skill file for AI coding tools.
-
----
-
-## Why This Exists
-
-AI tools are powerful and fast. They are also predictable in the worst ways — defaulting to the same UI patterns, skipping security controls, and generating output that looks finished but isn't. This toolkit series exists to correct those defaults with tested, opinionated prompts and rules that actually change how the AI behaves.
-
-Every file here has been built from real work, not theory.
+By [Glen E. Grant](https://glenegrant.com) · [glenegrant.com](https://glenegrant.com)
 
 ---
 
-## Toolkit 1 — Anti-Slop Design Skill
+## What's in here
+
+### MCP Servers — add live capabilities to Claude
+
+| Tool | What it does | API Key? |
+|---|---|---|
+| [web-research-mcp](mcps/web-research-mcp/) | Live web search + page fetch via DuckDuckGo | None |
+
+### Design Skills — enforce quality in AI-generated UI
+
+| Skill | What it does |
+|---|---|
+| [anti-slop-design](skills/anti-slop-design/) | Blocks default AI aesthetics — forces original typography, color, and layout decisions |
+
+### Prompt Guides — use directly in Claude Projects or any LLM
+
+| Guide | Use case |
+|---|---|
+| [claude-project-instructions.md](claude-project-instructions.md) | Anti-slop design rules for Claude.ai / Projects users (no code tools needed) |
+| [ANTI-SLOP-COMPANION-PROMPT.md](ANTI-SLOP-COMPANION-PROMPT.md) | Full human reference: aesthetic directions, quality checklist, pushback phrases |
+
+---
+
+## MCP Servers
+
+### [web-research-mcp](mcps/web-research-mcp/)
+
+Adds three research tools to Claude via the Model Context Protocol. No API keys. No paid accounts.
+
+```
+Tools: web_search | fetch_page | multi_search
+Stack: DuckDuckGo · httpx · BeautifulSoup · Python MCP SDK
+```
+
+**Install in 2 steps:**
+
+```bash
+pip install -r mcps/web-research-mcp/requirements.txt
+```
+
+Add to `claude_desktop_config.json`:
+```json
+{
+  "mcpServers": {
+    "web-research": {
+      "command": "python",
+      "args": ["/path/to/Glenski-Toolkit/mcps/web-research-mcp/server.py"]
+    }
+  }
+}
+```
+
+→ Full setup and parameter docs in [mcps/web-research-mcp/README.md](mcps/web-research-mcp/README.md)
+
+---
+
+## Design Skills
+
+### [anti-slop-design](skills/anti-slop-design/)
 
 > Stop AI tools from generating the same UI, over and over.
 
-Every AI-generated interface defaults to Inter, purple gradients, rounded cards, and the same `hero → feature cards → CTA` layout. This toolkit breaks that pattern and keeps it broken by forcing a named aesthetic commitment before any code is written.
+Every AI-generated interface defaults to Inter, purple gradients, rounded cards, and the same `hero → feature cards → CTA` layout. This toolkit breaks that pattern — and keeps it broken.
 
-**What it enforces:** Design Declaration before any code, typography bans, color bans, layout bans, 12 named aesthetic directions, and a 12-point quality gate checklist.
+**Pick your file — three options, three audiences:**
 
-**Compatible with:** Claude, GPT-4o, Gemini, Cursor, Windsurf, any LLM-powered IDE.
+**Option 1 — Claude.ai (chat / Projects)**  
+File: [`claude-project-instructions.md`](claude-project-instructions.md)  
+Paste into your Claude Project. Every design conversation runs with these rules automatically. No setup required.
 
-| File | Who It's For |
-|------|-------------|
-| [`claude-project-instructions.md`](./claude-project-instructions.md) | Claude.ai users — 5-step setup, paste directly into Project Instructions |
-| [`anti-slop-companion-prompt.md`](./anti-slop-companion-prompt.md) | Full human reference: aesthetic library, quality checklist, pushback phrases |
-| [`skills/anti-slop-design/SKILL.md`](./skills/anti-slop-design/SKILL.md) | AI coding tools — Cursor, Windsurf, Claude Code |
+**Option 2 — Cursor, Windsurf, or AI coding tools**  
+File: [`skills/anti-slop-design/SKILL.md`](skills/anti-slop-design/SKILL.md)  
+Add to `.cursorrules` or your equivalent project rules file.
 
----
+**Option 3 — Full human reference**  
+File: [`ANTI-SLOP-COMPANION-PROMPT.md`](ANTI-SLOP-COMPANION-PROMPT.md)  
+Complete guide: aesthetic direction library, quality checklist, pushback phrases, team enforcement.
 
-## Toolkit 2 — Vibe-Coded App Security Audit
+**What this enforces:**
 
-> Vibe-coded apps ship fast. Security does not ship with them.
+- A named Design Declaration required before any code is written
+- Typography bans: Inter, Roboto, Arial, Space Grotesk, Poppins — blocked
+- Color bans: purple/indigo gradients, default Tailwind palette — blocked
+- Layout bans: hero → cards → CTA, alternating image/text rows — blocked
+- 12 named aesthetic directions with font pairings and color logic
+- 12-point Quality Gate Checklist before output ships
+- Team mode: lock a shared aesthetic so every team member's AI output converges
 
-AI coding tools generate working code. They do not generate secure code. The gap between "it works" and "it is safe" is where real applications get compromised. This toolkit is a deterministic, runnable test suite covering the full OWASP attack surface — drop it into any Python ASGI project and run it before you ship.
-
-**What it covers:** Security headers, authentication enforcement, IDOR and authorization boundaries, input validation against real attack payloads, rate limiting, error sanitization, CORS, cookie flags, method abuse, and config hardening.
-
-**Compatible with:** FastAPI, Flask (ASGI), Django ASGI, any Python ASGI application.
-
-| File | Who It's For |
-|------|-------------|
-| [`vibe-security-audit/README.md`](./vibe-security-audit/README.md) | Full setup guide, file reference, CI/CD integration, OWASP coverage map |
-| [`skills/vibe-security-audit/SKILL.md`](./skills/vibe-security-audit/SKILL.md) | AI coding tools — load into Cursor, Windsurf, or Claude Code |
+Compatible with: Claude · GPT-4o · Gemini · Cursor · Windsurf · any LLM-powered IDE
 
 ---
 
@@ -54,27 +103,28 @@ AI coding tools generate working code. They do not generate secure code. The gap
 
 ```
 Glenski-Toolkit/
-├── README.md                              This file
-│
-├── claude-project-instructions.md         Toolkit 1 — Claude Projects paste-in
-├── anti-slop-companion-prompt.md          Toolkit 1 — Full human reference
-│
-├── vibe-security-audit/
-│   └── README.md                          Toolkit 2 — Setup and reference guide
-│
+├── README.md                              This file — toolkit index
+├── CONTRIBUTING.md                        How to contribute
+├── claude-project-instructions.md         Anti-slop for Claude.ai users
+├── ANTI-SLOP-COMPANION-PROMPT.md          Full anti-slop reference guide
+├── mcps/
+│   └── web-research-mcp/
+│       ├── README.md                      Setup and usage docs
+│       ├── server.py                      MCP server (Python)
+│       ├── requirements.txt
+│       ├── claude_desktop_config.json     Config snippet
+│       └── LICENSE
 └── skills/
-    ├── anti-slop-design/
-    │   └── SKILL.md                       Toolkit 1 — AI coding tool skill
-    └── vibe-security-audit/
-        └── SKILL.md                       Toolkit 2 — AI coding tool skill
+    └── anti-slop-design/
+        └── SKILL.md                       Cursor / Windsurf / Claude Code skill
 ```
 
 ---
 
-## More Coming
+## License
 
-This repo grows as new tools get built and tested. Follow or star to get notified.
+[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) — share freely, credit appreciated.
 
 ---
 
-`#glenski` `#anti-slop` `#vibe-security` `#frontend` `#design-system` `#owasp` `#security` `#ai-tools` `#prompt-engineering`
+`#mcp` `#claude` `#ai-tools` `#anti-slop` `#frontend` `#design-system` `#web-research` `#no-api-key`
