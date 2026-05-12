@@ -15,8 +15,8 @@ BG      = (10, 10, 10)
 ORANGE  = (232, 93, 4)
 WHITE   = (255, 255, 255)
 LIGHT   = (168, 168, 168)
-MID     = (105, 105, 105)
-DIM     = (55, 55, 55)
+MID     = (180, 180, 180)
+DIM     = (200, 200, 200)
 PILL_BG = (16, 16, 16)
 
 # ─── Font Loader ─────────────────────────────────────────────────────────────
@@ -39,12 +39,12 @@ for gx in range(0, 800, 36):
         draw.point((gx, gy), fill=(19, 19, 19))
 
 # ─── Load fonts ──────────────────────────────────────────────────────────────
-f_label   = font("InstrumentSans-Regular.ttf",  14)
+f_label   = font("InstrumentSans-Regular.ttf",  17)
 f_heading = font("BigShoulders-Bold.ttf",        60)
-f_sub     = font("InstrumentSans-Regular.ttf",   21)
-f_code    = font("JetBrainsMono-Bold.ttf",       15)
-f_feature = font("InstrumentSans-Regular.ttf",   15)
-f_handle  = font("GeistMono-Regular.ttf",        13)
+f_sub     = font("InstrumentSans-Regular.ttf",   23)
+f_code    = font("JetBrainsMono-Bold.ttf",       17)
+f_feature = font("InstrumentSans-Regular.ttf",   18)
+f_handle  = font("GeistMono-Regular.ttf",        17)
 
 PAD = 72   # left margin
 
@@ -142,16 +142,16 @@ y += FEAT_H + GAP_FD
 
 # Secondary detail
 draw.text((PAD, y), "Parallel search.   JS-page detection.   Playwright-ready.",
-          font=f_feature, fill=(75, 75, 75))
+          font=f_feature, fill=(160, 160, 160))
 y += DETAIL_H + GAP_DA
 
 # Divider
-draw.line([(PAD, y), (700, y)], fill=(26, 26, 26), width=1)
+draw.line([(PAD, y), (700, y)], fill=(40, 40, 40), width=1)
 y += DIV_H + GAP_DT
 
-# Attribution
+# Attribution — white on dark
 draw.text((PAD, y), "Glen E. Grant   ·   glenegrant.com",
-          font=f_handle, fill=(90, 90, 90))
+          font=f_handle, fill=WHITE)
 
 # ─── Vertical separator (warm fade) ──────────────────────────────────────────
 SEP_X = 800
@@ -167,7 +167,7 @@ for sy in range(H):
 LOGO_PATH = "C:/Users/Glen/Documents/GitHub/Glenski-Github/assets/GEG-Head-logo.png"
 logo_raw  = Image.open(LOGO_PATH).convert("RGBA")
 
-LOGO_SIZE = 420
+LOGO_SIZE = 340
 logo = logo_raw.resize((LOGO_SIZE, LOGO_SIZE), Image.LANCZOS)
 
 # Center horizontally in right zone (800 to 1280 = 480px)
