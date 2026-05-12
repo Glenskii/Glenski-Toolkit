@@ -2,7 +2,7 @@
 
 **API-free web research MCP server for Claude.**
 
-Adds three live research tools to Claude via the Model Context Protocol — no Perplexity key, no Brave key, no paid accounts. Uses DuckDuckGo for search and httpx + BeautifulSoup for content extraction.
+Adds three live research tools to Claude via the Model Context Protocol. No Perplexity key, no Brave key, no paid accounts. Uses DuckDuckGo for search and httpx + BeautifulSoup for content extraction.
 
 Part of the [Glenski-Toolkit](https://github.com/Glenskii/Glenski-Toolkit).
 
@@ -14,13 +14,13 @@ Part of the [Glenski-Toolkit](https://github.com/Glenskii/Glenski-Toolkit).
 |---|---|
 | `web_search` | DuckDuckGo full-web search. Returns titles, URLs, snippets. Optional region + recency filter. |
 | `fetch_page` | Fetches any URL, strips nav / ads / scripts, returns clean readable body text. |
-| `multi_search` | Runs 2–5 queries in sequence for cross-referencing and multi-angle coverage. |
+| `multi_search` | Runs 2-5 queries in sequence for cross-referencing and multi-angle coverage. |
 
 ---
 
 ## Why this exists
 
-Every popular web-search MCP ties you to a specific vendor API (Perplexity, Brave, Bing). This one doesn't. DuckDuckGo is free, requires no account, and works out of the box. If you later want to layer in a paid API for higher volume or better ranking, the architecture supports it — add a key via environment variable and a new tool in `server.py`.
+Every popular web-search MCP ties you to a specific vendor API (Perplexity, Brave, Bing). This one does not. DuckDuckGo is free, requires no account, and works out of the box. If you later want to layer in a paid API for higher volume or better ranking, the architecture supports it. Add a key via environment variable and a new tool in `server.py`.
 
 ---
 
@@ -41,7 +41,7 @@ Edit your config file:
 - **Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
 - **macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
 
-Add this block under `"mcpServers"` — update the path to match where you cloned:
+Add this block under `"mcpServers"`. Update the path to match where you cloned:
 
 ```json
 {
@@ -76,7 +76,7 @@ Claude calls `web_search(query, time_filter="m")`.
 ```
 Get the full content of https://example.com/article
 ```
-Claude calls `fetch_page(url)` — returns clean text, no nav clutter.
+Claude calls `fetch_page(url)`, which returns clean text with no nav clutter.
 
 **Multi-angle research:**
 ```
@@ -93,9 +93,9 @@ Claude calls `multi_search(["Cloudflare Workers performance 2025", "Vercel Edge 
 | Parameter | Type | Default | Notes |
 |---|---|---|---|
 | `query` | str | required | Search string |
-| `max_results` | int | 5 | 1–10 |
+| `max_results` | int | 5 | 1-10 |
 | `region` | str | `wt-wt` | Worldwide. Use `us-en`, `ca-en`, `gb-en`, etc. |
-| `time_filter` | str | None | `d` day · `w` week · `m` month · `y` year |
+| `time_filter` | str | None | `d` day, `w` week, `m` month, `y` year |
 
 ### `fetch_page`
 
@@ -108,8 +108,8 @@ Claude calls `multi_search(["Cloudflare Workers performance 2025", "Vercel Edge 
 
 | Parameter | Type | Default | Notes |
 |---|---|---|---|
-| `queries` | list[str] | required | 2–5 query strings |
-| `max_results_each` | int | 3 | 1–5 per query |
+| `queries` | list[str] | required | 2-5 query strings |
+| `max_results_each` | int | 3 | 1-5 per query |
 | `region` | str | `wt-wt` | Same as web_search |
 | `time_filter` | str | None | Same as web_search |
 
@@ -117,10 +117,10 @@ Claude calls `multi_search(["Cloudflare Workers performance 2025", "Vercel Edge 
 
 ## Research Protocol
 
-The MCP's system instructions embed the research protocol directly — Claude sees it as behavioral context for all tool use:
+The MCP's system instructions embed the research protocol directly. Claude sees it as behavioral context for all tool use:
 
-1. Search before answering — no training-data fallbacks for current facts
-2. Fetch top 2–3 URLs for full content, not just snippets
+1. Search before answering, no training-data fallbacks for current facts
+2. Fetch top 2-3 URLs for full content, not just snippets
 3. Use `multi_search` for comparative or multi-angle queries
 4. Cite every source with URL and access timestamp
 5. Flag conflicts between sources explicitly
@@ -150,23 +150,23 @@ If you want to add optional enhancements (Brave free tier, Perplexity, Bing), ad
 
 ---
 
-## License
-
-[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) — share freely, credit appreciated.
-
----
-
 ## Origin and Credits
 
 This MCP server is the executable form of the **Web Research Prompt** created by Glen E. Grant.
 
-The core research protocol embedded in this tool -- tool priority order, mandatory source fetching, cross-referencing via multi-angle queries, confidence rating, and citation structure -- was designed, field-tested, and refined by Glen as a standalone AI prompt system before being encoded here as an MCP. The `multi_search` tool directly implements his parallel-query cross-referencing methodology.
+The core research protocol embedded in this tool: tool priority order, mandatory source fetching, cross-referencing via multi-angle queries, confidence rating, and citation structure. It was designed, field-tested, and refined by Glen as a standalone AI prompt system before being encoded here as an MCP. The `multi_search` tool directly implements his parallel-query cross-referencing methodology.
 
-**Author and original prompt author:** [Glen E. Grant](https://glenegrant.com)  
-**Contact:** [glen@glenegrant.com](mailto:glen@glenegrant.com)  
-**GitHub:** [github.com/Glenskii](https://github.com/Glenskii)  
+**Author and original prompt author:** [Glen E. Grant](https://glenegrant.com)
+**Contact:** [glen@glenegrant.com](mailto:glen@glenegrant.com)
+**GitHub:** [github.com/Glenskii](https://github.com/Glenskii)
 **Portfolio:** [glenegrant.com](https://glenegrant.com)
 
 ---
 
-*Part of the [Glenski-Toolkit](https://github.com/Glenskii/Glenski-Toolkit) -- practical AI tools built for real workflows.*
+## License
+
+[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/), share freely, credit appreciated.
+
+---
+
+*Part of the [Glenski-Toolkit](https://github.com/Glenskii/Glenski-Toolkit) - practical AI tools built for real workflows.*
