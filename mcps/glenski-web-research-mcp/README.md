@@ -1,4 +1,4 @@
-# web-research-mcp
+# glenski-web-research-mcp
 
 **API-free web research MCP server for Claude.**
 
@@ -30,7 +30,7 @@ Every popular web-search MCP ties you to a specific vendor API (Perplexity, Brav
 
 ```bash
 git clone https://github.com/Glenskii/Glenski-Toolkit
-cd Glenski-Toolkit/mcps/web-research-mcp
+cd Glenski-Toolkit/mcps/glenski-web-research-mcp
 pip install -r requirements.txt
 ```
 
@@ -46,9 +46,9 @@ Add this block under `"mcpServers"` — update the path to match where you clone
 ```json
 {
   "mcpServers": {
-    "web-research": {
+    "glenski-web-research": {
       "command": "python",
-      "args": ["C:/path/to/Glenski-Toolkit/mcps/web-research-mcp/server.py"]
+      "args": ["C:/path/to/Glenski-Toolkit/mcps/glenski-web-research-mcp/server.py"]
     }
   }
 }
