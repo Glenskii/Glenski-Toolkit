@@ -11,9 +11,11 @@ By [Glen E. Grant](https://glenegrant.com) · [glenegrant.com](https://glenegran
 
 ### MCP Servers - add live capabilities to Claude
 
+MCP servers now live in their own dedicated repo: **[Glenski-MCPs](https://github.com/Glenskii/Glenski-MCPs)**
+
 | Tool | What it does | API Key? |
 |---|---|---|
-| [glenski-web-research-mcp](mcps/glenski-web-research-mcp/) | Live web search + page fetch via DuckDuckGo | None |
+| [glenski-web-research-mcp](https://github.com/Glenskii/Glenski-MCPs/tree/main/glenski-web-research-mcp) | Live web search + page fetch via DuckDuckGo. Parallel search, JS-page detection, Playwright fallback. | None |
 
 ### Design Skills - enforce quality in AI-generated UI
 
@@ -32,7 +34,9 @@ By [Glen E. Grant](https://glenegrant.com) · [glenegrant.com](https://glenegran
 
 ## MCP Servers
 
-### [glenski-web-research-mcp](mcps/glenski-web-research-mcp/)
+MCP servers are maintained in **[github.com/Glenskii/Glenski-MCPs](https://github.com/Glenskii/Glenski-MCPs)**.
+
+### [glenski-web-research-mcp](https://github.com/Glenskii/Glenski-MCPs/tree/main/glenski-web-research-mcp)
 
 Adds three research tools to Claude via the Model Context Protocol. No API keys. No paid accounts.
 
@@ -44,22 +48,23 @@ Stack: DuckDuckGo, httpx, BeautifulSoup, Python MCP SDK
 **Install in 2 steps:**
 
 ```bash
-pip install -r mcps/glenski-web-research-mcp/requirements.txt
+git clone https://github.com/Glenskii/Glenski-MCPs
+pip install -r Glenski-MCPs/glenski-web-research-mcp/requirements.txt
 ```
 
-Add to `claude_desktop_config.json`:
+Add to `~/.claude/mcp.json` (Claude Code) or `claude_desktop_config.json` (Claude Desktop):
 ```json
 {
   "mcpServers": {
     "glenski-web-research": {
       "command": "python",
-      "args": ["/path/to/Glenski-Toolkit/mcps/glenski-web-research-mcp/server.py"]
+      "args": ["/path/to/Glenski-MCPs/glenski-web-research-mcp/server.py"]
     }
   }
 }
 ```
 
-Full setup and parameter docs in [mcps/glenski-web-research-mcp/README.md](mcps/glenski-web-research-mcp/README.md)
+Full setup and parameter docs: [Glenski-MCPs README](https://github.com/Glenskii/Glenski-MCPs/tree/main/glenski-web-research-mcp#readme)
 
 ---
 
@@ -107,16 +112,11 @@ Glenski-Toolkit/
 ├── CONTRIBUTING.md                        How to contribute
 ├── claude-project-instructions.md         Anti-slop for Claude.ai users
 ├── ANTI-SLOP-COMPANION-PROMPT.md          Full anti-slop reference guide
-├── mcps/
-│   └── glenski-web-research-mcp/
-│       ├── README.md                      Setup and usage docs
-│       ├── server.py                      MCP server (Python)
-│       ├── requirements.txt
-│       ├── claude_desktop_config.json     Config snippet
-│       └── LICENSE
 └── skills/
     └── anti-slop-design/
         └── SKILL.md                       Cursor / Windsurf / Claude Code skill
+
+MCP servers: github.com/Glenskii/Glenski-MCPs
 ```
 
 ---
