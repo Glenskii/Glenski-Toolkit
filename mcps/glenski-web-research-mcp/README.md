@@ -12,9 +12,9 @@ Part of the [Glenski-Toolkit](https://github.com/Glenskii/Glenski-Toolkit).
 
 | Tool | Description |
 |---|---|
-| `web_search` | DuckDuckGo full-web search. Returns titles, URLs, snippets. Optional region + recency filter. |
-| `fetch_page` | Fetches any URL, strips nav / ads / scripts, returns clean readable body text. |
-| `multi_search` | Runs 2-5 queries in sequence for cross-referencing and multi-angle coverage. |
+| `web_search` | DuckDuckGo full-web search. Returns titles, URLs, snippets. Optional region + recency filter. Retries automatically on rate limit errors with exponential backoff. |
+| `fetch_page` | Fetches any URL, strips nav / ads / scripts, returns clean readable body text. Returns `js_rendered_hint: true` when a page is JS-rendered and BeautifulSoup cannot read the full content -- signals Claude to route to Playwright MCP instead. |
+| `multi_search` | Runs 2-5 queries in PARALLEL via asyncio + ThreadPoolExecutor for fast multi-angle coverage. All queries fire simultaneously. |
 
 ---
 
@@ -34,14 +34,9 @@ cd Glenski-Toolkit/mcps/glenski-web-research-mcp
 pip install -r requirements.txt
 ```
 
-### 2. Wire into Claude Desktop
+### 2. Wire into Claude Code
 
-Edit your config file:
-
-- **Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
-- **macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
-
-Add this block under `"mcpServers"`. Update the path to match where you cloned:
+Edit `~/.claude/mcp.json` (create it if it does not exist):
 
 ```json
 {
@@ -54,7 +49,16 @@ Add this block under `"mcpServers"`. Update the path to match where you cloned:
 }
 ```
 
-Restart Claude Desktop. The server appears in your connected tools list.
+Restart Claude Code. The server appears in your connected tools list.
+
+### 2b. Wire into Claude Desktop
+
+Edit your config file:
+
+- **Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
+- **macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
+
+Add the same block under `"mcpServers"` with the corrected path. Restart Claude Desktop.
 
 ### 3. Verify
 
@@ -78,11 +82,17 @@ Get the full content of https://example.com/article
 ```
 Claude calls `fetch_page(url)`, which returns clean text with no nav clutter.
 
-**Multi-angle research:**
+**Multi-angle research (parallel):**
 ```
 Compare what different sources say about Cloudflare Workers vs Vercel Edge Functions
 ```
-Claude calls `multi_search(["Cloudflare Workers performance 2025", "Vercel Edge Functions benchmark", "Workers vs Vercel comparison"])`.
+Claude calls `multi_search(["Cloudflare Workers performance 2025", "Vercel Edge Functions benchmark", "Workers vs Vercel comparison"])`. All three queries fire simultaneously.
+
+**JS-rendered page fallback:**
+```
+Get the full content of https://some-react-app.com/pricing
+```
+Claude calls `fetch_page(url)`. If the response includes `js_rendered_hint: true`, Claude automatically switches to Playwright MCP to fetch the fully rendered content.
 
 ---
 
@@ -104,6 +114,8 @@ Claude calls `multi_search(["Cloudflare Workers performance 2025", "Vercel Edge 
 | `url` | str | required | Full URL including `https://` |
 | `max_chars` | int | 8000 | Body text character limit |
 
+**Response includes `js_rendered_hint: bool`.** When `true`, the page returned a successful 200 but suspiciously few words -- a reliable indicator of JS-rendered content. Claude will route the URL to Playwright MCP automatically when this flag fires.
+
 ### `multi_search`
 
 | Parameter | Type | Default | Notes |
@@ -121,10 +133,11 @@ The MCP's system instructions embed the research protocol directly. Claude sees 
 
 1. Search before answering, no training-data fallbacks for current facts
 2. Fetch top 2-3 URLs for full content, not just snippets
-3. Use `multi_search` for comparative or multi-angle queries
+3. Use `multi_search` for comparative or multi-angle queries (all parallel)
 4. Cite every source with URL and access timestamp
 5. Flag conflicts between sources explicitly
 6. Rate confidence: High / Medium / Low based on consensus and recency
+7. If `fetch_page` returns `js_rendered_hint: true`, route that URL to Playwright MCP for full rendered content
 
 ---
 
@@ -147,6 +160,19 @@ beautifulsoup4 >= 4.12.0
 Zero vendor dependencies. The `env: {}` block in `claude_desktop_config.json` is intentionally empty.
 
 If you want to add optional enhancements (Brave free tier, Perplexity, Bing), add the key as `"BRAVE_API_KEY": "your_key"` in the `env` block and wire a new tool in `server.py` that checks for it.
+
+---
+
+## Changelog
+
+### v2.0
+- `multi_search` now runs all queries in parallel via asyncio + ThreadPoolExecutor (was sequential with 0.75s delays between queries)
+- Added exponential backoff with jitter on DuckDuckGo rate limit errors across all search calls
+- `fetch_page` now returns `js_rendered_hint: true` when a page is likely JS-rendered, with a note directing Claude to use Playwright MCP for that URL
+- Added Claude Code install instructions alongside Claude Desktop
+
+### v1.0
+- Initial release: web_search, fetch_page, multi_search via DuckDuckGo + httpx + BeautifulSoup
 
 ---
 
