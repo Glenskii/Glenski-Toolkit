@@ -32,7 +32,7 @@ from mcp.server.fastmcp import FastMCP
 
 # ─── Server Init ─────────────────────────────────────────────────────────────
 mcp = FastMCP(
-    "web-research",
+    "glenski-web-research",
     instructions="""
 You are a live research execution engine. When handling factual or time-sensitive queries:
 

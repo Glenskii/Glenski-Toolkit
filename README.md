@@ -13,7 +13,7 @@ By [Glen E. Grant](https://glenegrant.com) · [glenegrant.com](https://glenegran
 
 | Tool | What it does | API Key? |
 |---|---|---|
-| [web-research-mcp](mcps/web-research-mcp/) | Live web search + page fetch via DuckDuckGo | None |
+| [glenski-web-research-mcp](mcps/glenski-web-research-mcp/) | Live web search + page fetch via DuckDuckGo | None |
 
 ### Design Skills — enforce quality in AI-generated UI
 
@@ -32,7 +32,7 @@ By [Glen E. Grant](https://glenegrant.com) · [glenegrant.com](https://glenegran
 
 ## MCP Servers
 
-### [web-research-mcp](mcps/web-research-mcp/)
+### [glenski-web-research-mcp](mcps/glenski-web-research-mcp/)
 
 Adds three research tools to Claude via the Model Context Protocol. No API keys. No paid accounts.
 
@@ -44,22 +44,22 @@ Stack: DuckDuckGo · httpx · BeautifulSoup · Python MCP SDK
 **Install in 2 steps:**
 
 ```bash
-pip install -r mcps/web-research-mcp/requirements.txt
+pip install -r mcps/glenski-web-research-mcp/requirements.txt
 ```
 
 Add to `claude_desktop_config.json`:
 ```json
 {
   "mcpServers": {
-    "web-research": {
+    "glenski-web-research": {
       "command": "python",
-      "args": ["/path/to/Glenski-Toolkit/mcps/web-research-mcp/server.py"]
+      "args": ["/path/to/Glenski-Toolkit/mcps/glenski-web-research-mcp/server.py"]
     }
   }
 }
 ```
 
-→ Full setup and parameter docs in [mcps/web-research-mcp/README.md](mcps/web-research-mcp/README.md)
+→ Full setup and parameter docs in [mcps/glenski-web-research-mcp/README.md](mcps/glenski-web-research-mcp/README.md)
 
 ---
 
@@ -108,7 +108,7 @@ Glenski-Toolkit/
 ├── claude-project-instructions.md         Anti-slop for Claude.ai users
 ├── ANTI-SLOP-COMPANION-PROMPT.md          Full anti-slop reference guide
 ├── mcps/
-│   └── web-research-mcp/
+│   └── glenski-web-research-mcp/
 │       ├── README.md                      Setup and usage docs
 │       ├── server.py                      MCP server (Python)
 │       ├── requirements.txt
