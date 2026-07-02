@@ -6,9 +6,10 @@ Thanks for considering a contribution. This toolkit is built for real workflows 
 
 ## What belongs here
 
-- **MCP servers** that add genuine capability to Claude — live data, external APIs, system integrations
 - **Skills** that enforce quality or process in AI-assisted work (design, writing, code review, etc.)
 - **Prompt guides** that are field-tested and immediately usable, not theoretical
+
+**MCP servers** live in a separate repo: **[github.com/Glenskii/Glenski-MCPs](https://github.com/Glenskii/Glenski-MCPs)**. Contribute those there, not here.
 
 What doesn't belong: wrappers around existing tools without improvement, prompts that are just rephrased versions of stock ChatGPT prompts, anything requiring a paid API without a free fallback or clear disclosure.
 
@@ -16,18 +17,7 @@ What doesn't belong: wrappers around existing tools without improvement, prompts
 
 ## Adding an MCP server
 
-```
-mcps/
-└── your-mcp-name/
-    ├── README.md                 Required — setup, tools table, usage examples, parameters
-    ├── server.py                 Single-file preferred; add subdirs if complexity demands it
-    ├── requirements.txt          Pin major versions: package>=x.y.0
-    ├── claude_desktop_config.json  Config snippet users can copy directly
-    ├── LICENSE                   CC BY 4.0 preferred for consistency
-    └── .gitignore
-```
-
-README must include: tool table, install steps, at least 2 usage examples, parameter docs, and honest disclosure of any API key requirements.
+MCP servers are not kept in this repo. They live in their own home: **[github.com/Glenskii/Glenski-MCPs](https://github.com/Glenskii/Glenski-MCPs)**. Open MCP contributions there, following that repo's structure and contribution notes. This keeps the two concerns cleanly separated: skills and prompt guides here, live-capability servers there.
 
 ---
 
@@ -51,21 +41,20 @@ Keep `SKILL.md` under 500 lines. If the instructions run longer, move detail int
 
 ## Pull request checklist
 
-- [ ] New files follow the folder structure above
-- [ ] README or SKILL.md is complete — no placeholder sections
+- [ ] New skill follows the folder structure above (folder name == `name:` field, self-contained)
+- [ ] `SKILL.md` is complete — no placeholder sections
 - [ ] No hardcoded API keys, tokens, or personal credentials
-- [ ] `requirements.txt` uses `>=` version pins, not exact `==` locks
-- [ ] Root `README.md` updated to reference the new tool in the appropriate table
-- [ ] Tested locally — MCP servers must import cleanly and register tools
+- [ ] Any bundled scripts pin dependency floors with `>=`, not exact `==` locks
+- [ ] Root `README.md` updated to reference the new skill in the Skills table
 
 ---
 
 ## Commit style
 
 ```
-feat(web-research-mcp): add multi_search tool for parallel queries
+feat(seo-aeo-geo-gbp): add citation-tracking module
 fix(anti-slop-design): correct font ban list in Quality Gate section
-docs: update root README with mcps/ table
+docs: update root README skills table
 ```
 
 ---
