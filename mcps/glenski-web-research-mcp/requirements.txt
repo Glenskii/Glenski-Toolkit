@@ -1,7 +1,0 @@
-# web-research-mcp dependencies
-# Install: pip install -r requirements.txt
-
-mcp>=1.0.0                  # Model Context Protocol SDK
-ddgs>=0.1.0                 # DuckDuckGo search — no API key required (was: duckduckgo-search)
-httpx>=0.27.0               # Async-capable HTTP client
-beautifulsoup4>=4.12.0      # HTML parsing and content extraction
