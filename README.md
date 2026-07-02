@@ -92,17 +92,15 @@ Glenski-Toolkit/
 ├── CONTRIBUTING.md                    How to contribute
 ├── claude-project-instructions.md     Anti-slop for Claude.ai users
 ├── anti-slop-companion-prompt.md      Full anti-slop reference guide
-├── skills/
-│   ├── anti-slop-design/SKILL.md
-│   ├── frontend-taste/SKILL.md
-│   ├── cross-platform-compliance/     SKILL.md + scripts/
-│   ├── seo-aeo-geo-gbp/               SKILL.md + modules/ + schemas/ + templates/
-│   └── vibe-security-audit/           SKILL.md + security/ + pytest.ini
-└── mcps/
-    └── glenski-web-research-mcp/      Mirror of the standalone Glenski-MCPs server
+└── skills/
+    ├── anti-slop-design/SKILL.md
+    ├── frontend-taste/SKILL.md
+    ├── cross-platform-compliance/     SKILL.md + scripts/
+    ├── seo-aeo-geo-gbp/               SKILL.md + modules/ + schemas/ + templates/
+    └── vibe-security-audit/           SKILL.md + security/ + pytest.ini
 ```
 
-Canonical MCP home: [github.com/Glenskii/Glenski-MCPs](https://github.com/Glenskii/Glenski-MCPs).
+MCP servers are not kept here. They live in their own repo: [github.com/Glenskii/Glenski-MCPs](https://github.com/Glenskii/Glenski-MCPs).
 
 ---
 
