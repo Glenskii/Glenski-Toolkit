@@ -1,0 +1,144 @@
+# Brand Entity Bundle — Glen E. Grant Creative
+# Version: 2.1.0
+# Last updated: 2026-05-17
+#
+# This file is the authoritative data source for all schema, GBP, citation,
+# and AEO work across Glen's properties. Do not edit values here without
+# verifying against the live site and GBP listing.
+
+brand:
+  legal_name: "Glen E. Grant Creative"
+  trading_name: "Glen E. Grant"
+  founded: 2000
+  schema_type: "LocalBusiness"
+  schema_subtype: "ProfessionalService"
+  entity_id: "https://www.glenegrant.com/#business"
+
+contact:
+  email: "glen@glenegrant.com"
+  info_email: "info@glenegrant.com"
+  phone_schema: "+1-416-801-2525"
+  phone_work: "+1-416-801-2542"
+  website: "https://www.glenegrant.com"
+  profile_page: "https://profile.glenegrant.com"
+
+locations:
+  - type: "primary"
+    city: "Toronto"
+    neighborhood: "Liberty Village"
+    province: "ON"
+    country: "CA"
+    postal_code: "M6K 3R1"
+    geo_lat: 43.6532
+    geo_lng: -79.3832
+    service_area: "Toronto and Greater Toronto Area"
+
+person:
+  name: "Glen E. Grant"
+  given_name: "Glen"
+  family_name: "Grant"
+  entity_id: "https://profile.glenegrant.com/#glen"
+  job_title: "Commercial Photographer & Software Developer"
+  github: "https://github.com/Glenskii"
+
+services:
+  photography:
+    primary: "Commercial Photography"
+    specialties:
+      - "Commercial brand photography"
+      - "Fashion photography"
+      - "Glamour photography"
+      - "Lifestyle photography"
+      - "Fitness photography"
+      - "Editorial photography"
+      - "AI content multiplication"
+    pricing:
+      range: "$799-$2999"
+      currency: "CAD"
+      packages:
+        - name: "Foundation"
+          price: "799"
+          description: "Portfolio-focused commercial photography session"
+        - name: "Strategic"
+          price: "1799"
+          description: "Full commercial photography production"
+        - name: "Enterprise"
+          price: "2999"
+          description: "Multi-day production with AI content multiplication"
+
+  software:
+    products:
+      - name: "Watermark Gienie V3"
+        url: "https://watermarkgienie.com"
+        type: "SoftwareApplication"
+        category: "PhotographyApplication"
+        os: "Windows"
+        spelling_note: "Always 'Gienie' not 'Genie'"
+      - name: "IdeaThreader Pro"
+        url: "https://ideathreader.com"
+        type: "SoftwareApplication"
+        category: "ProductivityApplication"
+      - name: "Sitemap Architect Pro"
+        url: "https://sitemappro.ca"
+        type: "SoftwareApplication"
+        category: "DeveloperApplication"
+      - name: "MailMindz"
+        url: "https://mailmindz.app"
+        type: "SoftwareApplication"
+        category: "ProductivityApplication"
+      - name: "Cinéma Canon"
+        url: "https://trivia.glenegrant.com"
+        type: "WebApplication"
+      - name: "QR Generator"
+        url: "https://apps.glenegrant.com/qr-generator"
+        type: "WebApplication"
+
+affiliations:
+  - name: "Inside Fitness Magazine"
+    type: "MediaPublication"
+    role: "Contributing Photographer"
+  - name: "CBBF"
+    full_name: "Canadian Bodybuilding Federation"
+    type: "SportsOrganization"
+  - name: "IFBB"
+    full_name: "International Federation of Bodybuilding"
+    type: "SportsOrganization"
+
+awards:
+  - name: "Unmasking the Pain — Cannes recognition"
+    year: 2024
+    month: 10
+    description: "International recognition at Cannes for the Unmasking the Pain project"
+
+nap:
+  # NAP must be used IDENTICALLY across all citations and directories
+  business_name: "Glen E. Grant Creative"
+  address_line_1: ""
+  address_line_2: "Liberty Village"
+  city: "Toronto"
+  province: "ON"
+  postal_code: "M6K 3R1"
+  country: "Canada"
+  phone: "+1-416-801-2525"
+  website: "https://www.glenegrant.com"
+
+infrastructure:
+  # Technical reference for SEO audits
+  origin_ip: "157.173.209.121"
+  origin_host: "Hostinger"
+  edge: "Cloudflare"
+  nameservers: ["kip.ns.cloudflare.com", "sneh.ns.cloudflare.com"]
+  cms_photography: "WordPress (Blocksy + Stackable)"
+  cms_other: "Static HTML (Cloudflare Pages)"
+  image_format: "AVIF"
+  known_issues:
+    - "ideathreader.com: 403 on some paths — surgical .htaccess fix pending"
+    - "provenance.glenegrant.com: DNS not yet configured"
+
+design_tokens:
+  bg_dark: "#0A0A0A"
+  accent_orange: "#E85D04"
+  accent_coral: "#E63946"
+  heading_font: "Georgia, serif"
+  body_font: "system-ui, sans-serif"
+  min_font_size: "16px"
