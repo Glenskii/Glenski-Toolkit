@@ -91,7 +91,7 @@ The suite depends on `asyncio_mode = auto` in the bundled `pytest.ini`. Without 
 
 ### 2. Copy the security/ folder into your project root
 
-The runnable suite lives in `vibe-security-audit/security/` (plus `pytest.ini`) in this repo. Copy both into your project.
+The runnable suite is bundled in this skill folder: `security/` plus `pytest.ini`. Copy both into your project root.
 
 ```
 your-project/
