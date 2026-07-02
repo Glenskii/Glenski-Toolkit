@@ -3,128 +3,113 @@
 **Practical AI tools for creative and technical workflows.**
 Skills, MCP servers, and prompt guides built for real use, free to share.
 
-By [Glen E. Grant](https://glenegrant.com) · [glenegrant.com](https://glenegrant.com)
+By [Glen E. Grant](https://profile.glenegrant.com) · [glenegrant.com](https://glenegrant.com)
 
 ---
 
 ## What's in here
 
-### MCP Servers - add live capabilities to Claude
-
-MCP servers now live in their own dedicated repo: **[Glenski-MCPs](https://github.com/Glenskii/Glenski-MCPs)**
-
-| Tool | What it does | API Key? |
-|---|---|---|
-| [glenski-web-research-mcp](https://github.com/Glenskii/Glenski-MCPs/tree/main/glenski-web-research-mcp) | Live web search + page fetch via DuckDuckGo. Parallel search, JS-page detection, Playwright fallback. | None |
-
-### Design Skills - enforce quality in AI-generated UI
+### Skills — enforce quality and process in AI-assisted work
 
 | Skill | What it does |
 |---|---|
-| [anti-slop-design](skills/anti-slop-design/) | Blocks default AI aesthetics and forces original typography, color, and layout decisions |
+| [anti-slop-design](skills/anti-slop-design/) | Blocks default AI aesthetics and forces original typography, color, and layout. |
+| [taste](skills/taste/) | Ships landing pages, portfolios, and redesigns that do not look templated. Brief in, design direction out. |
+| [cross-platform-compliance](skills/cross-platform-compliance/) | Two-layer browser and device audit: static analysis plus rendered Playwright checks, with a BLOCKED / REVIEW / PASS gate. |
+| [seo-aeo-geo-gbp](skills/seo-aeo-geo-gbp/) | Search presence orchestrator: technical SEO, keyword research, AEO/GEO, Google Business Profile, JSON-LD schema. Evidence-gated. |
+| [vibe-security-audit](skills/vibe-security-audit/) | Runnable pytest suite covering the OWASP surface for any Python ASGI app before it ships. |
 
-### Prompt Guides - use directly in Claude Projects or any LLM
+### MCP servers — add live capability to Claude
+
+MCP servers live in their own repo: **[Glenski-MCPs](https://github.com/Glenskii/Glenski-MCPs)**.
+
+| Server | What it does | API key |
+|---|---|---|
+| [glenski-web-research-mcp](https://github.com/Glenskii/Glenski-MCPs) | Live web search + page fetch via DuckDuckGo. Parallel search, JS-page detection, Playwright fallback, SSRF-guarded fetch. | None |
+
+### Prompt guides — paste into Claude Projects or any LLM
 
 | Guide | Use case |
 |---|---|
-| [claude-project-instructions.md](claude-project-instructions.md) | Anti-slop design rules for Claude.ai / Projects users (no code tools needed) |
-| [ANTI-SLOP-COMPANION-PROMPT.md](ANTI-SLOP-COMPANION-PROMPT.md) | Full human reference: aesthetic directions, quality checklist, pushback phrases |
+| [claude-project-instructions.md](claude-project-instructions.md) | Anti-slop design rules for Claude.ai / Projects users, no code tools needed. |
+| [anti-slop-companion-prompt.md](anti-slop-companion-prompt.md) | Full human reference: aesthetic directions, quality checklist, pushback phrases. |
 
 ---
 
-## MCP Servers
+## Installing a skill
 
-MCP servers are maintained in **[github.com/Glenskii/Glenski-MCPs](https://github.com/Glenskii/Glenski-MCPs)**.
+Every skill is a self-contained folder with a `SKILL.md` at its root, the same layout Claude Code and the Anthropic skills ecosystem expect. Install is the same for all of them:
 
-### [glenski-web-research-mcp](https://github.com/Glenskii/Glenski-MCPs/tree/main/glenski-web-research-mcp)
-
-Adds three research tools to Claude via the Model Context Protocol. No API keys. No paid accounts.
-
-```
-Tools: web_search | fetch_page | multi_search
-Stack: DuckDuckGo, httpx, BeautifulSoup, Python MCP SDK
-```
-
-**Install in 2 steps:**
-
+**Claude Code (user-wide):**
 ```bash
-git clone https://github.com/Glenskii/Glenski-MCPs
-pip install -r Glenski-MCPs/glenski-web-research-mcp/requirements.txt
+git clone https://github.com/Glenskii/Glenski-Toolkit
+cp -r Glenski-Toolkit/skills/<skill-name> ~/.claude/skills/<skill-name>
 ```
 
-Add to `~/.claude/mcp.json` (Claude Code) or `claude_desktop_config.json` (Claude Desktop):
-```json
-{
-  "mcpServers": {
-    "glenski-web-research": {
-      "command": "python",
-      "args": ["/path/to/Glenski-MCPs/glenski-web-research-mcp/server.py"]
-    }
-  }
-}
+**Project-scoped (Claude Code, Cursor, Windsurf):**
+```bash
+cp -r Glenski-Toolkit/skills/<skill-name> .claude/skills/<skill-name>
 ```
 
-Full setup and parameter docs: [Glenski-MCPs README](https://github.com/Glenskii/Glenski-MCPs/tree/main/glenski-web-research-mcp#readme)
+No rename, no build step. The skill loads on next session. Skills that ship supporting files (`modules/`, `schemas/`, `scripts/`, `security/`) carry them in the same folder, so copying the folder is always enough.
 
 ---
 
-## Design Skills
+## The skills, in detail
 
 ### [anti-slop-design](skills/anti-slop-design/)
+> Stop AI tools from generating the same UI over and over.
 
-> Stop AI tools from generating the same UI, over and over.
+Requires a named Design Declaration before any code is written, bans the tells (Inter, purple gradients, hero → cards → CTA), and ships a 12-point quality gate. Also usable outside Claude Code: paste [`claude-project-instructions.md`](claude-project-instructions.md) into a Claude Project, or drop `SKILL.md` into `.cursorrules`. Compatible with Claude, GPT-4o, Gemini, Cursor, Windsurf.
 
-Every AI-generated interface defaults to Inter, purple gradients, rounded cards, and the same hero, feature cards, CTA layout. This toolkit breaks that pattern and keeps it broken.
+### [taste](skills/taste/)
+> Design direction, inferred from the brief.
 
-**Pick your file, three options, three audiences:**
+For expressive surfaces: landing pages, portfolios, marketing sites. Reads the brief, commits to a direction, and audits before shipping. Derived from Anthropic's `frontend-design`, extended with a hard typography floor and scope rules.
 
-**Option 1 - Claude.ai (chat / Projects)**
-File: [`claude-project-instructions.md`](claude-project-instructions.md)
-Paste into your Claude Project. Every design conversation runs with these rules automatically. No setup required.
+### [cross-platform-compliance](skills/cross-platform-compliance/)
+> Will it break on someone else's browser? Find out before they do.
 
-**Option 2 - Cursor, Windsurf, or AI coding tools**
-File: [`skills/anti-slop-design/SKILL.md`](skills/anti-slop-design/SKILL.md)
-Add to `.cursorrules` or your equivalent project rules file.
+Layer 1 greps the code for known-bad CSS/HTML/JS patterns. Layer 2 renders it across Playwright viewports, runs an axe accessibility scan, checks horizontal overflow and computed styles, and returns evidence-tiered findings behind a BLOCKED / REVIEW REQUIRED / PASS gate.
 
-**Option 3 - Full human reference**
-File: [`ANTI-SLOP-COMPANION-PROMPT.md`](ANTI-SLOP-COMPANION-PROMPT.md)
-Complete guide: aesthetic direction library, quality checklist, pushback phrases, team enforcement.
+### [seo-aeo-geo-gbp](skills/seo-aeo-geo-gbp/)
+> Search presence, done on evidence, not vibes.
 
-**What this enforces:**
+A single orchestrator covering technical SEO audits, keyword research, competitor gap analysis, Answer Engine and Generative Engine Optimization, Google Business Profile compliance, and JSON-LD schema. Operates on a mandatory input gate: no recommendation ships without verified data, tiered E1/E2/E3. Ships `modules/`, `schemas/`, and JSON-LD `templates/`.
 
-- A named Design Declaration required before any code is written
-- Typography bans: Inter, Roboto, Arial, Space Grotesk, Poppins - blocked
-- Color bans: purple/indigo gradients, default Tailwind palette - blocked
-- Layout bans: hero, cards, CTA, alternating image/text rows - blocked
-- 12 named aesthetic directions with font pairings and color logic
-- 12-point Quality Gate Checklist before output ships
-- Team mode: lock a shared aesthetic so every team member's AI output converges
+### [vibe-security-audit](skills/vibe-security-audit/)
+> AI tools generate working code. They do not generate secure code.
 
-Compatible with: Claude, GPT-4o, Gemini, Cursor, Windsurf, any LLM-powered IDE
+A deterministic pytest suite covering headers, auth, authorization/IDOR, input validation, rate limiting, error sanitization, CORS, cookies, method abuse, and config hardening for any Python ASGI app. Copy the bundled `security/` folder and `pytest.ini`, point it at your app, run it.
 
 ---
 
-## Repo Structure
+## Repo structure
 
 ```
 Glenski-Toolkit/
-├── README.md                              This file - toolkit index
-├── CONTRIBUTING.md                        How to contribute
-├── claude-project-instructions.md         Anti-slop for Claude.ai users
-├── ANTI-SLOP-COMPANION-PROMPT.md          Full anti-slop reference guide
-└── skills/
-    └── anti-slop-design/
-        └── SKILL.md                       Cursor / Windsurf / Claude Code skill
-
-MCP servers: github.com/Glenskii/Glenski-MCPs
+├── README.md                          This file — toolkit index
+├── CONTRIBUTING.md                    How to contribute
+├── claude-project-instructions.md     Anti-slop for Claude.ai users
+├── anti-slop-companion-prompt.md      Full anti-slop reference guide
+├── skills/
+│   ├── anti-slop-design/SKILL.md
+│   ├── taste/SKILL.md
+│   ├── cross-platform-compliance/     SKILL.md + scripts/
+│   ├── seo-aeo-geo-gbp/               SKILL.md + modules/ + schemas/ + templates/
+│   └── vibe-security-audit/           SKILL.md + security/ + pytest.ini
+└── mcps/
+    └── glenski-web-research-mcp/      Mirror of the standalone Glenski-MCPs server
 ```
+
+Canonical MCP home: [github.com/Glenskii/Glenski-MCPs](https://github.com/Glenskii/Glenski-MCPs).
 
 ---
 
 ## License
 
-[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/), share freely, credit appreciated.
+[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) — share freely, credit appreciated.
 
 ---
 
-`#mcp` `#claude` `#ai-tools` `#anti-slop` `#frontend` `#design-system` `#web-research` `#no-api-key`
+`#mcp` `#claude` `#ai-tools` `#anti-slop` `#frontend` `#design-system` `#seo` `#security` `#web-research` `#no-api-key`
