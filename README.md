@@ -60,12 +60,12 @@ No rename, no build step. The skill loads on next session. Skills that ship supp
 ### [anti-slop-design](skills/anti-slop-design/)
 > Stop AI tools from generating the same UI over and over.
 
-Requires a named Design Declaration before any code is written, bans the tells (Inter, purple gradients, hero → cards → CTA), and ships a 12-point quality gate. Also usable outside Claude Code: paste [`claude-project-instructions.md`](claude-project-instructions.md) into a Claude Project, or drop `SKILL.md` into `.cursorrules`. Compatible with Claude, GPT-4o, Gemini, Cursor, Windsurf.
+Requires a named Design Declaration before any code is written, bans the tells (Inter, purple gradients, hero → cards → CTA), and ships a 12-point quality gate. Also usable outside Claude Code: paste [`claude-project-instructions.md`](claude-project-instructions.md) into a Claude Project, or drop `SKILL.md` into `.cursorrules`. Compatible with Claude, GPT-4o, Gemini, Cursor, Windsurf. Portable *enforcement* — pairs with `frontend-taste`, which drives the actual design.
 
 ### [frontend-taste](skills/frontend-taste/)
 > Design direction, inferred from the brief.
 
-For expressive surfaces: landing pages, portfolios, marketing sites. Reads the brief, commits to a direction, and audits before shipping. Derived from Anthropic's `frontend-design`, extended with a hard typography floor and scope rules.
+For expressive surfaces: landing pages, portfolios, marketing sites. Reads the brief, commits to a direction, and audits before shipping. Derived from Anthropic's `frontend-design`, extended with a hard typography floor and scope rules. *Drives* the design — pairs with `anti-slop-design` as the cross-tool guardrail.
 
 ### [cross-platform-compliance](skills/cross-platform-compliance/)
 > Will it break on someone else's browser? Find out before they do.
