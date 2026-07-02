@@ -36,10 +36,16 @@ README must include: tool table, install steps, at least 2 usage examples, param
 ```
 skills/
 └── your-skill-name/
-    └── SKILL.md                  YAML frontmatter (name, description) + markdown instructions
+    ├── SKILL.md                  YAML frontmatter (name, description) + markdown instructions
+    └── (optional support files)  modules/, schemas/, scripts/, security/, references/, README.md
 ```
 
-Skills should be under 500 lines. If the instructions are longer, add a `references/` subdirectory and link from SKILL.md.
+Two rules keep skills frictionless to adopt:
+
+1. **The folder name and the `name:` field must match.** `skills/foo/` has `name: foo`. No surprises for the person installing it.
+2. **The skill folder is self-contained.** Everything the skill needs ships inside it, so `cp -r skills/your-skill-name ~/.claude/skills/your-skill-name` is the entire install. Do not scatter a skill's runnable parts elsewhere in the repo.
+
+Keep `SKILL.md` under 500 lines. If the instructions run longer, move detail into a `references/` or `modules/` subdirectory and link from `SKILL.md`.
 
 ---
 
