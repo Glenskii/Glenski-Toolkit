@@ -1,6 +1,22 @@
 ---
 name: design-taste-frontend
 description: Anti-slop frontend skill for landing pages, portfolios, and redesigns. The agent reads the brief, infers the right design direction, and ships interfaces that do not look templated. Real design systems when applicable, audit-first on redesigns, strict pre-flight check.
+author: "Glen E. Grant"
+website: "https://profile.glenegrant.com"
+derived_from: "anthropics/skills frontend-design"
+license: "CC BY 4.0"
+repo: "https://github.com/Glenskii/Glenski-Toolkit"
+compatible_with:
+  - "Claude"
+  - "Claude Projects"
+  - "Any LLM with file context support"
+tags:
+  - "frontend"
+  - "design"
+  - "anti-slop"
+  - "landing-page"
+  - "portfolio"
+  - "glenski"
 ---
 
 # tasteskill: Anti-Slop Frontend Skill
