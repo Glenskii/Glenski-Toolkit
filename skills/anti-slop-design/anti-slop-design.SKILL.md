@@ -132,12 +132,18 @@ Space Grotesk, DM Sans, Poppins, Nunito Sans, Lato, Open Sans
 
 ### Type Scale — Use Fluid Sizing
 ```css
-/* Use clamp() — never fixed px type */
+/* Use clamp() — never fixed px type.
+   Hard floor: no computed size below 14px (0.875rem), anywhere.
+   Body, buttons, inputs, and nav never compute below 16px (1rem).
+   Distinctive does not mean tiny: illegible text is its own kind of slop. */
 --text-display: clamp(3rem, 8vw, 9rem);
 --text-heading: clamp(1.75rem, 4vw, 3.5rem);
 --text-body: clamp(1rem, 1.5vw, 1.25rem);
---text-caption: clamp(0.75rem, 1vw, 0.875rem);
+--text-caption: clamp(0.875rem, 1vw, 1rem);
 ```
+
+### Font Licensing Reality Check
+Several fonts in the direction library are commercial (Neue Haas Grotesk, Canela, Domaine, Druk, Monument Extended, Suisse Int'l). If the project has no font budget, substitute free equivalents with the same character rather than silently falling back to a banned default: Archivo or Familjen Grotesk for Neue Haas, Fraunces for Canela/Domaine, Archivo Black or Anton for Druk/Monument. Declare the substitution in the Design Declaration.
 
 ---
 
@@ -237,6 +243,12 @@ Space Grotesk, DM Sans, Poppins, Nunito Sans, Lato, Open Sans
 
 ---
 
+## SCOPE — WHERE THIS SKILL APPLIES
+
+This skill is for expressive surfaces: landing pages, portfolios, marketing sites, campaign pages, posters. It is NOT for dense product UI. A brutalist button and exposed grid are wrong in a dashboard, a settings form, or a data table, where familiarity IS the design. For product UI, distinctiveness lives in restraint: one signature accent, excellent spacing, and typography discipline, not aesthetic maximalism. If the task is a dashboard, admin panel, or form-heavy app, apply only the typography, color-construction, and quality-gate sections and skip the layout-breaking rules.
+
+---
+
 ## MOTION — PURPOSEFUL, NOT DECORATIVE
 
 ### Banned Motion Patterns
@@ -249,7 +261,7 @@ Space Grotesk, DM Sans, Poppins, Nunito Sans, Lato, Open Sans
 ```
 
 ### One Signature Motion Rule
-Choose ONE signature animation for the entire project and do it exceptionally well:
+Choose ONE signature animation for the entire project and do it exceptionally well. Wrap it in `@media (prefers-reduced-motion: reduce)` with a no-motion fallback: respecting that setting is not optional, and a signature animation that ignores it fails the audit.
 
 | Motion Type | When to Use | Implementation |
 |-------------|-------------|----------------|
@@ -374,6 +386,8 @@ ANTI-SLOP AUDIT
 [ ] Fluid type sizing with clamp()
 [ ] CSS custom properties for ALL design tokens
 [ ] WCAG AA contrast ratio confirmed on all text
+[ ] No computed font size below 14px, body/buttons/inputs/nav at 16px+
+[ ] Signature motion has a prefers-reduced-motion fallback
 [ ] Would a designer be able to name the aesthetic in 2 words?
 ```
 

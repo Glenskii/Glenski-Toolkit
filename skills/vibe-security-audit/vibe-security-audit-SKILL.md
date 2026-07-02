@@ -75,6 +75,8 @@ covering the full OWASP attack surface.
 
 Run this suite as your first line. Not your only line.
 
+**Known gap:** this suite covers CORS and cookie flags but does not yet test anti-CSRF token flow (double-submit or synchronizer token). If your app mutates state via cookie-authenticated POST, add a CSRF token test and treat a green run here as necessary, not sufficient.
+
 ---
 
 ## QUICK START
@@ -82,10 +84,14 @@ Run this suite as your first line. Not your only line.
 ### 1. Install dependencies
 
 ```bash
-pip install pytest pytest-asyncio httpx python-dotenv
+pip install "pytest>=8" "pytest-asyncio>=0.24" "httpx>=0.27" python-dotenv
 ```
 
+The suite depends on `asyncio_mode = auto` in the bundled `pytest.ini`. Without it, the async fixtures in `conftest.py` do not run and every test errors on collection. Keep `pytest.ini` alongside the `security/` folder.
+
 ### 2. Copy the security/ folder into your project root
+
+The runnable suite lives in `vibe-security-audit/security/` (plus `pytest.ini`) in this repo. Copy both into your project.
 
 ```
 your-project/
