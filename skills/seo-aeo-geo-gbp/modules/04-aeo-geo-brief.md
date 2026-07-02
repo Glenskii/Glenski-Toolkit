@@ -1,5 +1,5 @@
 # MODULE 04: AEO / GEO BRIEF
-**Skill:** seo-aeo-geo-gbp-orchestrator v2.1.0
+**Skill:** seo-aeo-geo-gbp v2.1.0
 **Trigger:** `/seo aeo [url or topic]`
 
 ---

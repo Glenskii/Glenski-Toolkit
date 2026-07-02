@@ -1,5 +1,5 @@
 # MODULE 07: SEO CONTENT BRIEF
-**Skill:** seo-aeo-geo-gbp-orchestrator v2.1.0
+**Skill:** seo-aeo-geo-gbp v2.1.0
 **Trigger:** `/seo brief [topic + url]`
 
 ---

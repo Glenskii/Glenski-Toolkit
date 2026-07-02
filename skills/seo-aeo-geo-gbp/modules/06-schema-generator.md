@@ -1,5 +1,5 @@
 # MODULE 06: SCHEMA GENERATOR
-**Skill:** seo-aeo-geo-gbp-orchestrator v2.1.0
+**Skill:** seo-aeo-geo-gbp v2.1.0
 **Trigger:** `/seo schema [url or business-type]`
 
 ---

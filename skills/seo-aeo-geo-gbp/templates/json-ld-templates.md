@@ -1,5 +1,5 @@
 # JSON-LD Templates Reference
-**Skill:** seo-aeo-geo-gbp-orchestrator v2.1.0
+**Skill:** seo-aeo-geo-gbp v2.1.0
 **Used by:** Module 06 (Schema Generator)
 
 ---

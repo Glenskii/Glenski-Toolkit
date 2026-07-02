@@ -1,5 +1,5 @@
 ---
-name: "seo-aeo-geo-gbp-orchestrator"
+name: "seo-aeo-geo-gbp"
 title: "SEO / AEO / GEO / GBP ORCHESTRATOR"
 version: "2.1.0"
 last_updated: "2026-05-17"

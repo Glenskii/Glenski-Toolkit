@@ -1,5 +1,5 @@
 # MODULE 03: COMPETITOR ANALYSIS
-**Skill:** seo-aeo-geo-gbp-orchestrator v2.1.0
+**Skill:** seo-aeo-geo-gbp v2.1.0
 **Trigger:** `/seo competitors [url]`
 
 ---
