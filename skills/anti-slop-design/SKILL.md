@@ -37,6 +37,8 @@ tags:
 **Purpose:** Force AI code generators to produce genuinely distinctive, original UI — not recycled "vibe code" aesthetics.  
 **Compatible:** Claude, GPT-4o, Gemini, Cursor, Windsurf, any LLM-powered IDE  
 
+> **This skill vs. [frontend-taste](../frontend-taste/):** anti-slop-design is portable *enforcement* — a set of bans and a quality gate you bolt onto any UI build, in any tool, to stop default aesthetics. Reach for `frontend-taste` instead when you want a skill to *drive* the design of a landing page, portfolio, or marketing site end to end, brief in and interface out. They compose: build with `frontend-taste`, keep `anti-slop-design` as the cross-tool guardrail.
+
 ---
 
 ## THE CORE PROBLEM THIS SKILL SOLVES

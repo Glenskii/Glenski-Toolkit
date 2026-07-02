@@ -24,6 +24,8 @@ tags:
 > Landing pages, portfolios, and redesigns. Not dashboards, not data tables, not multi-step product UI.
 > Every rule below is **contextual**. None of it fires automatically. First read the brief, then pull only what fits.
 
+> **This skill vs. [anti-slop-design](../anti-slop-design/):** frontend-taste *drives* the design — read the brief, commit to a direction, ship the interface — and is scoped to expressive surfaces. Reach for `anti-slop-design` instead when you just want portable guardrails to stop default aesthetics in any build or tool, without a full design pass. They compose: build here, enforce with `anti-slop-design`.
+
 ---
 
 ## GLEN E. GRANT — BRAND CONTEXT (Auto-loaded for all Glen projects)
