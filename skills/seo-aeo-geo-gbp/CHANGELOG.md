@@ -1,4 +1,4 @@
-# CHANGELOG — seo-aeo-geo-gbp-orchestrator
+# CHANGELOG — seo-aeo-geo-gbp
 
 ---
 

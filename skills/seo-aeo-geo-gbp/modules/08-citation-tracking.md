@@ -1,5 +1,5 @@
 # MODULE 08: AI CITATION TRACKING
-**Skill:** seo-aeo-geo-gbp-orchestrator v2.1.0
+**Skill:** seo-aeo-geo-gbp v2.1.0
 **Trigger:** `/seo citations [brand-name]`
 
 ---

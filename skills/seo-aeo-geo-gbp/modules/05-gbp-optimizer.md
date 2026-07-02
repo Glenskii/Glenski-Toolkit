@@ -1,5 +1,5 @@
 # MODULE 05: GOOGLE BUSINESS PROFILE OPTIMIZER
-**Skill:** seo-aeo-geo-gbp-orchestrator v2.1.0
+**Skill:** seo-aeo-geo-gbp v2.1.0
 **Trigger:** `/seo gbp [listing-url or business-name]`
 
 ---
