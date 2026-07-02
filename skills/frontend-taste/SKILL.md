@@ -1,5 +1,5 @@
 ---
-name: taste
+name: frontend-taste
 description: Anti-slop frontend skill for landing pages, portfolios, and redesigns. The agent reads the brief, infers the right design direction, and ships interfaces that do not look templated. Real design systems when applicable, audit-first on redesigns, strict pre-flight check.
 author: "Glen E. Grant"
 website: "https://profile.glenegrant.com"
@@ -19,7 +19,7 @@ tags:
   - "glenski"
 ---
 
-# tasteskill: Anti-Slop Frontend Skill
+# frontend-taste: Anti-Slop Frontend Skill
 
 > Landing pages, portfolios, and redesigns. Not dashboards, not data tables, not multi-step product UI.
 > Every rule below is **contextual**. None of it fires automatically. First read the brief, then pull only what fits.
@@ -904,7 +904,7 @@ The Reference Vocabulary (Section 10) names patterns. The Block Library implemen
 
 ### 12.A File Location
 ```
-skills/taste-skill/blocks/
+skills/frontend-taste/blocks/
   hero/
     asymmetric-split.md
     editorial-manifesto.md

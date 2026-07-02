@@ -14,7 +14,7 @@ By [Glen E. Grant](https://profile.glenegrant.com) · [glenegrant.com](https://g
 | Skill | What it does |
 |---|---|
 | [anti-slop-design](skills/anti-slop-design/) | Blocks default AI aesthetics and forces original typography, color, and layout. |
-| [taste](skills/taste/) | Ships landing pages, portfolios, and redesigns that do not look templated. Brief in, design direction out. |
+| [frontend-taste](skills/frontend-taste/) | Ships landing pages, portfolios, and redesigns that do not look templated. Brief in, design direction out. |
 | [cross-platform-compliance](skills/cross-platform-compliance/) | Two-layer browser and device audit: static analysis plus rendered Playwright checks, with a BLOCKED / REVIEW / PASS gate. |
 | [seo-aeo-geo-gbp](skills/seo-aeo-geo-gbp/) | Search presence orchestrator: technical SEO, keyword research, AEO/GEO, Google Business Profile, JSON-LD schema. Evidence-gated. |
 | [vibe-security-audit](skills/vibe-security-audit/) | Runnable pytest suite covering the OWASP surface for any Python ASGI app before it ships. |
@@ -62,7 +62,7 @@ No rename, no build step. The skill loads on next session. Skills that ship supp
 
 Requires a named Design Declaration before any code is written, bans the tells (Inter, purple gradients, hero → cards → CTA), and ships a 12-point quality gate. Also usable outside Claude Code: paste [`claude-project-instructions.md`](claude-project-instructions.md) into a Claude Project, or drop `SKILL.md` into `.cursorrules`. Compatible with Claude, GPT-4o, Gemini, Cursor, Windsurf.
 
-### [taste](skills/taste/)
+### [frontend-taste](skills/frontend-taste/)
 > Design direction, inferred from the brief.
 
 For expressive surfaces: landing pages, portfolios, marketing sites. Reads the brief, commits to a direction, and audits before shipping. Derived from Anthropic's `frontend-design`, extended with a hard typography floor and scope rules.
@@ -94,7 +94,7 @@ Glenski-Toolkit/
 ├── anti-slop-companion-prompt.md      Full anti-slop reference guide
 ├── skills/
 │   ├── anti-slop-design/SKILL.md
-│   ├── taste/SKILL.md
+│   ├── frontend-taste/SKILL.md
 │   ├── cross-platform-compliance/     SKILL.md + scripts/
 │   ├── seo-aeo-geo-gbp/               SKILL.md + modules/ + schemas/ + templates/
 │   └── vibe-security-audit/           SKILL.md + security/ + pytest.ini
