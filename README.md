@@ -9,7 +9,7 @@ By [Glen E. Grant](https://profile.glenegrant.com) · [glenegrant.com](https://g
 
 ## What's in here
 
-### Skills — enforce quality and process in AI-assisted work
+### Skills - enforce quality and process in AI-assisted work
 
 | Skill | What it does |
 |---|---|
@@ -18,8 +18,9 @@ By [Glen E. Grant](https://profile.glenegrant.com) · [glenegrant.com](https://g
 | [cross-platform-compliance](skills/cross-platform-compliance/) | Two-layer browser and device audit: static analysis plus rendered Playwright checks, with a BLOCKED / REVIEW / PASS gate. |
 | [seo-aeo-geo-gbp](skills/seo-aeo-geo-gbp/) | Search presence orchestrator: technical SEO, keyword research, AEO/GEO, Google Business Profile, JSON-LD schema. Evidence-gated. |
 | [vibe-security-audit](skills/vibe-security-audit/) | Runnable pytest suite covering the OWASP surface for any Python ASGI app before it ships. |
+| [universal-audit](skills/universal-audit/) | Formal, evidence-based software engineering audit: ~120 catalogued controls, deterministic scoring, release gates, independent challenge pass, machine-readable artifacts. Built on the Universal Software Engineering Audit Specification v2.2. |
 
-### MCP servers — add live capability to Claude
+### MCP servers - add live capability to Claude
 
 MCP servers live in their own repo: **[Glenski-MCPs](https://github.com/Glenskii/Glenski-MCPs)**.
 
@@ -27,7 +28,7 @@ MCP servers live in their own repo: **[Glenski-MCPs](https://github.com/Glenskii
 |---|---|---|
 | [glenski-web-research-mcp](https://github.com/Glenskii/Glenski-MCPs) | Live web search + page fetch via DuckDuckGo. Parallel search, JS-page detection, Playwright fallback, SSRF-guarded fetch. | None |
 
-### Prompt guides — paste into Claude Projects or any LLM
+### Prompt guides - paste into Claude Projects or any LLM
 
 | Guide | Use case |
 |---|---|
@@ -60,12 +61,12 @@ No rename, no build step. The skill loads on next session. Skills that ship supp
 ### [anti-slop-design](skills/anti-slop-design/)
 > Stop AI tools from generating the same UI over and over.
 
-Requires a named Design Declaration before any code is written, bans the tells (Inter, purple gradients, hero → cards → CTA), and ships a 12-point quality gate. Also usable outside Claude Code: paste [`claude-project-instructions.md`](claude-project-instructions.md) into a Claude Project, or drop `SKILL.md` into `.cursorrules`. Compatible with Claude, GPT-4o, Gemini, Cursor, Windsurf. Portable *enforcement* — pairs with `frontend-taste`, which drives the actual design.
+Requires a named Design Declaration before any code is written, bans the tells (Inter, purple gradients, hero → cards → CTA), and ships a 12-point quality gate. Also usable outside Claude Code: paste [`claude-project-instructions.md`](claude-project-instructions.md) into a Claude Project, or drop `SKILL.md` into `.cursorrules`. Compatible with Claude, GPT-4o, Gemini, Cursor, Windsurf. Portable *enforcement* - pairs with `frontend-taste`, which drives the actual design.
 
 ### [frontend-taste](skills/frontend-taste/)
 > Design direction, inferred from the brief.
 
-For expressive surfaces: landing pages, portfolios, marketing sites. Reads the brief, commits to a direction, and audits before shipping. Derived from Anthropic's `frontend-design`, extended with a hard typography floor and scope rules. *Drives* the design — pairs with `anti-slop-design` as the cross-tool guardrail.
+For expressive surfaces: landing pages, portfolios, marketing sites. Reads the brief, commits to a direction, and audits before shipping. Derived from Anthropic's `frontend-design`, extended with a hard typography floor and scope rules. *Drives* the design - pairs with `anti-slop-design` as the cross-tool guardrail.
 
 ### [cross-platform-compliance](skills/cross-platform-compliance/)
 > Will it break on someone else's browser? Find out before they do.
@@ -82,13 +83,18 @@ A single orchestrator covering technical SEO audits, keyword research, competito
 
 A deterministic pytest suite covering headers, auth, authorization/IDOR, input validation, rate limiting, error sanitization, CORS, cookies, method abuse, and config hardening for any Python ASGI app. Copy the bundled `security/` folder and `pytest.ini`, point it at your app, run it.
 
+### [universal-audit](skills/universal-audit/)
+> Is this safe to ship? Prove it.
+
+A full production-assurance audit built on the Universal Software Engineering Audit Specification v2.2: catalogued controls with criticality weights, an evidence ledger where PASS requires affirmative proof, a deterministic scorer (`scripts/score.py`, stdlib only) with mandatory caps, honest tier-relative coverage, an independent challenge pass, and a release verdict the numeric score cannot override. Ships the spec, JSON Schemas for every artifact, intake/RoE/report templates, and per-family check procedures. Verdicts: APPROVED, APPROVED WITH CONDITIONS, REQUIRES REWORK, DO NOT SHIP.
+
 ---
 
 ## Repo structure
 
 ```
 Glenski-Toolkit/
-├── README.md                          This file — toolkit index
+├── README.md                          This file - toolkit index
 ├── CONTRIBUTING.md                    How to contribute
 ├── claude-project-instructions.md     Anti-slop for Claude.ai users
 ├── anti-slop-companion-prompt.md      Full anti-slop reference guide
@@ -97,7 +103,8 @@ Glenski-Toolkit/
     ├── frontend-taste/SKILL.md
     ├── cross-platform-compliance/     SKILL.md + scripts/
     ├── seo-aeo-geo-gbp/               SKILL.md + modules/ + schemas/ + templates/
-    └── vibe-security-audit/           SKILL.md + security/ + pytest.ini
+    ├── vibe-security-audit/           SKILL.md + security/ + pytest.ini
+    └── universal-audit/               SKILL.md + spec/ + references/ + scripts/
 ```
 
 MCP servers are not kept here. They live in their own repo: [github.com/Glenskii/Glenski-MCPs](https://github.com/Glenskii/Glenski-MCPs).
@@ -106,7 +113,7 @@ MCP servers are not kept here. They live in their own repo: [github.com/Glenskii
 
 ## License
 
-[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) — share freely, credit appreciated.
+[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) - share freely, credit appreciated.
 
 ---
 
