@@ -3,6 +3,10 @@
 **A formal, evidence-based software engineering audit skill for Claude Code and
 AI-assisted auditors.**
 
+Developed by [Glen E. Grant](https://profile.glenegrant.com).
+
+![glenski-universal-audit](assets/og-card.png)
+
 Built on the **Universal Software Engineering Audit Specification v2.2** - a
 full-lifecycle audit standard covering product fitness, security, architecture, data,
 supply chain, reliability, recovery, performance, quality, accessibility, UX, privacy,
