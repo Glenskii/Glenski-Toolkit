@@ -55,8 +55,8 @@ f_handle  = font("GeistMono-Regular.ttf",      13)
 PAD = 72   # left margin
 
 # --- Measure content block height to center it vertically -------------------------
-line1 = "glenski-universal"
-line2 = "- audit"
+line1 = "glenski"
+line2 = "universal-audit"
 
 f_heading_use = f_heading
 b1 = draw.textbbox((0, 0), line1, font=f_heading_use)
