@@ -1,8 +1,8 @@
 ---
 name: "seo-aeo-geo-gbp"
 title: "SEO / AEO / GEO / GBP ORCHESTRATOR"
-version: "2.1.0"
-last_updated: "2026-05-17"
+version: "2.2.0"
+last_updated: "2026-07-15"
 description: >
   Production-grade search presence skill covering technical SEO auditing, keyword
   research, competitor gap analysis, Answer Engine Optimization (AEO), Generative
@@ -30,7 +30,7 @@ compatible_with:
   - "Any LLM with file context support"
 ---
 
-# SEO / AEO / GEO / GBP ORCHESTRATOR v2.1.0
+# SEO / AEO / GEO / GBP ORCHESTRATOR v2.2.0
 
 **Author:** Glen E. Grant (profile.glenegrant.com)
 **Purpose:** Complete search presence management — from technical audit to AI citation monitoring.
@@ -100,6 +100,7 @@ Every finding and recommendation must carry an evidence label.
 | `/seo schema [url or business-type]` | 06-schema-generator | JSON-LD generation for all schema types |
 | `/seo brief [topic + url]` | 07-content-brief | Full SEO content brief with intent + AEO structure |
 | `/seo citations [brand-name]` | 08-citation-tracking | AI citation monitoring across LLMs |
+| `/seo entity [url]` | 09-entity-repositioning | Reclaim a mis-read AI entity, AI-term scrub, keep the core identity front |
 | `/seo help` | — | Show this router |
 | `/seo status` | — | Current input gate status (what's been provided) |
 
@@ -203,6 +204,7 @@ Full implementation logic lives in the `/modules/` directory:
 - [modules/06-schema-generator.md](modules/06-schema-generator.md)
 - [modules/07-content-brief.md](modules/07-content-brief.md)
 - [modules/08-citation-tracking.md](modules/08-citation-tracking.md)
+- [modules/09-entity-repositioning.md](modules/09-entity-repositioning.md)
 
 Supporting references:
 
