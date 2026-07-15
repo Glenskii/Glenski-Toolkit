@@ -2,6 +2,19 @@
 
 ---
 
+## v2.2.0 — 2026-07-15
+
+**Entity repositioning + Agentic Browsing.**
+
+- New **module 09 (entity-repositioning)**: reclaim an entity that AI engines have mis-read. Governing rule "AI-forward positioning is opt-in, never default", substitution lexicon (name capability in real craft terms, never the tech label, never bury the tenure), and the proven diagnose → backup → scrub → 301 → noindex/de-link → sitemap → reindex sequence.
+- **Two-dates modeling** guidance: craft tenure vs business/professional founding are often both real, model them distinctly and use each consistently by meaning so the machine stops hedging (the cause of "over 20 years" for a 26-year career).
+- **llms.txt as a top-tier entity surface**: it is the first thing AI agents read, audit it exactly like the rest of the site (no AI framing, date-consistent, no stale slugs, no identity blending).
+- Hard **verify-before-claims gate** in module 09: never relay research-agent output about a live page/bio/review as fact without confirming against the live source.
+- **Module 01**: added the **Agentic Browsing** PageSpeed category (2026) — accessibility tree, CLS, llms.txt — with the llms.txt entity lever.
+- Router: added `/seo entity [url]`.
+
+---
+
 ## v2.1.0 — 2026-05-17
 
 **Full build release.**

@@ -160,6 +160,16 @@ Cloudflare Pages sites (Glen's stack): confirm the following are in place:
 
 ---
 
+**4.4 Agentic Browsing** `[E1 if PSI run, E2-REF: Chrome for Developers Lighthouse docs]`
+New PageSpeed Insights / Lighthouse category (2026) scoring how well AI **agents** (not just search crawlers) can navigate and act on the page. Reported as a pass ratio (e.g. 3/3), not a 0-100 score. Three scorable audits:
+- **Accessibility tree** — every interactive element has a programmatic name + valid role, parent-child relationships are valid, and interactive content is not hidden from the a11y tree. (Overlaps the Accessibility category, fix once and pass both.)
+- **Layout stability (CLS)** — agents rely on element position to click the correct target, keep CLS < 0.1 (explicit width/height on images/media, no late-injected content).
+- **llms.txt** — a machine-readable summary file at the domain root. OPTIONAL for the score, but a genuine GEO / entity lever: it hands AI agents a controlled, first-party summary of who the site is. For entity-repositioning clients (see module 09), publish an llms.txt that LEADS with the core identity (e.g. "26-year Toronto commercial photographer") so agent-generated summaries inherit the framing you want, not the one they guess.
+
+Fix priority: correct a11y-tree names/roles + image dimensions usually earn a clean 3/3. Treat llms.txt as a proactive AEO/GEO win, not a passive checkbox.
+
+---
+
 ### PHASE 5 — SECURITY & TRUST SIGNALS
 
 **5.1 HTTPS**
