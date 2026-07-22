@@ -123,7 +123,7 @@ TOTAL_H = (LABEL_H + GAP_LH + H1 + GAP_L12 + H2 + GAP_HS +
            SUB_H + GAP_SB + BAR_H + GAP_BP + PILLS_TOTAL_H + GAP_PF +
            FEAT_H + GAP_FD + DETAIL_H + GAP_DA + DIV_H + GAP_DT + ATTR_H)
 
-TOP_PAD  = 130
+TOP_PAD  = 48
 BOT_PAD  = 40
 AVAIL    = H - TOP_PAD - BOT_PAD
 Y_START  = TOP_PAD + max(0, (AVAIL - TOTAL_H) // 2)
@@ -203,12 +203,12 @@ logo = logo_raw.resize((LOGO_SIZE, LOGO_SIZE), Image.LANCZOS)
 # Center horizontally in right zone (800 to 1280 = 480px)
 right_cx = 800 + (1280 - 800) // 2   # = 1040
 logo_x   = right_cx - LOGO_SIZE // 2
-logo_y   = (H - LOGO_SIZE) // 2
+logo_y   = (H - LOGO_SIZE) // 2 - 30  # shifted up to leave clearance for handle below
 
 # Faint orange glow behind logo
 glow_cx  = logo_x + LOGO_SIZE // 2
 glow_cy  = logo_y + LOGO_SIZE // 2
-for step in range(22, 0, -1):
+for step in range(16, 0, -1):
     intensity = int(12 * (step / 22) ** 2)
     r = min(255, ORANGE[0] * intensity // 12)
     g = min(255, ORANGE[1] * intensity // 12)
@@ -226,7 +226,7 @@ canvas.paste(logo, (logo_x, logo_y), logo)
 handle   = "github.com/Glenskii"
 hb       = draw.textbbox((0, 0), handle, font=f_handle)
 handle_w = hb[2] - hb[0]
-handle_y = logo_y + LOGO_SIZE + 14
+handle_y = logo_y + LOGO_SIZE + 36
 if handle_y + 18 < H - 20:
     draw.text(
         (right_cx - handle_w // 2, handle_y),
