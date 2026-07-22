@@ -6,7 +6,7 @@ Skills, MCP servers, and prompt guides built for real use, free to share.
 By [Glen E. Grant](https://profile.glenegrant.com) · [glenegrant.com](https://glenegrant.com)
 
 > [!TIP]
-> **New here? Start with [`vibe-security-audit`](skills/vibe-security-audit/).** AI tools write working code, not secure code. This one ships a runnable pytest suite that finds the gaps before you deploy. If it saves you a shipping mistake, [star the repo](https://github.com/Glenskii/Glenski-Toolkit/stargazers): it is the one signal that tells me which tools to keep building.
+> **New here? Start with [`vibe-security-audit`](skills/vibe-security-audit/).** AI tools write working code, not secure code. This one ships a runnable pytest suite that finds the gaps before you deploy. Then add [`human-writer`](skills/human-writer/): it strips the AI tells from your posts, emails, and docs before anyone else spots them. If either saves you a shipping mistake, [star the repo](https://github.com/Glenskii/Glenski-Toolkit/stargazers): it is the one signal that tells me which tools to keep building.
 
 ---
 
