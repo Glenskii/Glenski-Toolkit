@@ -1,5 +1,7 @@
 # Glenski-Toolkit
 
+![Glenski-Toolkit](./assets/social-preview.png)
+
 **Practical AI tools for creative and technical workflows.**
 Skills, MCP servers, and prompt guides built for real use, free to share.
 
