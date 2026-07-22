@@ -22,6 +22,7 @@ By [Glen E. Grant](https://profile.glenegrant.com) · [glenegrant.com](https://g
 | [seo-aeo-geo-gbp](skills/seo-aeo-geo-gbp/) | Search presence orchestrator: technical SEO, keyword research, AEO/GEO, Google Business Profile, JSON-LD schema. Evidence-gated. |
 | [vibe-security-audit](skills/vibe-security-audit/) | Runnable pytest suite covering the OWASP surface for any Python ASGI app before it ships. |
 | [universal-audit](skills/universal-audit/) | Formal, evidence-based software engineering audit: ~120 catalogued controls, deterministic scoring, release gates, independent challenge pass, machine-readable artifacts. Built on the Universal Software Engineering Audit Specification v2.2. |
+| [human-writer](skills/human-writer/) | Strips AI writing tells from your own writing before you send or publish it. Edit-only pass: banned vocabulary, em dash overuse, structural patterns, hedging, assistant-voice bleed-through. Never changes meaning. |
 
 ### MCP servers - add live capability to Claude
 
@@ -91,6 +92,11 @@ A deterministic pytest suite covering headers, auth, authorization/IDOR, input v
 
 A full production-assurance audit built on the Universal Software Engineering Audit Specification v2.2: catalogued controls with criticality weights, an evidence ledger where PASS requires affirmative proof, a deterministic scorer (`scripts/score.py`, stdlib only) with mandatory caps, honest tier-relative coverage, an independent challenge pass, and a release verdict the numeric score cannot override. Ships the spec, JSON Schemas for every artifact, intake/RoE/report templates, and per-family check procedures. Verdicts: APPROVED, APPROVED WITH CONDITIONS, REQUIRES REWORK, DO NOT SHIP.
 
+### [human-writer](skills/human-writer/)
+> Your readers can tell. Fix it before you hit send.
+
+A strict editing pass that removes AI writing fingerprints from text you wrote or are about to send: posts, emails, docs, READMEs, chat replies. Grounded in Wikipedia:Signs of AI writing (WikiProject AI Cleanup): banned vocabulary, em dash overuse, negative parallelisms, bolded-header bullet lists, "-ing" tail clauses, hollow significance claims, assistant-voice bleed-through, typographic paste artifacts. Every check is tiered FIX / FLAG / ASK, it re-audits its own output, and it never adds content, changes meaning, or rewrites your argument. Reads your standing style rules and converges toward your voice, not a generic one.
+
 ---
 
 ## Repo structure
@@ -107,7 +113,8 @@ Glenski-Toolkit/
     ├── cross-platform-compliance/     SKILL.md + scripts/
     ├── seo-aeo-geo-gbp/               SKILL.md + modules/ + schemas/ + templates/
     ├── vibe-security-audit/           SKILL.md + security/ + pytest.ini
-    └── universal-audit/               SKILL.md + spec/ + references/ + scripts/
+    ├── universal-audit/               SKILL.md + spec/ + references/ + scripts/
+    └── human-writer/SKILL.md
 ```
 
 MCP servers are not kept here. They live in their own repo: [github.com/Glenskii/Glenski-MCPs](https://github.com/Glenskii/Glenski-MCPs).
