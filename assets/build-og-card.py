@@ -182,6 +182,7 @@ y += DIV_H + GAP_DT
 
 # Attribution -- white on dark
 draw.text((PAD, y), "Glen E. Grant   ·   glenegrant.com", font=f_handle, fill=WHITE)
+ATTRIBUTION_Y = y  # reused to align the right-zone handle below the logo
 
 # --- Vertical separator (warm fade) -----------------------------------------------------
 SEP_X = 800
@@ -222,16 +223,15 @@ for step in range(16, 0, -1):
 # Paste logo with alpha
 canvas.paste(logo, (logo_x, logo_y), logo)
 
-# GitHub handle below logo
+# GitHub handle below logo -- aligned with the left attribution line,
+# same white InstrumentSans label style as the top repo-URL line
 handle   = "github.com/Glenskii"
-hb       = draw.textbbox((0, 0), handle, font=f_handle)
+hb       = draw.textbbox((0, 0), handle, font=f_label)
 handle_w = hb[2] - hb[0]
-handle_y = logo_y + LOGO_SIZE + 36
-if handle_y + 18 < H - 20:
-    draw.text(
-        (right_cx - handle_w // 2, handle_y),
-        handle, font=f_handle, fill=(100, 100, 100)
-    )
+draw.text(
+    (right_cx - handle_w // 2, ATTRIBUTION_Y),
+    handle, font=f_label, fill=WHITE
+)
 
 # --- Save --------------------------------------------------------------------------------
 OUT = "C:/Users/Glen/Documents/GitHub/Glenski-Github/assets/social-preview.png"
