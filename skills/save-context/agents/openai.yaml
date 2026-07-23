@@ -1,0 +1,7 @@
+interface:
+  display_name: "Save Context"
+  short_description: "Writes durable session notes before compact or a new chat"
+  icon_small: "./assets/icon-small.svg"
+  icon_large: "./assets/icon-large.png"
+  brand_color: "#E85D04"
+  default_prompt: "Use $save-context to write durable session notes before I compact or switch to a new chat."
