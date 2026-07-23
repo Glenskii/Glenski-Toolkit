@@ -1,5 +1,7 @@
 # save-context
 
+![save-context](./assets/social-preview.png)
+
 **Version:** 1.0 | **Author:** [Glen E. Grant](https://profile.glenegrant.com) | **License:** CC BY 4.0
 
 Stops an AI coding agent from losing everything it learned this session the moment you compact or start a new chat. Detects which agent and persistence mechanism you're running, writes a dated summary to the right place, then proves it did so with a structured report instead of a vague "done!".
