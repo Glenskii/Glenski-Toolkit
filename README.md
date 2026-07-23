@@ -107,7 +107,7 @@ A strict editing pass that removes AI writing fingerprints from text you wrote o
 ### [save-context](skills/save-context/)
 > Compaction and new chats both throw away what the agent just learned. This stops that.
 
-A pre-compact, pre-handoff memory write with a hard rule against its own worst failure mode: it can never say "already done" without opening the target file and finding today's dated section as proof. Detects the environment first, a platform-native memory system if one exists, an `AGENTS.md`-style dated log for Codex-like agents, or a generic `.agent-context/HANDOFF.md` fallback for anything else, then writes a structured, dated summary: what shipped, deviations from spec and why, root-caused bugs, standing rules established, what's pending. Ends every run with a structured report, not a vague confirmation.
+A pre-compact, pre-handoff memory write with a hard rule against its own worst failure mode: it can never say "already done" without opening the target file and finding today's dated section as proof. Detects the environment first, a platform-native memory system if one exists, an `AGENTS.md`-style dated log for Codex-like agents, or a generic `.agent-context/HANDOFF.md` fallback for anything else, then writes a structured, dated summary: what shipped, deviations from spec and why, root-caused bugs, standing rules established, what's pending. Ends every run with a structured report, not a vague confirmation. Ships `agents/openai.yaml` for a proper Codex UI card, and never writes secrets, tokens, or credentials into any persisted file.
 
 ---
 
@@ -127,7 +127,7 @@ Glenski-Toolkit/
     ├── vibe-security-audit/           SKILL.md + security/ + pytest.ini
     ├── universal-audit/               SKILL.md + spec/ + references/ + scripts/
     ├── human-writer/                  SKILL.md + eval.md
-    └── save-context/SKILL.md
+    └── save-context/                  SKILL.md + agents/openai.yaml + assets/
 ```
 
 MCP servers are not kept here. They live in their own repo: [github.com/Glenskii/Glenski-MCPs](https://github.com/Glenskii/Glenski-MCPs).
