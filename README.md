@@ -29,6 +29,7 @@ By [Glen E. Grant](https://profile.glenegrant.com) · [glenegrant.com](https://g
 | [vibe-security-audit](skills/vibe-security-audit/) | Runnable pytest suite covering the OWASP surface for any Python ASGI app before it ships. |
 | [universal-audit](skills/universal-audit/) | Formal, evidence-based software engineering audit: ~120 catalogued controls, deterministic scoring, release gates, independent challenge pass, machine-readable artifacts. Built on the Universal Software Engineering Audit Specification v2.2. |
 | [human-writer](skills/human-writer/) | Strips AI writing tells from your own writing before you send or publish it. Edit-only pass: banned vocabulary, em dash overuse, structural patterns, hedging, assistant-voice bleed-through. Never changes meaning. |
+| [save-context](skills/save-context/) | Writes durable session notes before `/compact` or a new chat destroys them. Detects the environment (Claude memory, Codex `AGENTS.md`, or a generic fallback file) and adapts. Never claims "already done" without reading proof first. |
 
 ### MCP servers - add live capability to Claude
 
@@ -103,6 +104,11 @@ A full production-assurance audit built on the Universal Software Engineering Au
 
 A strict editing pass that removes AI writing fingerprints from text you wrote or are about to send: posts, emails, docs, READMEs, chat replies. Grounded in Wikipedia:Signs of AI writing (WikiProject AI Cleanup): banned vocabulary, em dash overuse, negative parallelisms, bolded-header bullet lists, "-ing" tail clauses, hollow significance claims, assistant-voice bleed-through, typographic paste artifacts. Every check is tiered FIX / FLAG / ASK, it re-audits its own output, and it never adds content, changes meaning, or rewrites your argument. Reads your standing style rules and converges toward your voice, not a generic one.
 
+### [save-context](skills/save-context/)
+> Compaction and new chats both throw away what the agent just learned. This stops that.
+
+A pre-compact, pre-handoff memory write with a hard rule against its own worst failure mode: it can never say "already done" without opening the target file and finding today's dated section as proof. Detects the environment first, a platform-native memory system if one exists, an `AGENTS.md`-style dated log for Codex-like agents, or a generic `.agent-context/HANDOFF.md` fallback for anything else, then writes a structured, dated summary: what shipped, deviations from spec and why, root-caused bugs, standing rules established, what's pending. Ends every run with a structured report, not a vague confirmation.
+
 ---
 
 ## Repo structure
@@ -120,7 +126,8 @@ Glenski-Toolkit/
     ├── seo-aeo-geo-gbp/               SKILL.md + modules/ + schemas/ + templates/
     ├── vibe-security-audit/           SKILL.md + security/ + pytest.ini
     ├── universal-audit/               SKILL.md + spec/ + references/ + scripts/
-    └── human-writer/SKILL.md
+    ├── human-writer/                  SKILL.md + eval.md
+    └── save-context/SKILL.md
 ```
 
 MCP servers are not kept here. They live in their own repo: [github.com/Glenskii/Glenski-MCPs](https://github.com/Glenskii/Glenski-MCPs).
