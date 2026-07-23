@@ -32,6 +32,12 @@ An earlier version of this skill, run on a session where nothing had been saved,
 
 ---
 
+## Security
+
+Saves decisions, actions, blockers, file paths, commands run, and verification results. Never saves secrets, raw credentials, cookie material, or private data dumps, even when they were visible earlier in the conversation. Sensitive detail gets replaced with a safe description ("OAuth authentication completed") instead of the actual value. Before writing to a repo-local fallback path, checks whether `.gitignore` covers it and warns if it doesn't. If asked to save a secret anyway, it refuses and asks for an intentionally private location instead.
+
+---
+
 ## Usage
 
 Trigger it explicitly:
