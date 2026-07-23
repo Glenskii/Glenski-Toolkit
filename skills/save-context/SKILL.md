@@ -194,6 +194,67 @@ End every run of this skill with a short, structured report, not a vague
    detected target, ambiguous project root), say so plainly instead of
    pretending it succeeded.
 
+## Security: what gets saved, what never does
+
+Save decisions, actions, blockers, file paths, commands run, and
+verification results. Never save secrets, raw credentials, cookie
+material, or private data dumps. That line is the whole rule; the rest of
+this section is how to hold it in practice.
+
+Every persistence target this skill writes to is plain text, and the
+generic fallback (`.agent-context/HANDOFF.md`) lives inside the project
+repo where it can be committed without anyone deciding that on purpose.
+Treat every target as potentially non-private, including the
+platform-native path, since sync, backup, and multi-agent sharing can all
+carry it further than the current machine.
+
+### Scan the summary before writing it, not after
+
+Before any content goes into the dated section, check it for:
+
+- API keys, tokens, OAuth codes, refresh tokens, session cookies, auth
+  headers
+- Private keys, passwords, recovery codes, seed phrases
+- Full browser cookie paths or copied cookie values
+- Client secrets, billing details, private customer data
+- `.env` contents or credentials copied from config files
+
+None of the above goes into the file, even if it already appeared earlier
+in the conversation and even if it seems like the exact detail that
+explains a fix.
+
+### Replace with a safe description, not a redaction placeholder
+
+Don't write `[REDACTED]` next to a fact that still implies the secret's
+shape or location. Replace the whole detail with a plain description of
+what happened instead:
+
+- "OAuth authentication completed" (not which token, not its value)
+- "A token was configured locally" (not the token, not the file it lives in
+  if that file is itself sensitive)
+- "Browser profile was selected" (not session or cookie detail)
+- "Credential issue remains pending" (not what the credential is or why
+  it's failing at the value level)
+
+If the operational detail genuinely can't be captured without exposing the
+secret, say that a credential-related step happened and stop there; a
+future session can ask the user directly rather than read it off disk.
+
+### Check before writing to a repo-local target
+
+Before writing to `.agent-context/HANDOFF.md` (or any other repo-local
+path), check whether the project has a `.gitignore` and whether that path
+is covered. If it is not ignored, warn the user before writing any
+operationally sensitive detail there, even a safely-described one, and
+mention the gap in the final report. Add the `.gitignore` entry yourself
+if asked; don't add it silently without saying so, since the user may want
+the file tracked on purpose.
+
+### If asked to save a secret anyway
+
+Don't silently comply. Flag that this file is not an appropriate place for
+it and ask for an intentionally private, commit-excluded location instead.
+
 ## What not to do
 
 - Don't write a summary so compressed it loses the "why." A bullet list of
