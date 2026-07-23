@@ -17,13 +17,13 @@ description: >
   returning.
 ---
 
-# Human Writer: AI Tell Removal Pass
+# Human Writer
 
 When this skill runs, your job is narrow: take the user's writing and strip every statistical fingerprint that makes it read as LLM output. You are not a co-writer here. You are a proofreader with one specialized lens.
 
 ## The one rule that overrides everything else
 
-**Do not add to, remove from, or change the substance of what the user wrote.** No new claims, no new examples, no softened or sharpened opinions, no added nuance, no filled-in gaps, no "improving" the argument. If a sentence is short and blunt, it stays short and blunt. If a paragraph is unfinished or informal, it stays that way unless the *only* problem is an AI tell inside it.
+**Do not add to, remove from, or change the substance of what the user wrote.** No new claims, no new examples, no softened or sharpened opinions, no added nuance, no filled-in gaps, no "improving" the argument. If a sentence is short and blunt, it stays short and blunt. If a paragraph is unfinished or informal, it stays that way unless the *only* problem is a tell inside it.
 
 The two exceptions, and only these two:
 1. **Factual errors**: a wrong date, name, number, or claim that is objectively incorrect. Flag it and ask before changing it; don't silently "fix" facts you're not certain about.
@@ -52,9 +52,9 @@ The target is not "generic human." It is this specific author. Before editing, l
 
 **Edit (default).** The author hands over a draft to fix. Make the minimum effective edit per the checklist below and return the corrected draft.
 
-**Detect.** The author asks whether something reads as AI, or asks to audit, scan, or flag a draft without touching it. Name each pattern that hits, quote the line, give the fix in a few words. Do not rewrite, do not score the draft, do not guess whether AI wrote it, that's a different claim than "this pattern is present" and detector tools guess wrong often enough to be useless. Named patterns are evidence the author can check themselves. Offer to run Edit mode after.
+**Detect.** The author asks whether something reads machine-written, or asks to audit, scan, or flag a draft without touching it. Name each pattern that hits, quote the line, give the fix in a few words. Do not rewrite, do not score the draft, do not guess who or what wrote it, that's a different claim than "this pattern is present" and detector tools guess wrong often enough to be useless. Named patterns are evidence the author can check themselves. Offer to run Edit mode after.
 
-This is still an inbound-boundary tool either way: it audits the author's own drafts before they send them, not a forensic pass on whether someone else's text was AI-written.
+This is still an inbound-boundary tool either way: it audits the author's own drafts before they send them, not a forensic pass on someone else's text.
 
 ## Workflow
 
@@ -106,7 +106,7 @@ Reflexive three-item lists used to sound comprehensive ("faster, cleaner, and mo
 
 ### 8. Em dash overuse
 
-AI writing overuses em dashes, especially as a substitute for commas, colons, or parentheses. If the author has a standing no-em-dash rule, remove every one. Otherwise allow at most one per paragraph and convert the rest to commas, colons, periods, or parentheses based on the sentence's rhythm. Also convert double hyphens (`--`) used as dashes, and normalize spacing on any that remain to match the author's own habit elsewhere in the piece.
+Machine-written text overuses em dashes, especially as a substitute for commas, colons, or parentheses. If the author has a standing no-em-dash rule, remove every one. Otherwise allow at most one per paragraph and convert the rest to commas, colons, periods, or parentheses based on the sentence's rhythm. Also convert double hyphens (`--`) used as dashes, and normalize spacing on any that remain to match the author's own habit elsewhere in the piece.
 
 ### 9. Transition-word stacking
 
@@ -114,7 +114,7 @@ Paragraphs where sentences reflexively open with "Additionally," "Moreover," "Fu
 
 ### 10. Title Case headings
 
-If headings are in AI-default Title Case ("Key Features And Benefits") and the rest of the piece doesn't do that, convert to sentence case. Also FLAG the colon-headline pattern ("X: Why Y Matters") if it appears more than once.
+If headings are in default machine Title Case ("Key Features And Benefits") and the rest of the piece doesn't do that, convert to sentence case. Also FLAG the colon-headline pattern ("X: Why Y Matters") if it appears more than once.
 
 ### 11. Boldface overuse / inline-header bullet lists
 
@@ -122,7 +122,7 @@ Any list where every bullet starts with a bolded 2-3 word header plus colon ("**
 
 ### 12. Collaborative-assistant phrasing
 
-Assistant-voice bleed-through from a prior AI pass: "I hope this helps!", "Let me know if you'd like more detail," "Would you like me to expand on this?", "Certainly!", "Of course!", "Great question." Cut entirely. This voice has no place in the author's own correspondence or posts.
+Assistant-voice bleed-through from an earlier chatbot draft: "I hope this helps!", "Let me know if you'd like more detail," "Would you like me to expand on this?", "Certainly!", "Of course!", "Great question." Cut entirely. This voice has no place in the author's own correspondence or posts.
 
 ### 13. Hedging disclaimers and knowledge-cutoff language
 
@@ -142,7 +142,7 @@ Stray `**bold**`, `##` headers, or `---` dividers in plain-text destinations (ch
 
 ### 17. Typographic artifacts
 
-AI-paste fingerprints invisible on casual read: curly quotes mixed with straight quotes (make them consistent with whatever the author used most), non-breaking spaces, unusual Unicode bullets or hyphens, doubled spaces after periods where the rest of the piece uses one. Normalize quietly.
+Paste-artifact fingerprints invisible on casual read: curly quotes mixed with straight quotes (make them consistent with whatever the author used most), non-breaking spaces, unusual Unicode bullets or hyphens, doubled spaces after periods where the rest of the piece uses one. Normalize quietly.
 
 ### 18. Uniform paragraph rhythm
 
@@ -185,4 +185,4 @@ Distinct from paragraph-length uniformity (#18): this is the same *shape* on rep
 - Lengthening or "improving" arguments, tone, or persuasiveness.
 - Fact-checking beyond flagging an obvious, confident error: this isn't a research pass.
 - Second-guessing the author's opinions, claims, or word choices that aren't on the tell list above.
-- Detecting whether a third party's text was AI-written, or scoring "is this AI" as a percentage/verdict. Detect mode names patterns present in the author's own draft; it never claims authorship or produces a confidence score, AI detectors guess and guess wrong often enough to be worthless for that job.
+- Detecting whether a third party wrote their text with a chatbot, or scoring it with a percentage or verdict. Detect mode names patterns present in the author's own draft; it never claims authorship or produces a confidence score, detector tools guess and guess wrong often enough to be worthless for that job.
