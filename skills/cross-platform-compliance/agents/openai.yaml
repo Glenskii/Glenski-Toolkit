@@ -1,0 +1,7 @@
+interface:
+  display_name: "Cross-Platform Compliance"
+  short_description: "Audit mobile and browser frontend risks"
+  brand_color: "#E85D04"
+  default_prompt: "Use $cross-platform-compliance to audit this website for desktop-to-mobile compatibility, browser risks, and accessibility release blockers."
+policy:
+  allow_implicit_invocation: true
