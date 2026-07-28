@@ -4,9 +4,21 @@
 **Author:** [Glenski Toolkit](https://example.com)
 **License:** CC BY 4.0
 
-Two-layer website compliance skill for desktop-to-mobile compatibility, browser-specific frontend risks, mobile UX, and accessibility release gates.
+Most website bugs do not show up while building on a desktop screen. A page can look finished in Chrome, then break on an iPhone because of viewport height behavior, tiny tap targets, hidden focus states, form inputs that trigger iOS zoom, Safari CSS differences, or simple horizontal overflow on narrow screens.
 
-Works as a normal Codex/Claude skill with no install required for static review. The optional rendered audit uses Playwright.
+`cross-platform-compliance` gives Codex or Claude Code a structured way to catch those problems before a site ships. It audits real frontend code and, when a preview URL is available, renders the site at mobile, tablet, and desktop sizes to measure what users actually get.
+
+Use this skill when you need to answer practical release questions:
+
+- Will the desktop layout still work on phones and tablets?
+- Are there Safari, iOS, Android, Firefox, or Edge risks hiding in the CSS or JavaScript?
+- Are buttons, links, forms, modals, and navigation usable on touch devices?
+- Are accessibility basics such as labels, focus states, and zoom support intact?
+- Should this page ship, or is it blocked by mobile/browser issues?
+
+The benefit is a release-style verdict instead of vague advice. Findings are grouped as `FAIL`, `WARN`, `NOTE`, or `PASS`, and every audit ends with `BLOCKED`, `REVIEW REQUIRED`, or `PASS`.
+
+Layer 1 works as a normal Codex or Claude skill with no install required. Layer 2 is optional and uses Playwright for rendered browser checks, screenshots, computed styles, and axe accessibility scanning.
 
 ## Compatibility
 
