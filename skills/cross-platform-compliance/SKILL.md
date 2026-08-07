@@ -1,28 +1,6 @@
 ---
 name: cross-platform-compliance
-description: Two-layer browser and device compliance audit for web frontend code. Use when asked to audit, verify, harden, or review websites, landing pages, web apps, React/Next/Vite frontends, static HTML/CSS/JS, or Electron renderers for desktop-to-mobile compatibility, mobile UX failures, browser-specific CSS/JS issues, accessibility regressions, viewport problems, touch target problems, Safari/iOS risks, Android Chrome/Samsung Internet risks, or release readiness. Runs Layer 1 static source review and, when a preview URL is available, Layer 2 Playwright rendered checks with screenshots, computed styles, axe accessibility scan, and a final BLOCKED / REVIEW REQUIRED / PASS gate.
-license: CC BY 4.0
-metadata:
-  title: CROSS-PLATFORM BROWSER COMPLIANCE AUDIT SKILL
-  version: "2.2"
-  author: Glenski Toolkit
-  website: https://example.com
-  repo: https://github.com/Glenskii/Glenski-Toolkit
-  compatible_with:
-    - HTML/CSS/JS static sites
-    - React / Next.js / Vite
-    - Electron renderer
-    - Cloudflare Pages
-    - Any web frontend code
-  tags:
-    - browser-compatibility
-    - cross-platform
-    - mobile
-    - css
-    - playwright
-    - accessibility
-    - audit
-    - glenski
+description: Audit web frontends for browser-engine, responsive, touch, and accessibility issues before release. Use when reviewing websites, web apps, React, Next, Vite, static HTML/CSS/JavaScript, or Electron renderers for desktop-to-mobile compatibility and release readiness. Run static source review and, when a preview URL is available, Playwright rendered checks with screenshots, computed styles, accessibility scanning, and a final BLOCKED, REVIEW REQUIRED, or PASS gate.
 ---
 
 # Cross-Platform Compliance

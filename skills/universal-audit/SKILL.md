@@ -1,6 +1,6 @@
 ---
 name: universal-audit
-description: Formal, evidence-based software engineering audit producing a scored, gated release verdict. Use when asked for a "full audit", "production audit", "release audit", "formal audit", "audit report with a verdict", "is this safe to ship", customer-assurance review, or a re-audit against a prior report. Runs the Universal Software Engineering Audit Specification v2.2 end to end: intake, control selection, evidence ledger, deterministic scoring, release gates, machine-readable artifacts. NOT for quick cleanup passes or refactoring - use a lighter review flow for those.
+description: 'Formal, evidence-based software engineering audit producing a scored, gated release verdict. Use when asked for a "full audit", "production audit", "release audit", "formal audit", "audit report with a verdict", "is this safe to ship", customer-assurance review, or a re-audit against a prior report. Runs the Universal Software Engineering Audit Specification v2.2 end to end: intake, control selection, evidence ledger, deterministic scoring, release gates, machine-readable artifacts. NOT for quick cleanup passes or refactoring - use a lighter review flow for those.'
 ---
 
 # Universal Audit - Formal Production Assurance
@@ -57,7 +57,7 @@ evidence listed in the catalog or stronger. Practical guidance per family is in
 
 - Record every material observation in `evidence-ledger.json`: ID, class, timestamp,
   location (file:line, endpoint, config key), method, sanitized excerpt, limitations.
-- Repository unavailable → source-dependent claims are `UNVERIFIED - Runtime inference only`.
+- Repository unavailable: source-dependent claims are `UNVERIFIED - Runtime inference only`.
 - Tool output (linters, SCA, scanners) is evidence to assess, not a verdict. Validate
   before accepting severity.
 - Sanitize as you go: no secrets, tokens, personal data, or working exploit payloads in
@@ -127,7 +127,7 @@ delta table. Never carry a PASS forward without confirming its evidence still ho
 
 ## Scope Control
 
-- A time box changes coverage, not truth standards. Out of time → remaining controls are
+- A time box changes coverage, not truth standards. Out of time: remaining controls are
   UNVERIFIED and reported as such.
 - Never present a limited audit as full production assurance.
 - Stop immediately if authorization is exceeded, a test risks material harm, or the

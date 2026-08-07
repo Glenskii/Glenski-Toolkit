@@ -3,7 +3,6 @@
 Icon generator for save-context's agents/openai.yaml
 icon_large: 512x512px PNG, Glenski dark rounded-square tile with an orange
 floppy-disk (save) glyph, matching icon-small.svg's line art.
-Glenski Toolkit | example.com | github.com/Glenskii
 """
 
 from PIL import Image, ImageDraw

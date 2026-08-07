@@ -2,7 +2,7 @@
 
 ![save-context](./assets/social-preview.png)
 
-**Version:** 1.0 | **Author:** [Glenski Toolkit](https://example.com) | **License:** CC BY 4.0
+**Version:** 1.0 | **License:** CC BY 4.0
 
 Stops an AI coding agent from losing everything it learned this session the moment you compact or start a new chat. Detects which agent and persistence mechanism you're running, writes a dated summary to the right place, then proves it did so with a structured report instead of a vague "done!".
 
@@ -58,4 +58,4 @@ No setup required for the generic fallback path (`.agent-context/HANDOFF.md`), i
 
 [github.com/Glenskii/Glenski-Toolkit](https://github.com/Glenskii/Glenski-Toolkit), skills for professional web development, creative production, and software quality.
 
-Licensed [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Credit: Glenski Toolkit, [example.com](https://example.com)
+Licensed [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).

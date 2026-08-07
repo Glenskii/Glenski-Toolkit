@@ -1,0 +1,4 @@
+interface:
+  display_name: "Python Web App Security Audit"
+  short_description: "Defensive release checks for FastAPI, Flask, and Django apps"
+  default_prompt: "Use $vibe-security-audit to check this Python web app for common security issues before release."

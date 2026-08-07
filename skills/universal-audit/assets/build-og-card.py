@@ -2,7 +2,6 @@
 """
 Social Preview Card Generator
 universal-audit -- 1280x640px GitHub / Twitter OG card, white edition
-Glenski Toolkit | example.com | github.com/Glenskii
 
 Layout matches the approved glenski-web-research-mcp card, inverted to a
 white field. Run with system Python (Pillow required).
@@ -153,7 +152,7 @@ draw.line([(PAD, y), (700, y)], fill=DIVIDER, width=1)
 y += DIV_H + GAP_DT
 
 # Attribution
-draw.text((PAD, y), "Glenski Toolkit   ·   example.com", font=f_handle, fill=ATTR)
+draw.text((PAD, y), "Evidence-led release assurance", font=f_handle, fill=ATTR)
 
 # --- Vertical separator (warm fade, tuned for white) ------------------------------
 SEP_X = 800
