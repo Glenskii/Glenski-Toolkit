@@ -1,143 +1,39 @@
-# Glenski-Toolkit
+# Glenski Toolkit
 
-![Glenski-Toolkit](./assets/social-preview.png)
+Open-source skills for building, reviewing, and releasing software with clear evidence and practical limits.
 
-**Practical AI tools for creative and technical workflows.**
-Skills, MCP servers, and prompt guides built for real use, free to share.
+The toolkit is shaped by active project work, then converted into portable resources that can be used with Codex, Claude Code, Cursor, Windsurf, or another compatible agent. Each published skill is intended to be useful without access to a private environment, client account, or business profile.
 
-By [Glenski Toolkit](https://example.com) · [example.com](https://example.com)
+## Maintained skills
 
-> [!TIP]
-> **New here? Start with [`vibe-security-audit`](skills/vibe-security-audit/).** AI tools write working code, not secure code. This one ships a pytest suite that finds the gaps before you deploy.
->
-> **Writing instead of code? Grab [`human-writer`](skills/human-writer/).** It strips the AI tells from your posts, emails, and docs before anyone else spots them.
->
-> If either saves you a mistake, [star the repo](https://github.com/Glenskii/Glenski-Toolkit/stargazers): it is the one signal that tells me which tools to keep building.
+| Skill | Purpose |
+| --- | --- |
+| [cross-platform-compliance](skills/cross-platform-compliance/) | Check web frontends for browser-engine, responsive, touch, and accessibility issues before release. |
+| [universal-audit](skills/universal-audit/) | Run an evidence-based software audit with a clear release verdict and stated limits. |
+| [vibe-security-audit](skills/vibe-security-audit/) | Perform defensive release checks for FastAPI, Flask, and Django applications. |
+| [human-writer](skills/human-writer/) | Edit supplied copy for clarity and natural voice without changing its meaning. |
+| [seo-aeo-geo-gbp](skills/seo-aeo-geo-gbp/) | Review search visibility, structured data, and public profile information using current evidence and no outcome promises. |
+| [save-context](skills/save-context/) | Create a durable, privacy-aware handoff before a session is compacted or transferred. |
 
----
+## Public-safety standard
 
-## What's in here
+Published skills contain generic workflows and fictional examples only. They do not include personal contact details, customer information, private infrastructure, credentials, analytics exports, or internal operations notes. Any platform policy or current search claim must be verified against the relevant primary source at the time of use.
 
-### Skills - enforce quality and process in AI-assisted work
+## Install
 
-| Skill | What it does |
-|---|---|
-| [anti-slop-design](skills/anti-slop-design/) | Blocks default AI aesthetics and forces original typography, color, and layout. |
-| [frontend-taste](skills/frontend-taste/) | Ships landing pages, portfolios, and redesigns that do not look templated. Brief in, design direction out. |
-| [cross-platform-compliance](skills/cross-platform-compliance/) | Two-layer browser and device audit: static analysis plus rendered Playwright checks, with a BLOCKED / REVIEW / PASS gate. |
-| [seo-aeo-geo-gbp](skills/seo-aeo-geo-gbp/) | Search presence orchestrator: technical SEO, keyword research, AEO/GEO, Google Business Profile, JSON-LD schema. Evidence-gated. |
-| [vibe-security-audit](skills/vibe-security-audit/) | Runnable pytest suite covering the OWASP surface for any Python ASGI app before it ships. |
-| [universal-audit](skills/universal-audit/) | Formal, evidence-based software engineering audit: ~120 catalogued controls, deterministic scoring, release gates, independent challenge pass, machine-readable artifacts. Built on the Universal Software Engineering Audit Specification v2.2. |
-| [human-writer](skills/human-writer/) | Strips AI writing tells from your own writing before you send or publish it. Edit-only pass: banned vocabulary, em dash overuse, structural patterns, hedging, assistant-voice bleed-through. Never changes meaning. |
-| [save-context](skills/save-context/) | Writes durable session notes before `/compact` or a new chat destroys them. Detects the environment (Claude memory, Codex `AGENTS.md`, or a generic fallback file) and adapts. Never claims "already done" without reading proof first. |
+Clone the repository, then copy the skill folder into the location your client recognizes. Most compatible coding agents support a project-level skills directory or their own user-level skills directory.
 
-### MCP servers - add live capability to Claude
-
-MCP servers live in their own repo: **[Glenski-MCPs](https://github.com/Glenskii/Glenski-MCPs)**.
-
-| Server | What it does | API key |
-|---|---|---|
-| [glenski-web-research-mcp](https://github.com/Glenskii/Glenski-MCPs) | Live web search + page fetch via DuckDuckGo. Parallel search, JS-page detection, Playwright fallback, SSRF-guarded fetch. | None |
-
-### Prompt guides - paste into Claude Projects or any LLM
-
-| Guide | Use case |
-|---|---|
-| [claude-project-instructions.md](claude-project-instructions.md) | Anti-slop design rules for Claude.ai / Projects users, no code tools needed. |
-| [anti-slop-companion-prompt.md](anti-slop-companion-prompt.md) | Full human reference: aesthetic directions, quality checklist, pushback phrases. |
-
----
-
-## Installing a skill
-
-Every skill is a self-contained folder with a `SKILL.md` at its root, the same layout Claude Code and the Anthropic skills ecosystem expect. Install is the same for all of them:
-
-**Claude Code (user-wide):**
 ```bash
-git clone https://github.com/Glenskii/Glenski-Toolkit
-cp -r Glenski-Toolkit/skills/<skill-name> ~/.claude/skills/<skill-name>
+git clone https://github.com/Glenskii/Glenski-Toolkit.git
+cp -r Glenski-Toolkit/skills/<skill-name> <your-agent-skills-directory>/<skill-name>
 ```
 
-**Project-scoped (Claude Code, Cursor, Windsurf):**
-```bash
-cp -r Glenski-Toolkit/skills/<skill-name> .claude/skills/<skill-name>
-```
+Keep each skill folder intact so its supporting scripts and references remain available.
 
-No rename, no build step. The skill loads on next session. Skills that ship supporting files (`modules/`, `schemas/`, `scripts/`, `security/`) carry them in the same folder, so copying the folder is always enough.
+## Scope
 
----
-
-## The skills, in detail
-
-### [anti-slop-design](skills/anti-slop-design/)
-> Stop AI tools from generating the same UI over and over.
-
-Requires a named Design Declaration before any code is written, bans the tells (Inter, purple gradients, hero → cards → CTA), and ships a 12-point quality gate. Also usable outside Claude Code: paste [`claude-project-instructions.md`](claude-project-instructions.md) into a Claude Project, or drop `SKILL.md` into `.cursorrules`. Compatible with Claude, GPT-4o, Gemini, Cursor, Windsurf. Portable *enforcement* - pairs with `frontend-taste`, which drives the actual design.
-
-### [frontend-taste](skills/frontend-taste/)
-> Design direction, inferred from the brief.
-
-For expressive surfaces: landing pages, portfolios, marketing sites. Reads the brief, commits to a direction, and audits before shipping. Derived from Anthropic's `frontend-design`, extended with a hard typography floor and scope rules. *Drives* the design - pairs with `anti-slop-design` as the cross-tool guardrail.
-
-### [cross-platform-compliance](skills/cross-platform-compliance/)
-> Will it break on someone else's browser? Find out before they do.
-
-Layer 1 greps the code for known-bad CSS/HTML/JS patterns. Layer 2 renders it across Playwright viewports, runs an axe accessibility scan, checks horizontal overflow and computed styles, and returns evidence-tiered findings behind a BLOCKED / REVIEW REQUIRED / PASS gate.
-
-### [seo-aeo-geo-gbp](skills/seo-aeo-geo-gbp/)
-> Search presence, done on evidence, not vibes.
-
-A single orchestrator covering technical SEO audits, keyword research, competitor gap analysis, Answer Engine and Generative Engine Optimization, Google Business Profile compliance, and JSON-LD schema. Operates on a mandatory input gate: no recommendation ships without verified data, tiered E1/E2/E3. Ships `modules/`, `schemas/`, and JSON-LD `templates/`.
-
-### [vibe-security-audit](skills/vibe-security-audit/)
-> AI tools generate working code. They do not generate secure code.
-
-A deterministic pytest suite covering headers, auth, authorization/IDOR, input validation, rate limiting, error sanitization, CORS, cookies, method abuse, and config hardening for any Python ASGI app. Copy the bundled `security/` folder and `pytest.ini`, point it at your app, run it.
-
-### [universal-audit](skills/universal-audit/)
-> Is this safe to ship? Prove it.
-
-A full production-assurance audit built on the Universal Software Engineering Audit Specification v2.2: catalogued controls with criticality weights, an evidence ledger where PASS requires affirmative proof, a deterministic scorer (`scripts/score.py`, stdlib only) with mandatory caps, honest tier-relative coverage, an independent challenge pass, and a release verdict the numeric score cannot override. Ships the spec, JSON Schemas for every artifact, intake/RoE/report templates, and per-family check procedures. Verdicts: APPROVED, APPROVED WITH CONDITIONS, REQUIRES REWORK, DO NOT SHIP.
-
-### [human-writer](skills/human-writer/)
-> Your readers can tell. Fix it before you hit send.
-
-A strict editing pass that removes AI writing fingerprints from text you wrote or are about to send: posts, emails, docs, READMEs, chat replies. Grounded in Wikipedia:Signs of AI writing (WikiProject AI Cleanup): banned vocabulary, em dash overuse, negative parallelisms, bolded-header bullet lists, "-ing" tail clauses, hollow significance claims, assistant-voice bleed-through, typographic paste artifacts. Every check is tiered FIX / FLAG / ASK, it re-audits its own output, and it never adds content, changes meaning, or rewrites your argument. Reads your standing style rules and converges toward your voice, not a generic one.
-
-### [save-context](skills/save-context/)
-> Compaction and new chats both throw away what the agent just learned. This stops that.
-
-A pre-compact, pre-handoff memory write with a hard rule against its own worst failure mode: it can never say "already done" without opening the target file and finding today's dated section as proof. Detects the environment first, a platform-native memory system if one exists, an `AGENTS.md`-style dated log for Codex-like agents, or a generic `.agent-context/HANDOFF.md` fallback for anything else, then writes a structured, dated summary: what shipped, deviations from spec and why, root-caused bugs, standing rules established, what's pending. Ends every run with a structured report, not a vague confirmation. Ships `agents/openai.yaml` for a proper Codex UI card, and never writes secrets, tokens, or credentials into any persisted file.
-
----
-
-## Repo structure
-
-```
-Glenski-Toolkit/
-├── README.md                          This file - toolkit index
-├── CONTRIBUTING.md                    How to contribute
-├── claude-project-instructions.md     Anti-slop for Claude.ai users
-├── anti-slop-companion-prompt.md      Full anti-slop reference guide
-└── skills/
-    ├── anti-slop-design/SKILL.md
-    ├── frontend-taste/SKILL.md
-    ├── cross-platform-compliance/     SKILL.md + scripts/
-    ├── seo-aeo-geo-gbp/               SKILL.md + modules/ + schemas/ + templates/
-    ├── vibe-security-audit/           SKILL.md + security/ + pytest.ini
-    ├── universal-audit/               SKILL.md + spec/ + references/ + scripts/
-    ├── human-writer/                  SKILL.md + eval.md
-    └── save-context/                  SKILL.md + agents/openai.yaml + assets/
-```
-
-MCP servers are not kept here. They live in their own repo: [github.com/Glenskii/Glenski-MCPs](https://github.com/Glenskii/Glenski-MCPs).
-
----
+This repository contains portable skills. Personal operating procedures, private project settings, and connected MCP services stay out of the public toolkit.
 
 ## License
 
-[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) - share freely, credit appreciated.
-
----
-
-`#mcp` `#claude` `#ai-tools` `#anti-slop` `#frontend` `#design-system` `#seo` `#security` `#web-research` `#no-api-key`
+[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)

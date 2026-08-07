@@ -2,8 +2,6 @@
 
 **Version:** 2.2  
 **Status:** Production audit standard  
-**Authorship:** Glenski Toolkit  
-**Author Profile:** https://example.com  
 **Purpose:** Evidence-based, full-lifecycle software engineering audit standard for human and AI-assisted auditors  
 **Updated:** 2026-07-10  
 **Supersedes:** Version 2.1  
@@ -1307,6 +1305,4 @@ If the High finding is fixed, the re-audit must confirm the current build, repea
 
 ---
 
-**Authorship:** Glenski Toolkit  
-**Profile:** https://example.com  
 **Specification Version:** 2.2
