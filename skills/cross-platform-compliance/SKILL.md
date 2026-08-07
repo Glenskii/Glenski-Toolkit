@@ -1,39 +1,15 @@
 ---
-name: "cross-platform-compliance"
-title: "CROSS-PLATFORM BROWSER COMPLIANCE AUDIT SKILL"
-version: "2.1"
-description: >
-  Two-layer browser and device compliance audit for web frontend code. Layer 1:
-  static code analysis — find bad CSS/HTML/JS patterns without running the project.
-  Layer 2: rendered device audit — Playwright viewports, screenshot evidence,
-  axe accessibility scan, horizontal overflow detection, and computed style checks.
-  Fires on demand against existing code. Returns evidence-tiered findings with a
-  final compliance gate: BLOCKED / REVIEW REQUIRED / PASS.
-author: "Glenski Toolkit"
-website: "https://example.com"
-compatible_with:
-  - "HTML/CSS/JS — static sites"
-  - "React / Next.js"
-  - "Electron renderer"
-  - "Any web frontend code"
-license: "CC BY 4.0"
-repo: "https://github.com/Glenskii/Glenski-Toolkit"
-tags:
-  - "browser-compatibility"
-  - "cross-platform"
-  - "mobile"
-  - "css"
-  - "playwright"
-  - "audit"
-  - "glenski"
+name: cross-platform-compliance
+description: "Automated QA runner for pre-release cross-platform validation. Inspect local code and preview targets for browser-engine inconsistencies, responsive reflow errors, touch interaction bugs, and accessibility failures. Produce evidence logs and a mandatory release gate: BLOCKED, REVIEW REQUIRED, or PASS."
+license: CC-BY-4.0
 ---
 
 ## THE PROBLEM THIS SOLVES
 
 AI tools write for Chrome. Chrome is not the web. iOS Safari runs on every iPhone
-and iPad regardless of which browser the user installs — Chrome on iOS is WebKit
+and iPad regardless of which browser the user installs - Chrome on iOS is WebKit
 under the hood. The 100vh bug, safe area insets, input zoom at under 16px, hover
-states that never fire on touch, backdrop-filter without -webkit-prefix — none of
+states that never fire on touch, backdrop-filter without -webkit-prefix - none of
 these surface in Chrome DevTools. DevTools lie. Real devices don't.
 
 v1.0 of this skill was a useful checklist. Experienced engineers can read it and
@@ -51,14 +27,14 @@ explains exactly why it cannot.
 | FAIL | Will break or completely fail on the target platform. Layout collapses, interaction blocked, content unreachable. | Non-negotiable fix before ship. |
 | WARN | Degrades UX on target platform. Noticeable jank, mis-sizing, inaccessible interaction. | Fix before ship unless explicitly accepted and documented with owner sign-off. |
 | NOTE | Best practice gap. Non-critical. Does not break the experience. | Address in next pass. |
-| PASS | Compliant. Do not list individual PASS items — summarise at end: "Groups 1, 3, 4 — all checks passed." |
+| PASS | Compliant. Do not list individual PASS items - summarise at end: "Groups 1, 3, 4 - all checks passed." |
 
 ---
 
 ## TARGET CONFIGURATION
 
 Before any audit begins, confirm or establish this config block. If not provided
-by the user, ask for it — do not assume defaults.
+by the user, ask for it - do not assume defaults.
 
 ```yaml
 targets:
@@ -71,7 +47,7 @@ targets:
 
 project:
   type: ""          # "static" | "react" | "nextjs" | "electron" | "other"
-  build_cmd: ""     # e.g., "npm run build" — leave blank if not applicable
+  build_cmd: ""     # e.g., "npm run build" - leave blank if not applicable
   preview_cmd: ""   # e.g., "npm run preview" or "npx serve dist"
   base_url: ""      # e.g., "http://localhost:4173"
   entry_html: ""    # e.g., "dist/index.html" or "index.html"
@@ -82,7 +58,7 @@ layer2_available: false  # Set true when Playwright is available in the project
 **Browser support lookups:** When rules reference CSS property support or prefix
 requirements, verify against MDN Browser Compatibility Data (developer.mozilla.org)
 or caniuse.com with the target versions above. Do not rely on hardcoded support
-notes in this skill — they age. Quick check command (requires browserslist):
+notes in this skill - they age. Quick check command (requires browserslist):
 
 ```bash
 npx browserslist "ios_saf >= 16, chrome >= 120, firefox >= 120, edge >= 120, samsung >= 23"
@@ -93,7 +69,7 @@ npx update-browserslist-db@latest  # keep the db current before any audit
 
 ## AUDIT EXECUTION WORKFLOW
 
-### STEP 1 — TRIAGE
+### STEP 1 - TRIAGE
 
 1. Identify project type and confirm target config
 2. Confirm whether Layer 2 (Playwright) is available: check for `playwright` in
@@ -101,18 +77,18 @@ npx update-browserslist-db@latest  # keep the db current before any audit
 3. Run Layer 1 (static) always
 4. Run Layer 2 (rendered) when preview server is available
 
-### STEP 2 — LAYER 1: STATIC CODE AUDIT
+### STEP 2 - LAYER 1: STATIC CODE AUDIT
 
 Read HTML, CSS, and JS/TS files directly. Flag issues by file path and line
 number where possible. This layer catches structural and pattern-based failures
 that do not require rendering.
 
-### STEP 3 — LAYER 2: RENDERED DEVICE AUDIT
+### STEP 3 - LAYER 2: RENDERED DEVICE AUDIT
 
 Start preview server if available, then run Playwright checks at the six required
 viewports. See Layer 2 section for full execution spec.
 
-### STEP 4 — COMPILE FINDINGS AND GATE
+### STEP 4 - COMPILE FINDINGS AND GATE
 
 Produce the final findings report and compliance gate output.
 
@@ -120,15 +96,15 @@ Produce the final findings report and compliance gate output.
 
 ## LAYER 1: STATIC CODE AUDIT
 
-### GROUP 1 — MOBILE VIEWPORT
+### GROUP 1 - MOBILE VIEWPORT
 
 **1.1 Viewport Meta Tag**
 - FAIL: `<meta name="viewport">` missing from `<head>`
-- FAIL: `user-scalable=no` present (WCAG 1.4.4 violation — prevents zoom for
+- FAIL: `user-scalable=no` present (WCAG 1.4.4 violation - prevents zoom for
   low-vision users)
 - WARN: `interactive-widget=resizes-content` not set on pages with fixed bottom
   bars that must stay visible when the virtual keyboard opens. Chrome Android 108+
-  only — not a universal requirement. Flag if the project has fixed bottom UI and
+  only - not a universal requirement. Flag if the project has fixed bottom UI and
   targets Android Chrome 108+; skip otherwise.
 - WARN: `maximum-scale` set below `2`
 - Required baseline:
@@ -139,18 +115,18 @@ Produce the final findings report and compliance gate output.
 **1.2 The 100vh iOS Safari Bug**
 - FAIL: `height: 100vh` used as the SOLE height declaration on hero sections,
   modal overlays, sticky navigation, full-screen wrappers, or splash screens
-- PASS: `height: 100vh` present as a fallback alongside `height: 100dvh` — this
+- PASS: `height: 100vh` present as a fallback alongside `height: 100dvh` - this
   is the correct pattern
 - Correct pattern to recognise as PASS:
 ```css
 .hero {
-  height: 100vh;        /* Fallback — PASS when dvh follows */
+  height: 100vh;        /* Fallback - PASS when dvh follows */
   height: 100dvh;
 }
 ```
 - FAIL pattern (100vh alone, no dvh):
 ```css
-.hero { height: 100vh; }  /* FAIL — sole declaration, no dvh fallback */
+.hero { height: 100vh; }  /* FAIL - sole declaration, no dvh fallback */
 ```
 - New viewport units (svh, dvh, lvh): require Safari 15.4+. If target
   `ios_safari_min < 15.4`, WARN on dvh without 100vh fallback.
@@ -162,27 +138,27 @@ Produce the final findings report and compliance gate output.
 - Required CSS:
 ```css
 .bottom-nav {
-  padding-bottom: constant(safe-area-inset-bottom); /* legacy Safari — must come first */
-  padding-bottom: env(safe-area-inset-bottom);       /* modern — wins in cascade */
+  padding-bottom: constant(safe-area-inset-bottom); /* legacy Safari - must come first */
+  padding-bottom: env(safe-area-inset-bottom);       /* modern - wins in cascade */
 }
 ```
 
-**1.4 Input Font Size — iOS Auto-Zoom**
+**1.4 Input Font Size - iOS Auto-Zoom**
 - FAIL: any `<input>`, `<select>`, or `<textarea>` with computed or declared
   `font-size` below `16px`
-- This includes inherited font sizes — if body is 14px and inputs inherit, that
+- This includes inherited font sizes - if body is 14px and inputs inherit, that
   is a FAIL
 - 16px is a hard floor. No exceptions.
 
 ---
 
-### GROUP 2 — MOBILE TOUCH
+### GROUP 2 - MOBILE TOUCH
 
 **2.1 Touch Target Size**
 - WARN: interactive elements (`<button>`, `<a>`, `<input>`, toggles, icon
   buttons) with effective tap area below 44x44px (iOS HIG) / 48x48dp (Android
   Material)
-- Measure full area including padding — a 16px icon with 14px padding = 44px =
+- Measure full area including padding - a 16px icon with 14px padding = 44px =
   PASS
 - Note: Layer 2 (Playwright) provides the reliable measurement; Layer 1 flags
   obvious cases
@@ -216,7 +192,7 @@ Produce the final findings report and compliance gate output.
 - NOTE: page or modal missing `overscroll-behavior: contain` where
   bounce/chain scroll is undesirable
 
-**2.6 Body Scroll Lock — Modal Behaviour**
+**2.6 Body Scroll Lock - Modal Behaviour**
 - WARN: modal/drawer/sheet implementations that do not lock body scroll
   (`overflow: hidden` or equivalent on `<body>`) when open
 - Symptom: background page scrolls while modal is open on iOS
@@ -225,38 +201,38 @@ Produce the final findings report and compliance gate output.
 
 ---
 
-### GROUP 3 — CSS COMPATIBILITY
+### GROUP 3 - CSS COMPATIBILITY
 
 **3.1 -webkit- Prefixes**
 - WARN: `-webkit-text-size-adjust: 100%` missing (iOS text inflation on
   orientation change)
 - WARN: `backdrop-filter` without `-webkit-backdrop-filter` prefix
-- Verify current Safari prefix requirements against MDN BCD before flagging —
+- Verify current Safari prefix requirements against MDN BCD before flagging -
   do not hardcode support assumptions
 - `-webkit-font-smoothing` on body: NOTE (macOS cosmetic, not functional)
 
 **3.2 flex gap Support**
 - WARN: `gap` in flex context when target `ios_safari_min < 14.1`
-- Grid gap: supported broader — check MDN for exact version against configured
+- Grid gap: supported broader - check MDN for exact version against configured
   target
 
 **3.3 CSS Custom Properties in calc()**
-- WARN: `calc(var(--x) * value)` patterns — known Safari edge cases. Flag for
+- WARN: `calc(var(--x) * value)` patterns - known Safari edge cases. Flag for
   manual test in Layer 2.
 
 **3.4 @supports Nesting**
 - WARN: nested `@supports` inside a rule block (e.g.,
-  `.hero { @supports not (height: 100dvh) {} }`) — only safe with a CSS nesting
+  `.hero { @supports not (height: 100dvh) {} }`) - only safe with a CSS nesting
   compiler (PostCSS, Sass, Lightning CSS, or native CSS nesting with target
   browser support). Use top-level `@supports` blocks in plain CSS:
 ```css
-/* WARN — nested @supports, plain CSS only */
+/* WARN - nested @supports, plain CSS only */
 .hero {
   height: 100dvh;
   @supports not (height: 100dvh) { height: -webkit-fill-available; }
 }
 
-/* PASS — top-level @supports, safe everywhere */
+/* PASS - top-level @supports, safe everywhere */
 .hero { height: 100dvh; }
 @supports not (height: 100dvh) {
   .hero { height: -webkit-fill-available; }
@@ -275,7 +251,7 @@ Produce the final findings report and compliance gate output.
 
 ---
 
-### GROUP 4 — IMAGES AND MEDIA
+### GROUP 4 - IMAGES AND MEDIA
 
 **4.1 Image Format Fallbacks**
 - WARN: `<img src="...avif">` without `<picture>` providing WebP and JPEG
@@ -292,7 +268,7 @@ Produce the final findings report and compliance gate output.
 
 **4.2 srcset and sizes**
 - WARN: large images (>800px wide) without `srcset`
-- WARN: images missing `width` and `height` attributes (causes CLS — Cumulative
+- WARN: images missing `width` and `height` attributes (causes CLS - Cumulative
   Layout Shift)
 
 **4.3 Lazy Loading**
@@ -300,7 +276,7 @@ Produce the final findings report and compliance gate output.
 
 ---
 
-### GROUP 5 — FORMS AND INPUTS
+### GROUP 5 - FORMS AND INPUTS
 
 **5.1 Input type Attributes**
 - WARN: `<input>` missing `type` or using `type="text"` where a specific type
@@ -309,7 +285,7 @@ Produce the final findings report and compliance gate output.
   URL → type="url" | search → type="search"
 
 **5.2 autocomplete Attributes**
-- NOTE: personal-data form fields missing `autocomplete` (WCAG 1.3.5 — required
+- NOTE: personal-data form fields missing `autocomplete` (WCAG 1.3.5 - required
   for name, email, phone, address)
 
 **5.3 Label Association**
@@ -319,10 +295,10 @@ Produce the final findings report and compliance gate output.
 
 ---
 
-### GROUP 6 — DESKTOP GOTCHAS
+### GROUP 6 - DESKTOP GOTCHAS
 
 **6.1 Scrollbar Width**
-- WARN: `width: 100vw` on full-width elements — Windows scrollbar causes
+- WARN: `width: 100vw` on full-width elements - Windows scrollbar causes
   horizontal overflow
 - Fix: use `width: 100%` or `scrollbar-gutter: stable`
 
@@ -334,7 +310,7 @@ Produce the final findings report and compliance gate output.
   or `hover: hover` check
 
 **6.3 Pointer vs Touch Events**
-- WARN: JS using mousedown/mousemove/mouseup only — no pointer or touch event
+- WARN: JS using mousedown/mousemove/mouseup only - no pointer or touch event
   equivalent
 - Fix: use Pointer Events API (pointerdown/pointermove/pointerup) for unified
   coverage
@@ -347,11 +323,11 @@ Produce the final findings report and compliance gate output.
 
 **6.5 Sticky Header Overlap**
 - WARN: `position: sticky` headers without `scroll-margin-top` on anchor
-  targets — in-page anchor links scroll content under the sticky header
+  targets - in-page anchor links scroll content under the sticky header
 
 **6.6 position: sticky Inside overflow Parents**
 - WARN: `position: sticky` inside a parent with `overflow: hidden`,
-  `overflow: auto`, or `overflow: scroll` — sticky silently stops working when
+  `overflow: auto`, or `overflow: scroll` - sticky silently stops working when
   any ancestor has overflow set. Flag this pattern.
 
 **6.7 Focus Trap in Modals**
@@ -363,7 +339,7 @@ Produce the final findings report and compliance gate output.
 ## LAYER 2: RENDERED DEVICE AUDIT
 
 Layer 2 requires a running preview server. If not available, state: "Layer 2
-skipped — no preview server. Run `[project.preview_cmd]` and re-invoke."
+skipped - no preview server. Run `[project.preview_cmd]` and re-invoke."
 
 The companion script's default exit policy is:
 - FAIL findings fail the Playwright run and produce `BLOCKED`
@@ -380,14 +356,14 @@ Run Playwright checks at all six viewports:
 | V1 | iPhone 14 | 390 | 844 | Primary iOS target |
 | V2 | iPhone 14 Plus | 430 | 932 | Large iPhone |
 | V3 | Android mid | 360 | 800 | Standard Android |
-| V4 | iPad portrait | 768 | 1024 | Tablet — touch at "desktop" width |
+| V4 | iPad portrait | 768 | 1024 | Tablet - touch at "desktop" width |
 | V5 | iPad landscape | 1024 | 768 | Fires most desktop breakpoints |
 | V6 | Desktop | 1366 | 768 | Typical laptop viewport |
 
 Extended (run if time permits):
 
 | V7 | Large desktop | 1920 | 1080 | Wide monitor |
-| V8 | Narrow mobile | 320 | 568 | iPhone SE — narrow edge case |
+| V8 | Narrow mobile | 320 | 568 | iPhone SE - narrow edge case |
 
 ### AUTOMATED CHECKS TO RUN AT EACH VIEWPORT
 
@@ -405,7 +381,7 @@ const hasOverflow = await page.evaluate(() =>
 
 **L2-2: Tap Target Size Scan**
 
-Measure all interactive elements — report any with effective area below 44x44px:
+Measure all interactive elements - report any with effective area below 44x44px:
 ```javascript
 const smallTargets = await page.evaluate(() => {
   const selectors = 'a, button, input, select, textarea, [role="button"], [tabindex]';
@@ -489,9 +465,9 @@ Every finding must include all fields:
 
 ```
 [FAIL|WARN|NOTE] CHECK-ID: Short description
-Detection: [Static — file:line | Rendered — viewport V1, screenshot path]
-Browser affected: [Specific browsers — never "all browsers"]
-Location: /absolute/path/to/file.css:142 — .selector or element
+Detection: [Static - file:line | Rendered - viewport V1, screenshot path]
+Browser affected: [Specific browsers - never "all browsers"]
+Location: /absolute/path/to/file.css:142 - .selector or element
 Issue: [Specific description of what fails and why]
 Fix: [Exact code, paste-ready]
 Verified by: [Static pattern match | Playwright at V1/V3 | axe scan | computed style check]
@@ -511,8 +487,8 @@ CROSS-PLATFORM COMPLIANCE AUDIT
 Project: [name]
 Entry: [URL or file]
 Date: [date]
-Layer 1: [complete | partial — reason]
-Layer 2: [complete at V1–V6 | skipped — reason]
+Layer 1: [complete | partial - reason]
+Layer 2: [complete at V1–V6 | skipped - reason]
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 FAIL FINDINGS
@@ -525,7 +501,7 @@ NOTE FINDINGS
 [each finding in evidence format]
 
 PASSES
-Groups [list]: all checks passed — no issues found.
+Groups [list]: all checks passed - no issues found.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 COMPLIANCE GATE
@@ -536,10 +512,10 @@ NOTE count:  [N]
 
 STATUS: [BLOCKED | REVIEW REQUIRED | PASS]
 
-BLOCKED          — one or more FAIL findings remain unresolved.
-REVIEW REQUIRED  — no FAIL findings, but WARN findings remain. Owner sign-off
+BLOCKED          - one or more FAIL findings remain unresolved.
+REVIEW REQUIRED  - no FAIL findings, but WARN findings remain. Owner sign-off
                    required before ship.
-PASS             — no FAIL or WARN findings. NOTEs are advisory only.
+PASS             - no FAIL or WARN findings. NOTEs are advisory only.
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
@@ -564,7 +540,7 @@ PASS             — no FAIL or WARN findings. NOTEs are advisory only.
 9. Touch targets: measure the full effective tap area including padding. A 16px
    icon with 14px padding each side = 44px = PASS.
 10. A PASS audit means the checked patterns are compliant. Test on real iOS and
-    Android devices for final sign-off — the audit catches known patterns, real
+    Android devices for final sign-off - the audit catches known patterns, real
     devices catch unknown rendering behaviour.
 
 ---
@@ -575,13 +551,12 @@ PASS             — no FAIL or WARN findings. NOTEs are advisory only.
 - BrowserStack / Sauce Labs automated cross-browser matrix testing
 - Full WCAG accessibility audits (axe Layer 2 check covers overlap, not full
   WCAG)
-- Performance auditing (Lighthouse score and Core Web Vitals — use WebPageTest)
+- Performance auditing (Lighthouse score and Core Web Vitals - use WebPageTest)
 
 ---
 
-## CREDITS
+## REFERENCES
 
-Built by Glenski Toolkit — example.com
 Pattern informed by MDN Browser Compatibility Data, Can I Use (caniuse.com),
 WebKit Bug Tracker, WCAG 2.1, and real-world iOS Safari debugging.
 Part of the Glenski-Toolkit: github.com/Glenskii/Glenski-Toolkit

@@ -1,17 +1,14 @@
 # universal-audit
 
-**A formal, evidence-based software engineering audit skill for Claude Code and
-AI-assisted auditors.**
-
-Developed by [Glenski Toolkit](https://example.com).
+**A formal, evidence-based software engineering audit skill for AI-assisted auditors.**
 
 ![glenski-universal-audit](assets/og-card.png)
 
-Built on the **Universal Software Engineering Audit Specification v2.2** - a
-full-lifecycle audit standard covering product fitness, security, architecture, data,
-supply chain, reliability, recovery, performance, quality, accessibility, UX, privacy,
-AI systems, and decommissioning. Written to keep AI auditors honest: evidence over
-assumption, deterministic scoring, and release gates that a high score cannot override.
+Built on the **Universal Software Engineering Audit Specification v2.2**, a full-lifecycle
+standard covering product fitness, security, architecture, data, supply chain, reliability,
+recovery, performance, quality, accessibility, UX, privacy, AI systems, and decommissioning.
+It keeps audits honest through evidence, deterministic scoring, and release gates that a
+high score cannot override.
 
 ## What it produces
 
@@ -29,8 +26,8 @@ audits/AUD-MYAPP-20260710-001/
   report.md                # the deliverable
 ```
 
-The verdict is one of: **APPROVED · APPROVED WITH CONDITIONS · REQUIRES REWORK ·
-DO NOT SHIP** - selected by release gates, never by the numeric score alone.
+The verdict is one of: **APPROVED · APPROVED WITH CONDITIONS · REQUIRES REWORK · DO NOT SHIP**.
+Release gates select the verdict. The numeric score alone never does.
 
 ## Why it is different
 
@@ -63,17 +60,12 @@ universal-audit/
     score.py                        # deterministic scorer (stdlib only, Python 3.10+)
 ```
 
-## Install
+## Use
 
-Copy the folder into your skills directory:
-
-```bash
-cp -r universal-audit ~/.claude/skills/universal-audit
-```
-
-Then ask for a "full audit", "release audit", or "formal audit with a verdict" on any
-project. For quick refactor passes, use a lighter review flow - this skill is the
-heavyweight tier on purpose.
+Install the skill through your AI client or place the `universal-audit` folder in its
+supported local skills directory. Then ask for a "full audit", "release audit", or
+"formal audit with a verdict" on a project. For quick refactor passes, use a lighter
+review flow. This skill is deliberately the heavyweight option.
 
 ## Scorer usage
 
@@ -84,39 +76,7 @@ python scripts/score.py audits/<id>/selected-controls.json \
 
 No dependencies beyond the Python standard library.
 
-## A note on Claude Fable 5 safeguards
-
-If you run this skill on Claude Fable 5, you may see a banner like this and a mid-run
-switch to Opus 4.8:
-
-![Fable 5 safeguard notice](assets/fable5-safeguard-notice.png)
-
-This is expected, and it is not caused by anything unsafe in this skill.
-
-A software audit necessarily discusses defensive security concepts by name: input
-validation, authorization boundaries, secrets handling, SSRF defenses, and so on. Fable
-5's current safeguards are, in Anthropic's own words, "intentionally broad right now and
-may flag safe and routine coding, cybersecurity, or biology work." A message dense with
-that vocabulary can trip the classifier on pattern alone, regardless of intent. When it
-does, the platform hands off to Opus 4.8 and the work continues. Nothing is lost.
-
-What this skill contains, and does not:
-
-- **Defensive only.** Every procedure is inspect, verify, and record. It reads code and
-  configuration and reports what it finds.
-- **No exploit code, no payloads, no evasion techniques, no attack tooling** anywhere in
-  the files.
-- **Read-only by default.** The few active checks are marked, gated behind a written
-  Rules of Engagement step, and never run without explicit authorization on a system you
-  own.
-
-If you prefer to avoid the false positive entirely, run the audit phase by phase rather
-than in one pass, and let the security-heavy control families run in subagents (the skill
-already recommends this for large targets). That keeps the dense vocabulary in smaller
-contexts. Either way, the banner is a platform artifact, not a signal about this code.
-
 ## License
 
-Specification and skill: **CC BY 4.0** - free to use, adapt, and redistribute with
-attribution to Glenski Toolkit (https://example.com).
+Specification and skill: **CC BY 4.0**, free to use, adapt, and redistribute with attribution.
 `scripts/score.py`: MIT.

@@ -1,217 +1,68 @@
 ---
-name: "seo-aeo-geo-gbp"
-title: "SEO / AEO / GEO / GBP ORCHESTRATOR"
-version: "2.2.0"
-last_updated: "2026-07-15"
-description: >
-  Production-grade search presence skill covering technical SEO auditing, keyword
-  research, competitor gap analysis, Answer Engine Optimization (AEO), Generative
-  Engine Optimization (GEO), Google Business Profile compliance, JSON-LD schema
-  generation, SEO content briefs, and AI citation monitoring. Operates on a
-  mandatory input gate — no recommendations without verified data. Evidence is
-  tiered E1/E2/E3. All outputs are deterministic artifacts: audits, briefs,
-  schema blocks, compliance reports.
-author: "Glenski Toolkit"
-website: "https://example.com"
-license: "CC BY 4.0"
-repo: "https://github.com/Glenskii/Glenski-Toolkit"
-tags:
-  - "seo"
-  - "aeo"
-  - "geo"
-  - "gbp"
-  - "schema"
-  - "local-seo"
-  - "answer-engine"
-  - "glenski"
-compatible_with:
-  - "Claude"
-  - "Claude Projects"
-  - "Any LLM with file context support"
+name: seo-aeo-geo-gbp
+description: Perform an evidence-led search visibility review for a website or local business. Use when auditing technical SEO, page content, structured data, search-result readiness, AI-search claims, or public business-profile accuracy. Verify current platform guidance from primary sources, separate evidence from recommendations, and never promise rankings, traffic, rich results, or AI visibility.
 ---
 
-# SEO / AEO / GEO / GBP ORCHESTRATOR v2.2.0
+# Search Evidence Audit
 
-**Author:** Glenski Toolkit (example.com)
-**Purpose:** Complete search presence management — from technical audit to AI citation monitoring.
-**License:** CC BY 4.0 — share freely, credit appreciated
-**Tags:** `#glenski` `#seo` `#aeo` `#geo` `#gbp` `#schema` `#local-seo`
+Produce a focused audit of what can be verified. Treat this as a decision-support workflow, not a ranking guarantee.
 
----
+## Start with the target and scope
 
-## THE PROBLEM THIS SOLVES
+Confirm the site or pages to review, the market or audience, available access, and whether the request includes a public business profile. Do not request or record credentials, private addresses, personal contact information, origin IPs, hosting details, internal tickets, or unrelated business data in a public artifact.
 
-Generic SEO advice is everywhere. What's missing is a skill that:
-- Refuses to recommend without verified data (no guessing at traffic or rankings)
-- Covers the full modern search stack: classic SEO + AI answer engines + GBP + LLM citations
-- Ties GBP compliance to the **April 2026 policy** (Gemini-enforced, FTC $51,744/violation)
-- Generates ready-to-deploy JSON-LD, not placeholder schema templates
-- Tracks whether your brand appears in ChatGPT, Perplexity, and Google AI Overviews
+If the target cannot be inspected, state the limit and return a checklist of the evidence required. Do not infer crawlability, index coverage, traffic, rankings, or profile ownership from a URL alone.
 
-This skill enforces discipline: input gate first, evidence tier labeling on every claim, deterministic artifact delivery on every output.
+## Gather evidence
 
----
+Check only claims that can be supported by the supplied project, an accessible page, or a current primary source.
 
-## MANDATORY INPUT GATE
+- Inspect rendered pages and source for titles, headings, canonical URLs, robots directives, internal links, visible content, and structured data.
+- Review structured data against the visible page. Do not add facts that are absent, outdated, or unsupported.
+- For local business information, compare public name, address, phone, category, hours, and links only when the owner supplies or authorizes that data.
+- For claims about Google Search, Google Business Profile, AI search features, rich results, or other platforms, check the current official documentation before making a recommendation.
+- Label every finding as `[VERIFIED]`, `[DOCUMENTED]`, `[RECOMMENDATION]`, or `[UNVERIFIED]`.
 
-**Before invoking any module**, the following must be provided. If any field is missing, ask for it — do not proceed.
+Read [references/search-evidence.md](references/search-evidence.md) for the evidence standard and report format.
 
-```yaml
-# REQUIRED INPUTS
-target_url: ""          # Full URL (https://...) — the primary domain or page under analysis
-business_type: ""       # "local" | "ecommerce" | "saas" | "personal-brand" | "portfolio"
-primary_location: ""    # City + Province/State (local businesses only — skip for pure SaaS/global)
-data_sources: []        # At minimum ONE of: GSC export, GA4 export, Screaming Frog crawl,
-                        # Semrush/Ahrefs CSV, GBP insights export, live URL
+## Evaluate the work
 
-# OPTIONAL BUT STRONGLY RECOMMENDED
-competitor_urls: []     # Up to 5 direct competitors
-target_keywords: []     # Seed keyword list (will be expanded via research)
-gbp_listing_url: ""     # Google Business Profile URL (for GBP module)
+Group findings by impact and confidence.
+
+1. Technical discovery: indexability signals, canonical consistency, robots directives, status behavior, rendering blockers, and internal linking.
+2. Page usefulness: clear purpose, accurate headings, original visible copy, helpful structure, and evidence for important claims.
+3. Structured data: valid syntax, matching visible content, appropriate type selection, and no duplicate or contradictory markup.
+4. Local profile accuracy: only public details the owner has approved, consistent across the reviewed sources.
+5. Measurement: available Search Console, analytics, log, or rank-tracking evidence. Mark unavailable data as unverified.
+
+Do not treat a score from a third-party tool as a search-engine verdict. Do not describe AEO or GEO as separate technical requirements unless a current primary source supports the specific claim.
+
+## Return a usable report
+
+Use this structure:
+
+```text
+Scope and limits
+
+Evidence reviewed
+
+Verified findings
+
+Recommendations
+
+Unverified items and the evidence needed
+
+Priority order
+
+Expected outcome and limits
 ```
 
-**If no data source is provided:** state clearly: *"I can provide best-practice guidance only (E3 evidence). For E1 findings, provide a GSC export, Screaming Frog crawl, or GA4 data."*
+Each recommendation must name the page or asset, the reason, the supporting evidence, and the safe next action. Say plainly when an outcome cannot be guaranteed.
 
----
+## Guardrails
 
-## EVIDENCE TIER SYSTEM
-
-Every finding and recommendation must carry an evidence label.
-
-| Tier | Label | Definition |
-|------|-------|------------|
-| E1 | `[E1-VERIFIED]` | Pulled from live data: GSC, GA4, Screaming Frog crawl, GBP insights export, live URL fetch |
-| E2 | `[E2-REF]` | From authoritative reference: Google's own documentation, Search Central, official GBP policy docs, confirmed industry benchmarks with source cited |
-| E3 | `[E3-BEST-PRACTICE]` | Industry consensus with no project-specific data. Always flag: *"Verify against your data."* |
-
-**Rule:** Never present E3 findings as if they were E1. Never omit tier labels on claims.
-
----
-
-## MODULE ROUTER
-
-| Command | Module | Description |
-|---------|--------|-------------|
-| `/seo audit [url]` | 01-seo-audit | Full technical SEO crawl analysis |
-| `/seo keywords [url or topic]` | 02-keyword-research | Keyword research with intent mapping |
-| `/seo competitors [url]` | 03-competitor-analysis | Gap analysis + share-of-voice |
-| `/seo aeo [url or topic]` | 04-aeo-geo-brief | Answer Engine + Generative Engine brief |
-| `/seo gbp [listing-url or business-name]` | 05-gbp-optimizer | GBP audit, optimization, compliance |
-| `/seo schema [url or business-type]` | 06-schema-generator | JSON-LD generation for all schema types |
-| `/seo brief [topic + url]` | 07-content-brief | Full SEO content brief with intent + AEO structure |
-| `/seo citations [brand-name]` | 08-citation-tracking | AI citation monitoring across LLMs |
-| `/seo entity [url]` | 09-entity-repositioning | Reclaim a mis-read AI entity, AI-term scrub, keep the core identity front |
-| `/seo help` | — | Show this router |
-| `/seo status` | — | Current input gate status (what's been provided) |
-
----
-
-## BRAND ENTITY BUNDLE
-
-This bundle is pre-loaded for Glenski Toolkit Creative. When working on Glen's properties, this data is automatically injected into every module — no need to re-enter.
-
-```yaml
-brand:
-  legal_name: "Glenski Toolkit Creative"
-  trading_name: "Glenski Toolkit"
-  founded: 2000
-  type: "LocalBusiness > ProfessionalService"
-  description: "Toronto commercial photographer and software developer. 25+ years editorial and brand photography. 13+ software products including Example App V3 and Example Workspace Pro."
-
-contact:
-  email: "contact@example.com"
-  phone: "+1-555-0100"
-  website: "https://www.example.com"
-  profile: "https://example.com"
-
-locations:
-  - city: "Toronto"
-    province: "ON"
-    country: "CA"
-    postal_code: "00000"
-    neighborhood: "local market"
-    geo_lat: 43.6532
-    geo_lng: -79.3832
-
-services:
-  photography:
-    - "Commercial brand photography"
-    - "Fashion and glamour photography"
-    - "Lifestyle photography"
-    - "Editorial photography"
-    - "Fitness photography"
-    - "AI content multiplication"
-  software:
-    - "Example App V3 (watermarkgienie.com)"
-    - "Example Workspace Pro (ideathreader.com)"
-    - "Sitemap Architect Pro (sitemappro.ca)"
-    - "MailMindz (mailmindz.app)"
-
-pricing:
-  range: "$799-$2999"
-  packages: ["Foundation", "Strategic", "Enterprise"]
-
-affiliations:
-  - "Inside Fitness Magazine"
-  - "CBBF (Canadian Bodybuilding Federation)"
-  - "IFBB (International Federation of Bodybuilding)"
-
-awards:
-  - name: "Unmasking the Pain — Cannes recognition"
-    year: 2024
-    month: 10
-
-social:
-  github: "https://github.com/Glenskii"
-
-design_system:
-  bg: "#0A0A0A"
-  accent_orange: "#E85D04"
-  accent_coral: "#E63946"
-  heading_font: "Georgia, serif"
-  body_font: "system-ui, sans-serif"
-```
-
----
-
-## GLOBAL OUTPUT STANDARDS
-
-All module outputs must follow these conventions:
-
-**Format:**
-- Lead with the finding, follow with the fix
-- Label each finding with evidence tier
-- Priority: Critical (breaks indexing/compliance) → High (measurable ranking impact) → Medium → Low
-- Every actionable item has a deliverable: "Fix X" not "Consider fixing X"
-
-**Schema blocks:** Valid JSON-LD, ready to paste into `<head>` or `<script type="application/ld+json">`.
-
-**Copy artifacts:** Complete, final strings — not templates with [PLACEHOLDER] text.
-
-**Compliance items:** Always cite the specific policy section or Google documentation URL.
-
----
-
-## MODULE FILES
-
-Full implementation logic lives in the `/modules/` directory:
-
-- [modules/01-seo-audit.md](modules/01-seo-audit.md)
-- [modules/02-keyword-research.md](modules/02-keyword-research.md)
-- [modules/03-competitor-analysis.md](modules/03-competitor-analysis.md)
-- [modules/04-aeo-geo-brief.md](modules/04-aeo-geo-brief.md)
-- [modules/05-gbp-optimizer.md](modules/05-gbp-optimizer.md)
-- [modules/06-schema-generator.md](modules/06-schema-generator.md)
-- [modules/07-content-brief.md](modules/07-content-brief.md)
-- [modules/08-citation-tracking.md](modules/08-citation-tracking.md)
-- [modules/09-entity-repositioning.md](modules/09-entity-repositioning.md)
-
-Supporting references:
-
-- [schemas/evidence-tiers.md](schemas/evidence-tiers.md)
-- [schemas/brand-entity.yaml](schemas/brand-entity.yaml)
-- [templates/json-ld-templates.md](templates/json-ld-templates.md)
-
----
-
-*This skill enforces data discipline. No fabricated metrics. No invented rankings. No assumed keyword volumes. Evidence tier on every claim.*
+- Do not publish client details, personal details, infrastructure identifiers, analytics exports, credentials, or internal operations notes in reusable examples.
+- Do not fabricate citations, rankings, reviews, local coverage, entity relationships, or schema fields.
+- Do not use hidden text, misleading markup, doorway pages, review manipulation, or other deceptive tactics.
+- Treat platform policy as time-sensitive. Link to the primary policy or documentation used for the conclusion.
+- Keep generic reusable examples on `example.com` and use fictional data only.

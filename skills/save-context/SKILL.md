@@ -273,4 +273,4 @@ it and ask for an intentionally private, commit-excluded location instead.
 
 ---
 
-Credit: Glenski Toolkit, [example.com](https://example.com)
+Licensed under CC BY 4.0.
