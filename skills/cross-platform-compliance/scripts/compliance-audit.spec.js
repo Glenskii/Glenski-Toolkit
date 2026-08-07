@@ -1,5 +1,5 @@
 /**
- * compliance-audit.spec.js — Cross-Platform Compliance Audit Script
+ * compliance-audit.spec.js - Cross-Platform Compliance Audit Script
  * Layer 2 companion for the cross-platform-compliance skill v2.1.
  *
  * REQUIRED DEPS (add to your project's devDependencies):
@@ -19,7 +19,7 @@
  * 4. Run audit:           npx playwright test --reporter=list --workers=1
  *    With env var:        BASE_URL=https://example.com npx playwright test --workers=1
  *
- * IMPORTANT — always run with --workers=1
+ * IMPORTANT - always run with --workers=1
  *   Parallel workers each get their own process scope. The global REPORT object
  *   is not shared across worker processes. Without --workers=1, results from
  *   different workers will be silently lost from the JSON report and summary.
@@ -54,7 +54,7 @@ const fs = require('fs');
 const path = require('path');
 
 // ─────────────────────────────────────────────────────────────────────────────
-// SECTION 2: CONFIGURATION — edit these values for your project
+// SECTION 2: CONFIGURATION - edit these values for your project
 // ─────────────────────────────────────────────────────────────────────────────
 
 const CONFIG = {
@@ -96,9 +96,9 @@ const CONFIG = {
 // ─────────────────────────────────────────────────────────────────────────────
 
 const SEVERITY = {
-  FAIL: 'FAIL',  // Broken or inaccessible on target platform — blocks ship
-  WARN: 'WARN',  // Degrades UX — requires owner sign-off to accept
-  NOTE: 'NOTE',  // Best practice gap or not-yet-implemented check — advisory only
+  FAIL: 'FAIL',  // Broken or inaccessible on target platform - blocks ship
+  WARN: 'WARN',  // Degrades UX - requires owner sign-off to accept
+  NOTE: 'NOTE',  // Best practice gap or not-yet-implemented check - advisory only
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -199,11 +199,11 @@ function writeReport() {
   console.log(`  Axe incomplete: ${REPORT.summary.axeIncomplete}`);
   console.log('──────────────────────────────────────────────────────');
 
-  // Per-result breakdown — only print non-passing checks to reduce noise
+  // Per-result breakdown - only print non-passing checks to reduce noise
   for (const result of REPORT.results) {
     const nonPassing = result.checks.filter(c => !c.passed);
     if (nonPassing.length === 0) continue;
-    console.log(`\n  ${result.viewport} — ${result.page}`);
+    console.log(`\n  ${result.viewport} - ${result.page}`);
     for (const check of nonPassing) {
       const icon = check.severity === SEVERITY.FAIL ? '✗ FAIL' :
                    check.severity === SEVERITY.WARN ? '⚠ WARN' : '· NOTE';
@@ -250,7 +250,7 @@ function writeReport() {
 // SECTION 6: IN-PAGE CHECK FUNCTIONS
 // ─────────────────────────────────────────────────────────────────────────────
 
-/** L2-1: Horizontal overflow — true if page scrolls horizontally. */
+/** L2-1: Horizontal overflow - true if page scrolls horizontally. */
 async function checkHorizontalOverflow(page) {
   return await page.evaluate(() =>
     document.documentElement.scrollWidth > window.innerWidth
@@ -415,7 +415,7 @@ for (const pagePath of CONFIG.PAGES_TO_AUDIT) {
           passed: !hasOverflow,
           severity: overflowSeverity,
           summary: hasOverflow
-            ? `Page scrolls horizontally at ${viewport.width}px — likely mobile layout break.`
+            ? `Page scrolls horizontally at ${viewport.width}px - likely mobile layout break.`
             : 'No horizontal overflow detected.',
         });
 
@@ -430,7 +430,7 @@ for (const pagePath of CONFIG.PAGES_TO_AUDIT) {
           severity: SEVERITY.FAIL,
           summary: smallInputs.length === 0
             ? `All inputs meet ${CONFIG.MIN_INPUT_FONT_SIZE}px minimum.`
-            : `${smallInputs.length} input(s) below ${CONFIG.MIN_INPUT_FONT_SIZE}px — triggers iOS auto-zoom.`,
+            : `${smallInputs.length} input(s) below ${CONFIG.MIN_INPUT_FONT_SIZE}px - triggers iOS auto-zoom.`,
           details: smallInputs,
         });
 
@@ -450,7 +450,7 @@ for (const pagePath of CONFIG.PAGES_TO_AUDIT) {
         });
 
         // ── 7.6 L2-4: Focus Outline ───────────────────────────────────────────
-        // FAIL: WCAG 2.4.7 — focus must be visible. This is a hard accessibility failure.
+        // FAIL: WCAG 2.4.7 - focus must be visible. This is a hard accessibility failure.
 
         const missingOutlines = await checkFocusOutlines(page);
         recordCheck({
@@ -460,13 +460,13 @@ for (const pagePath of CONFIG.PAGES_TO_AUDIT) {
           severity: SEVERITY.FAIL,
           summary: missingOutlines.length === 0
             ? 'All focusable elements have a visible focus indicator.'
-            : `${missingOutlines.length} element(s) lack a visible focus indicator — WCAG 2.4.7 failure.`,
+            : `${missingOutlines.length} element(s) lack a visible focus indicator - WCAG 2.4.7 failure.`,
           details: missingOutlines,
         });
 
         // ── 7.7 L2-5: Axe Accessibility Scan ─────────────────────────────────
         // violations → FAIL (confirmed failures).
-        // incomplete → WARN (needs manual review — axe couldn't determine pass/fail).
+        // incomplete → WARN (needs manual review - axe couldn't determine pass/fail).
 
         let axeResults;
         try {
@@ -510,7 +510,7 @@ for (const pagePath of CONFIG.PAGES_TO_AUDIT) {
           severity: SEVERITY.FAIL,
           summary: result.axe.violations.length === 0
             ? 'No axe violations found.'
-            : `${result.axe.violations.length} axe violation(s) — confirmed accessibility failures.`,
+            : `${result.axe.violations.length} axe violation(s) - confirmed accessibility failures.`,
           details: result.axe.violations.map(v => `[${v.impact}] ${v.id}: ${v.description}`),
         });
 
@@ -535,7 +535,7 @@ for (const pagePath of CONFIG.PAGES_TO_AUDIT) {
         // breaks process-scoped report accumulation even with --workers=1.
 
         // Inline progress log for CI visibility
-        console.log(`[${viewport.name}] ${pagePath} — FAIL:${result.checks.filter(c=>c.severity===SEVERITY.FAIL && !c.passed).length} WARN:${result.checks.filter(c=>c.severity===SEVERITY.WARN && !c.passed).length}`);
+        console.log(`[${viewport.name}] ${pagePath} - FAIL:${result.checks.filter(c=>c.severity===SEVERITY.FAIL && !c.passed).length} WARN:${result.checks.filter(c=>c.severity===SEVERITY.WARN && !c.passed).length}`);
       });
     }
   });
@@ -549,7 +549,7 @@ for (const pagePath of CONFIG.PAGES_TO_AUDIT) {
  * Fires once after all tests in this file complete.
  * Writes the JSON report and prints the full summary with compliance gate.
  *
- * Requires --workers=1 for accurate totals — see file header.
+ * Requires --workers=1 for accurate totals - see file header.
  */
 test.afterAll(() => {
   writeReport();

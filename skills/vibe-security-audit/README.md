@@ -1,6 +1,5 @@
-# Vibe-Coded App Security Audit Suite
+# Python Web App Security Audit
 
-**Built by:** Glenski Toolkit — [example.com](https://example.com)  
 **Part of:** [Glenski-Toolkit](https://github.com/Glenskii/Glenski-Toolkit)  
 **License:** [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)  
 **Tags:** `#glenski` `#vibe-security` `#owasp` `#pytest` `#fastapi` `#security`
@@ -11,9 +10,15 @@
 
 Vibe-coded apps ship fast. Security does not ship with them.
 
-AI coding tools generate working code. They do not generate secure code. The gap between "it works" and "it is safe" is where real applications get compromised. Credential stuffing, IDOR exploitation, debug pages in production, stack traces leaking database URLs — these are not exotic attacks. They are the first things an attacker checks on any app that looks AI-generated.
+AI coding tools generate working code. They do not generate secure code. The gap between "it works" and "it is safe" is where real applications get compromised. Credential stuffing, IDOR exploitation, debug pages in production, and stack traces leaking database URLs are not exotic attacks. They are the first things an attacker checks on any app that looks AI-generated.
 
 This suite closes that gap with a deterministic, runnable test suite covering the full OWASP attack surface. Drop it into your project, configure your routes, and run it before you ship.
+
+## Who this is for
+
+Use this with a Python web application, including FastAPI, Flask, Django, or a similar app that can run through ASGI. ASGI is the technical interface the tests use to communicate with the app without putting it on a public server.
+
+Do not use this test pack for Node, PHP, WordPress, native mobile, or desktop applications. Those need their own security checks.
 
 ---
 
@@ -41,7 +46,7 @@ This suite is your first line. Not your only line.
 - Manual penetration testing
 - WAF validation and configuration testing
 - Production HTTPS and TLS verification
-- Dependency vulnerability scanning — use `pip-audit` or `safety`
+- Dependency vulnerability scanning. Use `pip-audit` or `safety`.
 - DAST tooling such as OWASP ZAP or Burp Suite
 
 ---
@@ -133,17 +138,17 @@ pytest security/ -v
 
 Shared fixtures used across all test files. Provides three client types:
 
-- `client` — unauthenticated ASGI test client
-- `auth_client` — authenticated client, logged in with TEST_USERNAME credentials
-- `admin_client` — admin-authenticated client, logged in with TEST_ADMIN_USERNAME credentials
+- `client`: unauthenticated ASGI test client
+- `auth_client`: authenticated client, logged in with TEST_USERNAME credentials
+- `admin_client`: admin-authenticated client, logged in with TEST_ADMIN_USERNAME credentials
 
-All clients use `httpx.AsyncClient` with `ASGITransport` — no network required, no running server.
+All clients use `httpx.AsyncClient` with `ASGITransport`. No network or running server is required.
 
 ---
 
 ### `test_headers.py`
 
-Tests security header presence and directive quality. Header presence alone is not sufficient — every test validates actual directive values.
+Tests security header presence and directive quality. Header presence alone is not sufficient. Every test validates actual directive values.
 
 Covers: Content-Security-Policy (unsafe-inline, unsafe-eval, default-src, object-src), X-Frame-Options (DENY or SAMEORIGIN), X-Content-Type-Options (nosniff), Referrer-Policy (rejects unsafe-url), HSTS max-age minimum (1 year), Permissions-Policy, Server header fingerprinting, X-Powered-By removal.
 
@@ -225,7 +230,7 @@ Tests production configuration hardening. Scans responses for 15+ debug mode ind
 
 These rules govern how the suite is written and how you should interpret results:
 
-1. Do not trust framework defaults — test actual behavior.
+1. Do not trust framework defaults. Test actual behavior.
 2. Fail fast. Fail loud. A green suite with weak assertions is worse than no tests.
 3. Separate app-layer tests from deployment-layer tests.
 4. Test both authenticated and unauthenticated behavior on every protected route.
@@ -262,11 +267,11 @@ Store all test credentials as repository secrets. Never hardcode them in workflo
 
 ## Interpreting Results
 
-**A failing test is information.** It tells you a specific control is missing or misconfigured. Read the assertion message — every failure includes the attack it enables and why the current behavior is dangerous.
+**A failing test is information.** It tells you a specific control is missing or misconfigured. Read the assertion message. Every failure explains the risk and why the current behavior is dangerous.
 
 **A passing test is not a guarantee.** It means the tested control works under the conditions tested. In-memory ASGI tests do not validate TLS, CDN behavior, WAF rules, or production proxy configuration.
 
-**Skipped tests are not failures.** Some tests skip when the condition they test is not applicable — for example, cookie tests skip on token-based auth apps. Review skipped tests to confirm the skip reason is correct for your stack.
+**Skipped tests are not failures.** Some tests skip when the condition they test is not applicable. For example, cookie tests skip on token-based auth apps. Review skipped tests to confirm the reason is correct for your stack.
 
 ---
 
@@ -292,10 +297,8 @@ Store all test credentials as repository secrets. Never hardcode them in workflo
 
 ---
 
-## Credits
+## References
 
-Built by Glenski Toolkit — [example.com](https://example.com)  
-Based on: OWASP Top 10 (2021), OWASP API Security Top 10 (2023)  
-Part of the [Glenski-Toolkit](https://github.com/Glenskii/Glenski-Toolkit)
+Based on: OWASP Top 10 (2021), OWASP API Security Top 10 (2023).
 
 `#glenski` `#vibe-security` `#owasp` `#pytest` `#fastapi` `#security` `#api-security`

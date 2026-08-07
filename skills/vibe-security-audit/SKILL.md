@@ -1,38 +1,14 @@
 ---
-name: "vibe-security-audit"
-title: "VIBE-CODED APP SECURITY AUDIT SKILL"
-version: "1.0"
-description: >
-  Production-grade security audit suite for apps built with AI coding tools.
-  Provides a deterministic, runnable pytest test suite covering the full OWASP
-  attack surface: security headers, authentication, authorization, IDOR, input
-  validation, rate limiting, error sanitization, CORS, cookie flags, method abuse,
-  and config hardening. Use when auditing, reviewing, or hardening any Python ASGI
-  application before shipping.
-author: "Glenski Toolkit"
-website: "https://example.com"
-compatible_with:
-  - "FastAPI"
-  - "Flask (ASGI)"
-  - "Django ASGI"
-  - "Any Python ASGI application"
-license: "CC BY 4.0"
-repo: "https://github.com/Glenskii/Glenski-Toolkit"
-tags:
-  - "security"
-  - "vibe-security"
-  - "owasp"
-  - "fastapi"
-  - "pytest"
-  - "glenski"
+name: vibe-security-audit
+description: Audit or harden a Python ASGI application before release. Use for FastAPI, Flask ASGI, Django ASGI, and comparable services that need a defensive pytest review of authentication, authorization, input validation, headers, CORS, cookies, rate limits, errors, and configuration.
+license: CC-BY-4.0
 ---
 
-# VIBE-CODED APP SECURITY AUDIT SKILL v1.0
+# PYTHON WEB APP SECURITY AUDIT
 
-**Built by:** Glenski Toolkit (example.com)  
-**Purpose:** Production-grade security audit suite for apps built with AI coding tools.  
-**Compatible:** FastAPI, Flask (ASGI), Django ASGI, any Python ASGI app  
-**License:** CC BY 4.0 — share freely, credit appreciated  
+**Purpose:** A runnable security check for Python web applications built with AI coding tools.
+**Use with:** FastAPI, Flask, Django, and similar Python web applications that can run through ASGI.
+**License:** CC BY 4.0. Share freely, credit appreciated.
 **Tags:** `#glenski` `#vibe-security` `#owasp` `#fastapi` `#security` `#pytest`
 
 ---
@@ -45,6 +21,8 @@ AI coding tools generate working code. They do not generate secure code.
 The gap between "it works" and "it is safe" is where real applications get
 compromised. This suite closes that gap with deterministic, runnable tests
 covering the full OWASP attack surface.
+
+**Plain-language scope:** This is for Python web apps. ASGI is the technical interface that lets the tests talk to FastAPI, Django, Flask through an ASGI adapter, and similar applications without starting a public server. It is not for Node, PHP, WordPress, native mobile, or desktop apps.
 
 ---
 
@@ -126,12 +104,12 @@ pytest security/ -v
 
 ## OPERATING RULES
 
-1. Do not trust framework defaults — test actual behavior.
+1. Do not trust framework defaults. Test actual behavior.
 2. Fail fast. Fail loud. A passing test suite with weak assertions is worse than no tests.
 3. Separate app-layer tests from deployment-layer tests.
 4. Test both authenticated and unauthenticated behavior on every protected route.
 5. Test both normal and error code paths.
-6. Auth, CORS, cookies, CSRF, IDOR, and rate limiting are first-class controls — not afterthoughts.
+6. Auth, CORS, cookies, CSRF, IDOR, and rate limiting are first-class controls, not afterthoughts.
 7. Never assume in-memory ASGI tests prove production TLS or proxy correctness.
 8. Every assertion must check directive quality, not just header presence.
 9. Every test must have a comment explaining what attack it prevents.
@@ -156,8 +134,6 @@ pytest security/ -v
 
 ---
 
-## CREDITS
+## REFERENCES
 
-Built by Glenski Toolkit — example.com  
-Based on OWASP Top 10 (2021), OWASP API Security Top 10 (2023)  
-Part of the Glenski-Toolkit: github.com/Glenskii/Glenski-Toolkit
+Based on OWASP Top 10 (2021) and OWASP API Security Top 10 (2023).

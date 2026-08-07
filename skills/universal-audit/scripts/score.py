@@ -300,8 +300,17 @@ def main():
     eff_weights = {k: (weights[k] / active_weight * 100 if k in active else 0) for k in weights}
 
     # ---- Overall score and coverage ----------------------------------------
+    # UNVERIFIED controls reduce coverage, not quality (spec 13.3-13.4).
+    # Renormalize the overall-score denominator across categories that have a
+    # quality score so an entirely unverified category is not silently scored
+    # as zero. The unverified category still blocks approval through coverage.
     scored = [(k, r) for k, r in cat_results.items() if r["score"] is not None]
-    overall = round(sum(r["score"] * eff_weights[k] for k, r in scored) / 100, 1) if scored else None
+    scored_weight = sum(eff_weights[k] for k, _ in scored)
+    overall = (
+        round(sum(r["score"] * eff_weights[k] for k, r in scored) / scored_weight, 1)
+        if scored and scored_weight
+        else None
+    )
 
     scored_controls = [c for c in controls if map_category(c) is not None]
     applicable = [c for c in scored_controls if c["status"] != "NOT_APPLICABLE"]

@@ -6,11 +6,11 @@ For Detect requests: skip this file entirely. The eval below applies only to Edi
 
 ## Fidelity (the one rule that overrides everything else)
 
-1. Does the edit preserve Glen's actual point, with no new claims, examples, stats, or opinions added?
+1. Does the edit preserve the writer's actual point, with no new claims, examples, stats, or opinions added?
 2. Is every FIX a minimal correction (word swap, punctuation change, clause deletion), not a rewritten sentence?
-3. Do the 3-5 voice signals noted in Workflow step 2 survive in the edited draft? Would Glen recognize this as his own writing, not a smoothed-over version of it?
+3. Do the three to five voice signals noted in Workflow step 2 survive in the edited draft? Would the writer recognize it as their own writing, not a smoothed-over version?
 4. Did any FLAG item accidentally get auto-fixed? Every FLAG-tier hit must remain untouched in the draft and only appear in the notes.
-5. Were factual claims left alone unless Glen confirmed a change (ASK tier)?
+5. Were factual claims left alone unless the writer confirmed a change (ASK tier)?
 
 ## Checklist items didn't reintroduce themselves
 
@@ -22,7 +22,7 @@ For Detect requests: skip this file entirely. The eval below applies only to Edi
 
 ## Structure and rhythm
 
-11. Does the draft avoid uniform paragraph length and repeated sentence shape beyond what was already flagged (#18, #24), without Claude having restructured anything to force variation?
+11. Does the draft avoid uniform paragraph length and repeated sentence shape beyond what was already flagged (#18, #24), without the editor restructuring anything to force variation?
 12. Does the piece end on a real concrete point, takeaway, or next action, not a restated summary (#14) or an un-deleted fake-profound kicker (#23)?
 13. Is formatting proportionate: no emoji-as-decoration in professional/doc register (#15), no bolded-header bullet lists where prose reads better (#11), no stray Markdown in a plain-text destination (#16)?
 
@@ -34,5 +34,5 @@ For Detect requests: skip this file entirely. The eval below applies only to Edi
 ## Final read
 
 16. Was this eval run directly against the actual edited draft, not assumed to pass?
-17. Would the edited draft sound like Glen if read aloud to someone who knows how he writes?
+17. Would the edited draft sound like the writer if read aloud to someone who knows their work?
 18. Does the output include the corrected draft, plus a compact summary line (long pieces) or nothing extra (short pieces), plus any FLAG/ASK notes as a short bulleted list?
