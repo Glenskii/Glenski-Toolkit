@@ -4,7 +4,7 @@
 
 **Version:** 1.0 | **License:** CC BY 4.0
 
-Stops an AI coding agent from losing everything it learned this session the moment you compact or start a new chat. Detects which agent and persistence mechanism you're running, writes a dated summary to the right place, then proves it did so with a structured report instead of a vague "done!".
+Stops a compatible coding tool from losing everything learned in a session when you compact or start a new chat. Detects the available persistence mechanism, writes a dated summary to the right place, then proves it did so with a structured report instead of a vague "done!".
 
 ---
 
@@ -21,9 +21,9 @@ This skill is the explicit trigger to write durable notes before either of those
 
 ## What it does
 
-1. **Detects the environment.** Checks for a platform-native memory system first (an auto-loaded index plus per-topic notes files, if the harness has one). Falls back to an `AGENTS.md`-style dated-log convention (Codex and similar). Falls back again to a generic `.agent-context/HANDOFF.md` file at the project root if neither is present, so it still works in Antigravity, Grok, or any harness with no detected convention.
+1. **Detects the environment.** Checks for a platform-native memory system first, then an existing project instruction-file convention. Falls back again to a generic `.agent-context/HANDOFF.md` file at the project root if neither is present.
 2. **Writes a dated, structured section**, not a vague recap: what shipped, any deviation from the literal spec and why, bugs found and root-caused, standing rules established, and what's still pending.
-3. **Handles cross-agent handoff** when explicitly requested, since a Claude-native memory write is invisible to Codex and vice versa.
+3. **Handles cross-tool handoff** when explicitly requested, since native memory mechanisms are not always portable.
 4. **Reports what it did**, structured: environment detected, files written, verification evidence, and a plain bottom line ("Safe to compact" or an honest failure if something couldn't be written).
 
 ---

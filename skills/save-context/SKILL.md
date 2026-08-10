@@ -5,8 +5,8 @@ description: >
   says "save context", "save state", "I need to compact", "let's continue
   this in a new session", or similar. Writes everything durable from the
   current session to persistent storage BEFORE any compaction or session
-  handoff happens, so a fresh session (or a different agent, e.g. Codex,
-  Antigravity, Grok) picks up with full continuity instead of re-deriving
+  handoff happens, so a fresh session or a different compatible tool picks
+  up with full continuity instead of re-deriving
   context from scratch or losing it outright. Detects which agent/harness
   is running and which persistence mechanism it actually has, then adapts.
   This is a hard gate: do the write first, before responding to anything
@@ -72,9 +72,9 @@ order, and use the first one that matches:
    files). If present, use it: an indexed set of topic files referenced
    from a top-level index. Use the full workflow in Step 2a.
 
-2. **An `AGENTS.md`-style convention**, common in Codex and similar CLI
-   agents. Check for a repo-local `AGENTS.md` at the project root, or the
-   agent's global equivalent. That file is normally standing instructions,
+2. **An existing project instruction-file convention**, such as `AGENTS.md`.
+   Check for a repo-local instruction file at the project root, or its
+   global equivalent. That file is normally standing instructions,
    not a session log, so don't overwrite it wholesale. Instead: look for
    an existing dated-log section already in that file, or in a linked
    notes file it references. If one exists, append to it. If none exists,
@@ -86,7 +86,7 @@ order, and use the first one that matches:
    fallback: a single file at the project root, `.agent-context/HANDOFF.md`.
    Create the directory and file if they don't exist. Keep this file plain
    markdown, append-only, dated sections, with no assumption of any
-   particular tool reading it beyond "an LLM coding agent with file
+   particular tool reading it beyond "a compatible tool with file
    access." This is the safest default because every agent that can read
    the repo can read this file.
 
@@ -132,7 +132,7 @@ Cover, concretely, not vaguely:
 One-line pointer if this is a new topic file. Keep the index terse, it's
 always loaded into context, so it has to stay skimmable.
 
-## Step 2b: Codex or generic fallback path
+## Step 2b: Generic fallback path
 
 Same content requirements as Step 2a (what shipped, deviations and why,
 root-caused bugs, standing rules, what's pending, reusable gotchas), same
@@ -157,13 +157,12 @@ finishing a non-trivial session. -->`.
 ## Step 3: Cross-agent handoff, when explicitly requested
 
 If the user says this session's work needs to hand off to a *different*
-agent than the one currently running (for example, a Claude session
-handing off to Codex, or the reverse), the Step 2a memory-file write alone
+compatible tool than the one currently running, the Step 2a memory-file write alone
 is usually not enough, since platform-native memory files are typically
 invisible to other agents. Explicitly:
 
-- If the target agent uses a different convention (such as Codex's
-  `AGENTS.md`/`.agent-context/HANDOFF.md`) and it doesn't exist yet, create
+- If the target tool uses a different convention (such as a project
+  instruction file or `.agent-context/HANDOFF.md`) and it doesn't exist yet, create
   it now in addition to (not instead of) the native memory write, with the
   same session summary.
 - Ask whether the user also wants a GitHub issue or PR comment as the

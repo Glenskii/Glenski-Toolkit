@@ -16,6 +16,18 @@ This skill records information only when the current environment can read and wr
 
 Treat every recorded artifact as potentially discoverable. Do not save credentials, private keys, session cookies, access tokens, personal information, customer data, or unredacted environment files.
 
+## Persistent availability and use
+
+Install this skill at the workspace or user level when the client supports persistent skills. Persistent installation makes the workflow available in each compatible session. It does not require automatic execution or override the client's own conversation history.
+
+For consistent use, keep this short rule in the active project guidance:
+
+```text
+For multi-step work, use Task State Ledger before loading large output. Record the current task state and retrieve only the evidence needed for the next decision.
+```
+
+Do not inject the complete skill instructions into every session. Keep the persistent rule short, then load the detailed workflow only when a task meets the activation criteria.
+
 ## Start safely
 
 1. Confirm the project root and state whether the work is local, shared, or public.

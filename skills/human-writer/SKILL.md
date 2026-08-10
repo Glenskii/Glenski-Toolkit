@@ -1,25 +1,25 @@
 ---
 name: human-writer
 description: >
-  Use whenever the user asks to check, clean up, "humanize," de-AI, or polish
+  Use whenever the user asks to check, clean up, humanize, or polish
   a piece of their own writing: social posts, replies, documentation, README
   content, emails, Slack/Discord messages, comments, correspondence, or any
   text they're about to send or publish. Also invoke proactively before
   handing the user a drafted post, reply, or document for review, so it never
-  reads like AI wrote it. Two modes: Edit (default) rewrites minimally and
+  reads like a machine wrote it. Two modes: Edit (default) rewrites minimally and
   returns the corrected draft; Detect (when the user asks to audit, scan, or
-  check whether something reads as AI) names the patterns found with a
-  quoted line and a one-line fix, without rewriting. Removes AI writing
+  check whether something reads as machine-written) names the patterns found with a
+  quoted line and a one-line fix, without rewriting. Removes machine-written
   tells (canned vocabulary, structural patterns, formatting habits, hedging,
   vague attribution) without adding content, changing meaning, or expanding
-  the piece. Based on Wikipedia:Signs of AI writing (WikiProject AI Cleanup)
-  and petergyang/no-ai-slop. Self-checks output against eval.md before
+  the piece. Based on public writing-pattern research and established editorial
+  practice. Self-checks output against eval.md before
   returning.
 ---
 
 # Human Writer
 
-When this skill runs, your job is narrow: take the user's writing and strip every statistical fingerprint that makes it read as LLM output. You are not a co-writer here. You are a proofreader with one specialized lens.
+When this skill runs, your job is narrow: take the user's writing and strip every statistical fingerprint that makes it read as machine-written output. You are not a co-writer here. You are a proofreader with one specialized lens.
 
 ## The one rule that overrides everything else
 
@@ -41,7 +41,7 @@ Every checklist item below carries one of three actions. Never escalate a FLAG i
 
 ## Author voice anchors
 
-The target is not "generic human." It is this specific author. Before editing, learn their habits from the piece itself and from any standing style rules they've given you (CLAUDE.md, memory, prior instructions), then converge toward those habits. Things worth calibrating:
+The target is not "generic human." It is this specific author. Before editing, learn their habits from the piece itself and from any standing style rules they have given you, such as a project instruction file, memory, or prior instructions. Then converge toward those habits. Things worth calibrating:
 
 - **Dash habit.** Some authors ban em dashes outright; others use them sparingly. If the author has a standing rule, enforce it absolutely. If not, default to converting most em dashes to commas, colons, periods, or parentheses, since overuse is one of the strongest tells.
 - **Vocabulary bans.** If the author maintains their own banned-word list for public copy (many do: brand terms, buzzwords they refuse to use), apply it on top of the checklist below.
@@ -74,7 +74,7 @@ This is still an inbound-boundary tool either way: it audits the author's own dr
 
 ### 1. Banned vocabulary
 
-These words are statistically rare in genuine human writing and common in LLM output. Replace with a plainer synonym, or cut the clause entirely if it was padding.
+These words are statistically rare in genuine human writing and common in machine-written output. Replace with a plainer synonym, or cut the clause entirely if it was padding.
 
 `crucial`, `pivotal`, `vital`, `key` (as adjective), `robust`, `intricate`/`intricacies`, `delve`, `dive into`/`deep dive`, `boast`/`boasts` (meaning "has"), `bolstered`, `garner`, `underscore`/`underscores` (as verb), `highlight`/`highlighting` (as verb), `showcase`/`showcasing`, `emphasizing`, `enhance`, `elevate`, `empower`, `unlock`, `unleash`, `harness`, `leverage` (as verb), `streamline`, `seamless`/`seamlessly`, `fostering`, `align with`, `interplay`, `landscape` (abstract), `realm` (abstract), `tapestry` (abstract), `navigate` (abstract, "navigate the complexities"), `ever-evolving`, `fast-paced`, `game-changer`/`game-changing`, `cutting-edge`, `state-of-the-art`, `transformative`, `revolutionize`, `innovative` (as filler), `holistic`, `synergy`, `testament`, `valuable insights`, `actionable insights`, `enduring`, `meticulous`/`meticulously`, `groundbreaking`, `renowned`, `vibrant`, `rich` (as filler adjective), `nestled`, `in the heart of`, `diverse array`, `myriad`, `plethora`, `commitment to`, `plays a role in`, `serves as a testament/reminder`, `at the end of the day`, `in today's world/climate/era`.
 
@@ -94,7 +94,7 @@ Sentences ending in a dangling present-participle clause that restates significa
 
 ### 5. Copulative avoidance
 
-LLMs replace plain "is/are/has" with "serves as," "stands as," "functions as," "boasts," "features," "represents," "acts as." Put the plain verb back: "X serves as the backbone of Y" → "X is the backbone of Y." "The app boasts five tools" → "The app has five tools."
+Machine-written drafts often replace plain "is/are/has" with "serves as," "stands as," "functions as," "boasts," "features," "represents," "acts as." Put the plain verb back: "X serves as the backbone of Y" → "X is the backbone of Y." "The app boasts five tools" → "The app has five tools."
 
 ### 6. Negative parallelisms
 
