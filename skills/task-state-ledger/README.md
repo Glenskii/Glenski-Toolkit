@@ -68,10 +68,12 @@ Add `.task-state/` to `.gitignore`. Publish only a separate, reviewed summary wh
 ## Documentation
 
 - [Skill instructions](SKILL.md)
+- [Adoption guide](docs/adoption-guide.md)
 - [Privacy and retention](references/privacy-and-retention.md)
 - [Portable layout](references/portable-layout.md)
+- [Retrieval budget](references/retrieval-budget.md)
 - [Task-state template](templates/task-state-template.md)
 
 ## License
 
-CC BY 4.0. See [LICENSE](LICENSE).
+MIT. See [LICENSE](LICENSE).
