@@ -1,3 +1,6 @@
 # Python bytecode generated during local validation
 __pycache__/
 *.py[cod]
+
+# Local task-state ledger artifacts. These can contain operational evidence.
+.task-state/
