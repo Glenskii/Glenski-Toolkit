@@ -14,6 +14,7 @@ The toolkit is shaped by active project work, then converted into portable resou
 | [human-writer](skills/human-writer/) | Edit supplied copy for clarity and natural voice without changing its meaning. |
 | [seo-aeo-geo-gbp](skills/seo-aeo-geo-gbp/) | Review search visibility, structured data, and public profile information using current evidence and no outcome promises. |
 | [save-context](skills/save-context/) | Create a durable, privacy-aware handoff before a session is compacted or transferred. |
+| [task-state-ledger](skills/task-state-ledger/) | Track active work and retain safe evidence references without treating files as automatic memory. |
 
 ## Public-safety standard
 
