@@ -5,7 +5,7 @@
 
 Most website bugs do not show up while building on a desktop screen. A page can look finished in Chrome, then break on an iPhone because of viewport height behavior, tiny tap targets, hidden focus states, form inputs that trigger iOS zoom, Safari CSS differences, or simple horizontal overflow on narrow screens.
 
-`cross-platform-compliance` gives Codex or Claude Code a structured way to catch those problems before a site ships. It audits real frontend code and, when a preview URL is available, renders the site at mobile, tablet, and desktop sizes to measure what users actually get.
+`cross-platform-compliance` gives compatible development tools a structured way to catch those problems before a site ships. It audits real frontend code and, when a preview URL is available, renders the site at mobile, tablet, and desktop sizes to measure what users actually get.
 
 Use this skill when you need to answer practical release questions:
 
@@ -17,14 +17,11 @@ Use this skill when you need to answer practical release questions:
 
 The benefit is a release-style verdict instead of vague advice. Findings are grouped as `FAIL`, `WARN`, `NOTE`, or `PASS`, and every audit ends with `BLOCKED`, `REVIEW REQUIRED`, or `PASS`.
 
-Layer 1 works as a normal Codex or Claude skill with no install required. Layer 2 is optional and uses Playwright for rendered browser checks, screenshots, computed styles, and axe accessibility scanning.
+Layer 1 works as a normal portable skill with no install required. Layer 2 is optional and uses Playwright for rendered browser checks, screenshots, computed styles, and axe accessibility scanning.
 
 ## Compatibility
 
-This folder is designed for both:
-
-- **Codex skills:** valid `SKILL.md` frontmatter, optional `agents/openai.yaml`, bundled scripts.
-- **Anthropic / Claude Code skills:** normal `SKILL.md` instructions plus reusable scripts.
+This folder uses a portable `SKILL.md`, bundled scripts, and optional compatibility metadata. The core workflow does not depend on a named client.
 
 ## What It Checks
 
@@ -55,7 +52,7 @@ Default process behavior:
 
 ## Layer 1 Usage
 
-No install required. Use the skill in Codex or Claude Code against real source files or pasted code:
+No install required. Use the skill against real source files or pasted code:
 
 ```text
 Use $cross-platform-compliance to audit this website for mobile and browser compatibility.

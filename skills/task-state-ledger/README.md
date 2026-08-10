@@ -38,6 +38,20 @@ Copy the `task-state-ledger` folder into a project-level skills directory. Keep 
 cp -r task-state-ledger <your-skills-directory>/task-state-ledger
 ```
 
+## Persistent use
+
+When a compatible client supports persistent skills, install Task State Ledger at the workspace or user level. That makes it available in every compatible session, but it does not force automatic execution or replace the client's own conversation history.
+
+For reliable use, keep this short rule in the active project guidance:
+
+```text
+For multi-step work, use Task State Ledger before loading large output. Record the current task state and retrieve only the evidence needed for the next decision.
+```
+
+Keep the permanent rule short. Loading the full skill instructions in every unrelated session adds unnecessary context. Load the detailed workflow only when the task needs it.
+
+This progressive-disclosure approach preserves discoverability while avoiding indiscriminate contextual accumulation.
+
 Create a local state directory at the project root, then exclude it from version control before storing operational evidence:
 
 ```text

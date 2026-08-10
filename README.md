@@ -2,7 +2,7 @@
 
 Open-source skills for building, reviewing, and releasing software with clear evidence and practical limits.
 
-The toolkit is shaped by active project work, then converted into portable resources that can be used with Codex, Claude Code, Cursor, Windsurf, or another compatible agent. Each published skill is intended to be useful without access to a private environment, client account, or business profile.
+The toolkit is shaped by active project work, then converted into portable resources that work with compatible development tools. Each published skill is intended to be useful without access to a private environment, client account, or business profile.
 
 ## Maintained skills
 

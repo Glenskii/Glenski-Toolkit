@@ -1,17 +1,17 @@
 # Contributing to Glenski-Toolkit
 
-Thanks for considering a contribution. This toolkit is built for real workflows — keep that bar in mind.
+Thanks for considering a contribution. This toolkit is built for real workflows. Keep that bar in mind.
 
 ---
 
 ## What belongs here
 
-- **Skills** that enforce quality or process in AI-assisted work (design, writing, code review, etc.)
+- **Skills** that enforce quality or process in assisted work (design, writing, code review, etc.)
 - **Prompt guides** that are field-tested and immediately usable, not theoretical
 
 **MCP servers** live in a separate repo: **[github.com/Glenskii/Glenski-MCPs](https://github.com/Glenskii/Glenski-MCPs)**. Contribute those there, not here.
 
-What doesn't belong: wrappers around existing tools without improvement, prompts that are just rephrased versions of stock ChatGPT prompts, anything requiring a paid API without a free fallback or clear disclosure.
+What doesn't belong: wrappers around existing tools without improvement, prompts that are just rephrased versions of stock prompts, anything requiring a paid API without a free fallback or clear disclosure.
 
 ---
 
@@ -33,16 +33,22 @@ skills/
 Two rules keep skills frictionless to adopt:
 
 1. **The folder name and the `name:` field must match.** `skills/foo/` has `name: foo`. No surprises for the person installing it.
-2. **The skill folder is self-contained.** Everything the skill needs ships inside it, so `cp -r skills/your-skill-name ~/.claude/skills/your-skill-name` is the entire install. Do not scatter a skill's runnable parts elsewhere in the repo.
+2. **The skill folder is self-contained.** Everything the skill needs ships inside it, so copying the folder into a compatible skills directory is the entire install. Do not scatter a skill's runnable parts elsewhere in the repo.
 
 Keep `SKILL.md` under 500 lines. If the instructions run longer, move detail into a `references/` or `modules/` subdirectory and link from `SKILL.md`.
+
+## Universal-first public skills
+
+Core instructions, examples, and public documentation must work without a named client, provider, or model. Describe capabilities and file conventions in generic terms. Do not use product names, private paths, or client-only commands as universal guidance.
+
+If a compatible tool needs an adapter, keep it in a clearly separate optional integration file. Do not make that adapter the only documented path or allow it to narrow the core workflow.
 
 ---
 
 ## Pull request checklist
 
 - [ ] New skill follows the folder structure above (folder name == `name:` field, self-contained)
-- [ ] `SKILL.md` is complete — no placeholder sections
+- [ ] `SKILL.md` is complete, with no placeholder sections
 - [ ] No hardcoded API keys, tokens, or personal credentials
 - [ ] Any bundled scripts pin dependency floors with `>=`, not exact `==` locks
 - [ ] Root `README.md` updated to reference the new skill in the Skills table
