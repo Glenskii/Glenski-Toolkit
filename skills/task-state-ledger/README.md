@@ -2,35 +2,43 @@
 
 Version 1.0.0
 
-Task State Ledger is a portable working-notes method for complex technical tasks. It keeps a concise state file beside a private local evidence directory, so a person or compatible tool can understand the current work without repeatedly opening every command log and file dump.
+**Task State Ledger** is a lightweight, structured state-tracking method for long technical sessions. It keeps a single, high-density working state file supported by sanitized local evidence nodes.
 
-Use it where operational continuity, evidentiary traceability, and privacy-sensitive retention must remain explicit across extended implementation work.
+Instead of repeatedly loading long command outputs, file dumps, and debugging logs, the ledger records the current objective, decisions, blockers, and the small set of evidence needed to continue work responsibly.
 
-Its purpose is disciplined coordination, not invisible automation or speculative persistence.
+## The problem it solves
 
-## What it does
+Complex technical work often accumulates redundant logs, stale code dumps, and repeated explanations. That can lead to three recurring problems:
 
-- Captures the current objective, completed milestones, decisions, blockers, and verification limits.
-- Stores selected sanitized evidence in local files with stable node IDs.
-- Keeps the state record readable without requiring Mermaid support.
-- Supports deliberate handoffs without claiming to replace platform memory.
+- More material than the current task requires.
+- Lost constraints, decisions, and verification limits.
+- Slow, unfocused review when a task resumes or changes hands.
 
-## What it does not do
+Task State Ledger compresses active operational state into a structured, human-readable file. It helps a person or compatible tool resume work with focused context and direct evidence references.
 
-- It does not access hidden conversation history.
-- It does not reduce token use by a guaranteed amount.
-- It does not make local files private by itself.
-- It does not store secrets safely. Exclude them instead.
+## Core capabilities
 
-## Install
+- **Context selection:** Maintains a lean task record rather than copying large histories into every follow-up.
+- **Evidence node archiving:** Stores reviewed output logs in a local private directory using stable node IDs.
+- **Consistent handoffs:** Records the active state, decisions, blockers, and next action across sessions or tools.
+- **Plain Markdown readability:** Remains readable in plain text without external diagram dependencies or visual parsers.
 
-Copy this folder into a supported project-level skills directory. Keep the folder intact so the script, template, references, and tests remain available.
+## Operational constraints
+
+- **Explicit secret handling:** The bundled helper rejects common secret patterns, but it is not a complete redaction system. Exclude sensitive data before saving evidence.
+- **Local scope:** Operates within the selected local project directory. It does not create an external memory service or alter a host application's conversation history.
+- **Deliberate operation:** Runs through explicit instructions or the bundled script. It does not use background processes or hidden automation.
+- **No savings guarantee:** It can reduce the amount of material selected for a follow-up, but it cannot promise a fixed token, cost, or speed reduction.
+
+## Quick start and installation
+
+Copy the `task-state-ledger` folder into a project-level skills directory. Keep the folder intact so scripts, templates, references, and tests remain available.
 
 ```bash
 cp -r task-state-ledger <your-skills-directory>/task-state-ledger
 ```
 
-## Typical layout
+Create a local state directory at the project root, then exclude it from version control before storing operational evidence:
 
 ```text
 project/
@@ -41,7 +49,7 @@ project/
 └── .gitignore
 ```
 
-Add `.task-state/` to `.gitignore` before recording operational evidence in a repository. Publish only a separate, reviewed summary when it is genuinely safe for public release.
+Add `.task-state/` to `.gitignore`. Publish only a separate, reviewed summary when it is genuinely safe for public release.
 
 ## Documentation
 
