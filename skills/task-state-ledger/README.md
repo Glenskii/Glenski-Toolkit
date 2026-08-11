@@ -1,10 +1,12 @@
 # Task State Ledger
 
-Version 1.1.0
+Version 1.1.1
 
-**Task State Ledger** is a lightweight, structured state-tracking method for long technical sessions. It keeps a single, high-density working state file supported by sanitized local evidence nodes.
+Big technical projects stretch over days. Details disappear, decisions get lost, and you end up digging through long terminal logs just to remember where things stand.
 
-Instead of repeatedly loading long command outputs, file dumps, and debugging logs, the ledger records the current objective, decisions, blockers, and the small set of evidence needed to continue work responsibly.
+**Task State Ledger** keeps one small status file on your computer. It records what was done, why it was done, supporting verification evidence, important decisions, and the next step.
+
+When work resumes, a compatible coding tool can pick up from a clear record instead of making you reload the whole project history.
 
 ## The problem it solves
 
@@ -14,7 +16,7 @@ Complex technical work often accumulates redundant logs, stale code dumps, and r
 - Lost constraints, decisions, and verification limits.
 - Slow, unfocused review when a task resumes or changes hands.
 
-Task State Ledger compresses active operational state into a structured, human-readable file. It helps a person or compatible tool resume work with focused context and direct evidence references.
+Task State Ledger puts the important facts in one readable file. It helps a person or compatible coding tool resume work with the right context and direct evidence references.
 
 ## Core capabilities
 

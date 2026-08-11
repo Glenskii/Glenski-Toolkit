@@ -1,14 +1,14 @@
 ---
 name: task-state-ledger
-description: "Maintain a portable task-state ledger for long, multi-step work. Use when a task spans many files, produces large logs, needs a reliable handoff, or requires traceable evidence without repeatedly loading full outputs. Creates concise state records and private evidence references with explicit limits, redaction checks, and retention guidance."
+description: "Keep a small local status file for multi-step work. Use when a task runs across sessions, decisions get lost, or long logs make it hard to resume. Record what happened, why it matters, supporting verification evidence, important decisions, and the next step."
 license: MIT
 metadata:
-  version: 1.1.0
+  version: 1.1.1
 ---
 
 # Task State Ledger
 
-Maintain a compact record of active work and a separate local evidence ledger. Use this skill to improve continuity and traceability during long tasks. Do not describe it as automatic memory, a context-window optimizer, or a promise of token savings.
+Keep one small local record for work that stretches across sessions. Record what happened, why it matters, supporting verification evidence, important decisions, and the next step. Do not describe it as automatic memory, a context-window optimizer, or a promise of token savings.
 
 ## Operating limits
 
