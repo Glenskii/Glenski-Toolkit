@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080" viewBox="0 0 1080 1080" role="img" aria-labelledby="title description">
+  <title id="title">Human Writer, Featured 90</title>
+  <desc id="description">A dark editorial social card for Human Writer.</desc>
+  <rect width="1080" height="1080" fill="#0B0B10"/>
+  <rect x="50" y="50" width="980" height="980" rx="24" fill="none" stroke="#2D3D6B" stroke-width="2"/>
+  <path d="M50 275H1030M50 805H1030M275 50V1030M805 50V1030" stroke="#233052" stroke-width="1" opacity=".55"/>
+  <rect x="90" y="130" width="10" height="210" rx="5" fill="#F26419"/>
+  <text x="130" y="180" fill="#F6A36C" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700" letter-spacing="4">GLENSKI SKILLS</text>
+  <text x="130" y="355" fill="#F4F5FA" font-family="Georgia, serif" font-size="92" font-weight="700">Human Writer</text>
+  <text x="130" y="440" fill="#AAB7D6" font-family="Arial, Helvetica, sans-serif" font-size="38">Polish drafts while preserving your voice.</text>
+  <path d="M130 540H950" stroke="#41578E" stroke-width="2"/>
+  <text x="130" y="640" fill="#8197D4" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="700" letter-spacing="3">NATURAL WRITING</text>
+  <rect x="130" y="760" width="270" height="110" rx="55" fill="#162346" stroke="#6686D8" stroke-width="2"/>
+  <text x="180" y="805" fill="#AFC6FF" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700" letter-spacing="2">FEATURED</text>
+  <text x="180" y="848" fill="#FFFFFF" font-family="Arial, Helvetica, sans-serif" font-size="44" font-weight="700">90</text>
+  <circle cx="892" cy="820" r="82" fill="#17213E" stroke="#F26419" stroke-width="3"/>
+  <path d="M856 846l65-65m-48-8l56 8 8 56" fill="none" stroke="#F6A36C" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="130" y="950" fill="#F4F5FA" font-family="Arial, Helvetica, sans-serif" font-size="30" font-weight="700">Glenski</text>
+</svg>
