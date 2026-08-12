@@ -17,7 +17,8 @@
   <path d="M26 108V55h28M1054 55v997H26v-28" fill="none" stroke="#0960F5" stroke-width="3"/>
   <text x="76" y="277" fill="#F8F8FA" font-family="Arial Narrow, Impact, Arial, sans-serif" font-size="148" font-weight="900" letter-spacing="-6">TASK STATE</text>
   <text x="76" y="456" fill="#1260F5" font-family="Arial Narrow, Impact, Arial, sans-serif" font-size="175" font-weight="900" letter-spacing="-8">LEDGER</text>
-  <text x="79" y="575" fill="#F8F8FA" font-family="Arial, Helvetica, sans-serif" font-size="35">Keep long work clear across sessions.</text>
+  <text x="79" y="575" fill="#F8F8FA" font-family="Arial, Helvetica, sans-serif" font-size="34">Keep a small status file so you can resume long projects</text>
+  <text x="79" y="627" fill="#F8F8FA" font-family="Arial, Helvetica, sans-serif" font-size="34">without digging through terminal logs.</text>
   <path d="M67 900h400v100l-20 20H67z" fill="#03050E" stroke="#0960F5" stroke-width="3"/>
   <text x="98" y="960" fill="#1260F5" font-family="Arial, Helvetica, sans-serif" font-size="31" font-weight="700" letter-spacing="8">FEATURED</text>
   <path d="M337 922v58" stroke="#E59A19" stroke-width="2"/>
