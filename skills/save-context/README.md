@@ -1,6 +1,6 @@
 # save-context
 
-![save-context](./assets/social-preview.png)
+![Save Context icon](assets/icon-large.png)
 
 **Version:** 1.0 | **License:** CC BY 4.0
 
