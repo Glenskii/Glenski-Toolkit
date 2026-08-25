@@ -1,23 +1,76 @@
 {
-  "version": 1,
-  "action_mode": "quarantine",
-  "allow_owner_purge": false,
-  "allow_scheduled_purge": false,
-  "oauth_scope_mode": "modify",
-  "whitelist_domains": ["example.com", "github.com"],
-  "whitelist_emails": ["billing@example.com"],
-  "blocklist_domains": [],
+  "whitelist_domains": [
+    "yourdomain.com",
+    "google.com",
+    "github.com",
+    "linkedin.com",
+    "stripe.com",
+    "apple.com"
+  ],
+  "whitelist_emails": [
+    "youremail@gmail.com"
+  ],
+  "blocklist_domains": [
+    "unsolicited-marketing.com",
+    "coldpitch-services.com"
+  ],
   "blocklist_senders": [],
-  "botnet_suspicious_tlds": [".biz", ".web.id", ".my.id", ".top", ".xyz"],
-  "spam_phishing_keywords": [
+  "trusted_unsub_domains": [
+    "substack.com",
+    "medium.com",
+    "github.com",
+    "linkedin.com",
+    "google.com",
+    "youtube.com",
+    "apple.com",
+    "microsoft.com"
+  ],
+  "suspicious_sender_tlds": [
+    ".biz",
+    ".web.id",
+    ".my.id",
+    ".top",
+    ".xyz",
+    ".at",
+    ".us",
+    ".monster",
+    ".icu",
+    ".me",
+    ".click",
+    ".loan"
+  ],
+  "quarantine_keywords": [
     "last reminder",
     "blocked your account",
+    "cloud_account",
+    "cloud storage",
     "viruses found",
     "antivirus expired",
+    "data is exposed",
+    "payment declined",
+    "photos and videos will be",
     "account is locked",
-    "unauthorized access"
+    "under-attack",
+    "under attack",
+    "unauthorized access",
+    "deactivated and your photos",
+    "final warning",
+    "crypto",
+    "bitcoin",
+    "casino",
+    "viagra",
+    "lottery",
+    "winner",
+    "b2b leads list",
+    "guest post outreach",
+    "we can rank your site",
+    "outsource development",
+    "guaranteed first page",
+    "cheap offshore",
+    "exclusive discount",
+    "flash sale",
+    "limited time deal"
   ],
-  "sweep_interval_minutes": 15,
-  "max_messages_per_folder": 200,
-  "logging": {"include_message_metadata": false}
+  "quarantine_label_name": "Guardian/Quarantine",
+  "sweep_interval_minutes": 15
 }

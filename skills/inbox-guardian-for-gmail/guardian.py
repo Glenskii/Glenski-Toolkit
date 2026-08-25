@@ -1,393 +1,520 @@
 #!/usr/bin/env python3
-"""Inbox Guardian for Gmail.
+"""
+Gmail Guardian (v0.1.0)
+-----------------------
+Local-first inbox organization and heuristic spam/phishing quarantine engine.
 
-Local, review-first mailbox triage. The owner may opt into irreversible
-purging only through an explicit local configuration and command confirmation.
+Core Architectural Principles:
+1. Least Privilege: Uses `gmail.modify` by default (read, label, archive, trash).
+2. Quarantine by Default: Moves suspicious emails to `Guardian/Quarantine` label.
+3. Review-First Audit: Audit mode is the default and generates an actionable review file.
+4. Safe Unsubscribe: Confirmation-only review flow for unsubscribe headers (zero auto-clicks).
+5. Sanitized Queries: Strict validation for all user inputs, domains, and email addresses.
 """
 
-from __future__ import annotations
-
-import argparse
-import datetime as dt
-import json
-import re
-import subprocess
+import os
 import sys
+import time
+import json
+import base64
+import argparse
+import datetime
+import subprocess
 import unicodedata
-from email.utils import parseaddr
-from pathlib import Path
-from typing import Any, Iterable
-
-from google.auth.transport.requests import Request
+from guardian_sanitizer import (
+    is_valid_domain,
+    is_valid_email,
+    sanitize_query_token,
+    extract_clean_address_and_domain
+)
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
+from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
 
-APP_NAME = "Inbox Guardian for Gmail"
-TASK_NAME = "InboxGuardian"
-MODIFY_SCOPE = "https://www.googleapis.com/auth/gmail.modify"
-PURGE_SCOPE = "https://mail.google.com/"
-ROOT = Path(__file__).resolve().parent
-CREDENTIALS_FILE = ROOT / "credentials.json"
-TOKEN_FILE = ROOT / "token.json"
-CONFIG_FILE = ROOT / "config.json"
-CONFIG_EXAMPLE_FILE = ROOT / "config.example.json"
-LOG_FILE = ROOT / "guardian.log"
-LABEL_NAME = "Guardian/Quarantine"
-VALID_ACTIONS = {"quarantine", "trash", "purge"}
+__version__ = "0.1.0"
 
-DEFAULT_CONFIG: dict[str, Any] = {
-    "version": 1,
-    "action_mode": "quarantine",
-    "allow_owner_purge": False,
-    "allow_scheduled_purge": False,
-    "oauth_scope_mode": "modify",
-    "whitelist_domains": ["google.com", "github.com"],
-    "whitelist_emails": [],
-    "blocklist_domains": [],
-    "blocklist_senders": [],
-    "botnet_suspicious_tlds": [".biz", ".web.id", ".my.id", ".top", ".xyz"],
-    "spam_phishing_keywords": [
-        "last reminder", "blocked your account", "viruses found", "antivirus expired",
-        "account is locked", "unauthorized access",
-    ],
-    "sweep_interval_minutes": 15,
-    "max_messages_per_folder": 200,
-    "logging": {"include_message_metadata": False},
-}
+# Standard least-privilege scope
+DEFAULT_SCOPES = ['https://www.googleapis.com/auth/gmail.modify']
+DESTRUCTIVE_SCOPE = ['https://mail.google.com/']
 
+CREDENTIALS_FILE = 'credentials.json'
+TOKEN_FILE = 'token.json'
+CONFIG_FILE = 'config.json'
+CONFIG_EXAMPLE_FILE = 'config.example.json'
+LOG_FILE = 'guardian.log'
 
-def normalize_text(value: str) -> str:
-    return unicodedata.normalize("NFKC", value or "").casefold().strip()
+if hasattr(sys.stdout, 'reconfigure'):
+    sys.stdout.reconfigure(encoding='utf-8', errors='replace')
 
-
-def normalize_domain(value: str) -> str | None:
-    """Return a valid lower-case DNS name or None."""
-    value = (value or "").strip().casefold().rstrip(".")
-    if not value or "@" in value or len(value) > 253:
-        return None
+if sys.platform == 'win32':
     try:
-        value = value.encode("idna").decode("ascii")
-    except UnicodeError:
-        return None
-    pattern = r"[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)+"
-    return value if re.fullmatch(pattern, value) else None
+        import ctypes
+        ctypes.windll.kernel32.SetThreadExecutionState(0x80000000)  # ES_CONTINUOUS
+    except Exception:
+        pass
 
+def load_config():
+    """Loads configuration with strict fallback."""
+    if os.path.exists(CONFIG_FILE):
+        try:
+            with open(CONFIG_FILE, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except Exception as e:
+            log(f"[WARN] Failed to read {CONFIG_FILE}: {e}")
 
-def normalize_email(value: str) -> str | None:
-    """Extract and validate one email address without accepting a display name."""
-    _, address = parseaddr(value or "")
-    address = address.casefold().strip()
-    if not address or address.count("@") != 1 or len(address) > 254:
-        return None
-    local, domain = address.rsplit("@", 1)
-    normalized_domain = normalize_domain(domain)
-    if not local or not normalized_domain or any(char.isspace() for char in local):
-        return None
-    return f"{local}@{normalized_domain}"
+    if os.path.exists(CONFIG_EXAMPLE_FILE):
+        try:
+            with open(CONFIG_EXAMPLE_FILE, 'r', encoding='utf-8') as f:
+                cfg = json.load(f)
+                with open(CONFIG_FILE, 'w', encoding='utf-8') as out:
+                    json.dump(cfg, out, indent=2)
+                return cfg
+        except Exception:
+            pass
 
+    return {
+        "whitelist_domains": ["google.com", "github.com"],
+        "whitelist_emails": [],
+        "blocklist_domains": [],
+        "blocklist_senders": [],
+        "trusted_unsub_domains": ["substack.com", "medium.com", "github.com", "linkedin.com"],
+        "suspicious_sender_tlds": [".biz", ".web.id", ".my.id", ".top", ".xyz", ".at", ".us", ".me"],
+        "quarantine_keywords": [
+            "last reminder", "blocked your account", "cloud_account", "viruses found",
+            "antivirus expired", "photos and videos will be", "account is locked", "unauthorized access"
+        ],
+        "quarantine_label_name": "Guardian/Quarantine",
+        "sweep_interval_minutes": 15
+    }
 
-def header_email(value: str) -> str | None:
-    return normalize_email(value)
+def save_config(cfg):
+    with open(CONFIG_FILE, 'w', encoding='utf-8') as f:
+        json.dump(cfg, f, indent=2)
 
+def log(msg):
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    line = f"[{timestamp}] {msg}\n"
+    print(line.strip(), flush=True)
+    try:
+        with open(LOG_FILE, "a", encoding="utf-8") as f:
+            f.write(line)
+    except Exception:
+        pass
 
-def domain_matches(address_domain: str | None, configured_domain: str) -> bool:
-    configured = normalize_domain(configured_domain)
-    if not address_domain or not configured:
-        return False
-    return address_domain == configured or address_domain.endswith(f".{configured}")
-
-
-def merge_config(loaded: dict[str, Any]) -> dict[str, Any]:
-    """Migrate known legacy settings and reject invalid configuration."""
-    config = json.loads(json.dumps(DEFAULT_CONFIG))
-    if not isinstance(loaded, dict):
-        raise ValueError("Configuration must be a JSON object.")
-    config.update({key: value for key, value in loaded.items() if key in config})
-    if isinstance(loaded.get("logging"), dict):
-        config["logging"].update(loaded["logging"])
-    if "sweep_interval_seconds" in loaded and "sweep_interval_minutes" not in loaded:
-        raise ValueError("Use sweep_interval_minutes. sweep_interval_seconds is no longer supported.")
-    if config["action_mode"] not in VALID_ACTIONS:
-        raise ValueError("action_mode must be quarantine, trash, or purge.")
-    if config["oauth_scope_mode"] not in {"modify", "owner_purge"}:
-        raise ValueError("oauth_scope_mode must be modify or owner_purge.")
-    for key in ("allow_owner_purge", "allow_scheduled_purge"):
-        if not isinstance(config[key], bool):
-            raise ValueError(f"{key} must be true or false.")
-    if not isinstance(config["logging"].get("include_message_metadata"), bool):
-        raise ValueError("logging.include_message_metadata must be true or false.")
-    if not isinstance(config["sweep_interval_minutes"], int) or not 1 <= config["sweep_interval_minutes"] <= 1440:
-        raise ValueError("sweep_interval_minutes must be an integer from 1 to 1440.")
-    if not isinstance(config["max_messages_per_folder"], int) or not 1 <= config["max_messages_per_folder"] <= 1000:
-        raise ValueError("max_messages_per_folder must be an integer from 1 to 1000.")
-    for key in ("whitelist_domains", "whitelist_emails", "blocklist_domains", "blocklist_senders", "botnet_suspicious_tlds", "spam_phishing_keywords"):
-        if not isinstance(config[key], list) or not all(isinstance(item, str) for item in config[key]):
-            raise ValueError(f"{key} must be a list of strings.")
-    return config
-
-
-def load_config() -> dict[str, Any]:
-    source = CONFIG_FILE if CONFIG_FILE.exists() else CONFIG_EXAMPLE_FILE
-    if not source.exists():
-        return json.loads(json.dumps(DEFAULT_CONFIG))
-    with source.open("r", encoding="utf-8") as handle:
-        return merge_config(json.load(handle))
-
-
-def save_config(config: dict[str, Any]) -> None:
-    with CONFIG_FILE.open("w", encoding="utf-8", newline="\n") as handle:
-        json.dump(merge_config(config), handle, indent=2, sort_keys=True)
-        handle.write("\n")
-
-
-def log(message: str) -> None:
-    line = f"[{dt.datetime.now().isoformat(timespec='seconds')}] {message}"
-    print(line, flush=True)
-    with LOG_FILE.open("a", encoding="utf-8", newline="\n") as handle:
-        handle.write(f"{line}\n")
-
-
-def scopes_for(config: dict[str, Any]) -> list[str]:
-    return [PURGE_SCOPE] if config["oauth_scope_mode"] == "owner_purge" else [MODIFY_SCOPE]
-
+def normalize_text(text: str) -> str:
+    """Converts stylized/mathematical unicode bold/italic text into canonical ASCII."""
+    if not text:
+        return ""
+    return unicodedata.normalize('NFKD', text).encode('ascii', 'ignore').decode('ascii').lower()
 
 class GmailAuth:
     @staticmethod
-    def get_service(scopes: list[str]) -> Any:
-        credentials = None
-        if TOKEN_FILE.exists():
-            credentials = Credentials.from_authorized_user_file(str(TOKEN_FILE), scopes)
-        if credentials and credentials.expired and credentials.refresh_token:
-            credentials.refresh(Request())
-        if not credentials or not credentials.valid or not credentials.has_scopes(scopes):
-            if not CREDENTIALS_FILE.exists():
-                raise FileNotFoundError(
-                    f"Missing {CREDENTIALS_FILE.name}. Create your own local OAuth desktop-client file. Do not publish it."
-                )
-            flow = InstalledAppFlow.from_client_secrets_file(str(CREDENTIALS_FILE), scopes)
-            credentials = flow.run_local_server(port=0)
-            TOKEN_FILE.write_text(credentials.to_json(), encoding="utf-8")
-        return build("gmail", "v1", credentials=credentials)
+    def get_service(scopes=DEFAULT_SCOPES):
+        creds = None
+        if os.path.exists(TOKEN_FILE):
+            try:
+                creds = Credentials.from_authorized_user_file(TOKEN_FILE, scopes)
+            except Exception:
+                creds = None
 
+        if not creds or not creds.valid:
+            if creds and creds.expired and creds.refresh_token:
+                try:
+                    creds.refresh(Request())
+                except Exception:
+                    creds = None
+            if not creds:
+                if not os.path.exists(CREDENTIALS_FILE):
+                    raise FileNotFoundError(
+                        f"Missing '{CREDENTIALS_FILE}'. Please obtain OAuth 2.0 Client credentials from "
+                        f"Google Cloud Console and save them to '{CREDENTIALS_FILE}'."
+                    )
+                flow = InstalledAppFlow.from_client_secrets_file(CREDENTIALS_FILE, scopes)
+                print("\n[AUTH] Opening browser to complete Google OAuth authorization...")
+                creds = flow.run_local_server(port=0)
+                with open(TOKEN_FILE, 'w') as token:
+                    token.write(creds.to_json())
+                print(f"[AUTH] Authorized user credentials saved to '{TOKEN_FILE}'.\n")
+
+        return build('gmail', 'v1', credentials=creds)
 
 class GuardianEngine:
-    def __init__(self, service: Any | None = None, config: dict[str, Any] | None = None) -> None:
-        self.config = merge_config(config) if config is not None else load_config()
-        self.service = service if service is not None else GmailAuth.get_service(scopes_for(self.config))
-        self._quarantine_label_id: str | None = None
+    def __init__(self, service=None, scopes=DEFAULT_SCOPES):
+        self.config = load_config()
+        self.scopes = scopes
+        self.service = service if service else GmailAuth.get_service(scopes=scopes)
+        self._labels_cache = {}
+        self._init_labels()
 
-    def _addresses(self, headers: dict[str, str]) -> list[str]:
-        values = (header_email(headers.get("from", "")), header_email(headers.get("return-path", "")))
-        return [value for value in values if value]
+    def reload_config(self):
+        self.config = load_config()
 
-    def is_safe_sender(self, headers: dict[str, str]) -> bool:
-        addresses = self._addresses(headers)
-        allowed_emails = {value for value in (normalize_email(item) for item in self.config["whitelist_emails"]) if value}
-        if any(address in allowed_emails for address in addresses):
-            return True
-        return any(
-            domain_matches(address.rsplit("@", 1)[1], allowed)
-            for address in addresses for allowed in self.config["whitelist_domains"]
-        )
+    def _init_labels(self):
+        try:
+            res = self.service.users().labels().list(userId='me').execute()
+            for l in res.get('labels', []):
+                self._labels_cache[l['name']] = l['id']
+        except Exception as e:
+            log(f"[WARN] Error fetching Gmail labels: {e}")
 
-    def is_blocked_sender(self, headers: dict[str, str]) -> bool:
-        addresses = self._addresses(headers)
-        blocked_emails = {value for value in (normalize_email(item) for item in self.config["blocklist_senders"]) if value}
-        if any(address in blocked_emails for address in addresses):
-            return True
-        return any(
-            domain_matches(address.rsplit("@", 1)[1], blocked)
-            for address in addresses for blocked in self.config["blocklist_domains"]
-        )
+    def get_or_create_label(self, label_name):
+        if label_name in self._labels_cache:
+            return self._labels_cache[label_name]
+        try:
+            body = {
+                "name": label_name,
+                "labelListVisibility": "labelShow",
+                "messageListVisibility": "show"
+            }
+            lbl = self.service.users().labels().create(userId='me', body=body).execute()
+            self._labels_cache[label_name] = lbl['id']
+            return lbl['id']
+        except Exception as e:
+            log(f"[WARN] Could not create label '{label_name}': {e}")
+            return None
 
-    def check_message(self, headers: dict[str, str], labels: list[str]) -> tuple[str, str]:
-        if {"STARRED", "SENT", "DRAFT"}.intersection(labels):
-            return "SAFE", "Protected Gmail label"
-        if self.is_safe_sender(headers):
-            return "SAFE", "Exact whitelist match"
-        if self.is_blocked_sender(headers):
-            return "CANDIDATE", "Exact blocklist match"
-        subject = normalize_text(headers.get("subject", ""))
-        for keyword in self.config["spam_phishing_keywords"]:
-            if normalize_text(keyword) and normalize_text(keyword) in subject:
-                return "CANDIDATE", "Subject rule match"
-        for address in self._addresses(headers):
-            if any(address.rsplit("@", 1)[1].endswith(tld.casefold()) for tld in self.config["botnet_suspicious_tlds"]):
-                return "CANDIDATE", "Configured TLD rule match"
-        return "LEGITIMATE", "No configured rule matched"
+    def is_safe_sender(self, from_header, return_path):
+        _, from_email, from_domain = extract_clean_address_and_domain(from_header)
+        _, rp_email, rp_domain = extract_clean_address_and_domain(return_path)
 
-    def _message(self, message_id: str) -> tuple[dict[str, str], list[str]]:
-        metadata = self.service.users().messages().get(
-            userId="me", id=message_id, format="metadata",
-            metadataHeaders=["From", "Return-Path", "Subject", "List-Unsubscribe", "List-Unsubscribe-Post"],
-        ).execute()
-        headers = {item["name"].casefold(): item["value"] for item in metadata.get("payload", {}).get("headers", [])}
-        return headers, metadata.get("labelIds", [])
+        for w_dom in self.config.get("whitelist_domains", []):
+            w_dom = w_dom.lower().strip()
+            if from_domain == w_dom or from_domain.endswith('.' + w_dom):
+                return True
+            if rp_domain == w_dom or rp_domain.endswith('.' + w_dom):
+                return True
 
-    def _iter_message_ids(self, query: str, maximum: int) -> Iterable[str]:
+        for w_email in self.config.get("whitelist_emails", []):
+            w_email = w_email.lower().strip()
+            if from_email == w_email or rp_email == w_email:
+                return True
+
+        return False
+
+    def is_blocked_sender(self, from_header, return_path):
+        _, from_email, from_domain = extract_clean_address_and_domain(from_header)
+        _, rp_email, rp_domain = extract_clean_address_and_domain(return_path)
+
+        for b_dom in self.config.get("blocklist_domains", []):
+            b_dom = b_dom.lower().strip()
+            if from_domain == b_dom or from_domain.endswith('.' + b_dom):
+                return True
+            if rp_domain == b_dom or rp_domain.endswith('.' + b_dom):
+                return True
+
+        for b_email in self.config.get("blocklist_senders", []):
+            b_email = b_email.lower().strip()
+            if from_email == b_email or rp_email == b_email:
+                return True
+
+        return False
+
+    def classify_message(self, headers, labels):
+        from_h = headers.get('from', '')
+        rp = headers.get('return-path', '')
+        raw_subj = headers.get('subject', '')
+
+        # 1. Highest Precedence: Starred, Sent, Drafts
+        if 'STARRED' in labels:
+            return "SAFE", "Starred message (User protected)"
+        if 'SENT' in labels or 'DRAFT' in labels:
+            return "SAFE", "Sent / Draft communication"
+
+        # 2. Whitelist Precedence
+        if self.is_safe_sender(from_h, rp):
+            return "SAFE", "Whitelisted domain or email"
+
+        # 3. Explicit Blocklist
+        if self.is_blocked_sender(from_h, rp):
+            return "QUARANTINE_BLOCKLIST", "Matched explicit blocklist"
+
+        clean_subj = normalize_text(raw_subj)
+        clean_from = normalize_text(from_h)
+        _, _, from_dom = extract_clean_address_and_domain(from_h)
+        _, _, rp_dom = extract_clean_address_and_domain(rp)
+
+        # 4. Keyword Matches
+        for kw in self.config.get("quarantine_keywords", []):
+            if kw.lower() in clean_subj:
+                return "QUARANTINE_KEYWORD", f"Matched heuristic keyword: '{kw}'"
+
+        # 5. Suspicious TLD Matches
+        for tld in self.config.get("suspicious_sender_tlds", []):
+            tld = tld.lower().strip()
+            if from_dom.endswith(tld) or rp_dom.endswith(tld):
+                return "QUARANTINE_TLD", f"Matched suspicious sender TLD: '{tld}'"
+
+        return "LEGITIMATE", "Standard communication"
+
+    def fetch_messages_paginated(self, query="in:inbox", max_results=100):
+        """Fetches messages handling pagination tokens and errors gracefully."""
+        messages = []
         page_token = None
-        yielded = 0
-        while yielded < maximum:
-            result = self.service.users().messages().list(
-                userId="me", q=query, maxResults=min(100, maximum - yielded), pageToken=page_token
-            ).execute()
-            messages = result.get("messages", [])
-            for message in messages:
-                yield message["id"]
-                yielded += 1
-            page_token = result.get("nextPageToken")
-            if not page_token or not messages:
+
+        while len(messages) < max_results:
+            batch_size = min(50, max_results - len(messages))
+            try:
+                res = self.service.users().messages().list(
+                    userId='me',
+                    q=query,
+                    maxResults=batch_size,
+                    pageToken=page_token
+                ).execute()
+
+                msg_ids = res.get('messages', [])
+                for m in msg_ids:
+                    try:
+                        full = self.service.users().messages().get(
+                            userId='me',
+                            id=m['id'],
+                            format='metadata',
+                            metadataHeaders=['From', 'Return-Path', 'Subject', 'Date', 'List-Unsubscribe', 'List-Unsubscribe-Post']
+                        ).execute()
+                        messages.append(full)
+                    except HttpError as he:
+                        log(f"[WARN] Failed to fetch message metadata {m['id']}: {he}")
+
+                page_token = res.get('nextPageToken')
+                if not page_token:
+                    break
+            except HttpError as e:
+                log(f"[ERROR] Gmail API query failed for '{query}': {e}")
+                break
+
+        return messages
+
+    def execute_quarantine(self, msg_id, move_to_trash=False, hard_delete=False):
+        """
+        Executes quarantine action.
+        Default: Adds Guardian/Quarantine label and removes INBOX label.
+        Optional: move_to_trash=True moves to Trash.
+        Destructive: hard_delete=True permanently destroys message.
+        """
+        if hard_delete:
+            self.service.users().messages().delete(userId='me', id=msg_id).execute()
+            return "hard_deleted"
+
+        label_name = self.config.get("quarantine_label_name", "Guardian/Quarantine")
+        label_id = self.get_or_create_label(label_name)
+
+        if move_to_trash:
+            if label_id:
+                try:
+                    self.service.users().messages().modify(
+                        userId='me',
+                        id=msg_id,
+                        body={'addLabelIds': [label_id], 'removeLabelIds': ['INBOX']}
+                    ).execute()
+                except Exception:
+                    pass
+            self.service.users().messages().trash(userId='me', id=msg_id).execute()
+            return "trashed"
+
+        # Default Quarantine: Label and archive (remove from INBOX)
+        body = {'removeLabelIds': ['INBOX']}
+        if label_id:
+            body['addLabelIds'] = [label_id]
+
+        self.service.users().messages().modify(userId='me', id=msg_id, body=body).execute()
+        return "quarantined"
+
+    def run_audit(self, max_results=50, output_review_file=True):
+        print(f"\n=======================================================")
+        print(f"        GMAIL GUARDIAN INBOX AUDIT (DRY RUN)           ")
+        print(f"=======================================================")
+        print(f"Scanning up to {max_results} recent messages in Inbox...")
+
+        messages = self.fetch_messages_paginated(query="in:inbox", max_results=max_results)
+        if not messages:
+            print("Inbox is empty or no messages returned.")
+            return []
+
+        review_records = []
+        counts = {"SAFE": 0, "LEGITIMATE": 0, "QUARANTINE_KEYWORD": 0, "QUARANTINE_TLD": 0, "QUARANTINE_BLOCKLIST": 0}
+
+        for m in messages:
+            labels = m.get('labelIds', [])
+            headers = {x['name'].lower(): x['value'] for x in m.get('payload', {}).get('headers', [])}
+            verdict, reason = self.classify_message(headers, labels)
+            counts[verdict] = counts.get(verdict, 0) + 1
+
+            record = {
+                "id": m.get('id'),
+                "date": headers.get('date', ''),
+                "from": headers.get('from', ''),
+                "return_path": headers.get('return-path', ''),
+                "subject": headers.get('subject', ''),
+                "classification": verdict,
+                "reason": reason,
+                "proposed_action": "QUARANTINE" if verdict.startswith("QUARANTINE") else "KEEP"
+            }
+            review_records.append(record)
+
+            f_str = (headers.get('from', ''))[:30]
+            s_str = (headers.get('subject', ''))[:35]
+            print(f"[{verdict.ljust(20)}] {f_str.ljust(32)} | {s_str}")
+
+        print("\n--- CLASSIFICATION SUMMARY ---")
+        for k, v in counts.items():
+            print(f"  {k.ljust(22)}: {v}")
+
+        if output_review_file:
+            ts = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+            filename = f"guardian_review_{ts}.json"
+            with open(filename, 'w', encoding='utf-8') as f:
+                json.dump(review_records, f, indent=2)
+            print(f"\n[REVIEW FILE GENERATED] -> {filename}")
+            print(f"To execute quarantine on this review file, run:")
+            print(f"  python guardian.py --execute --review-file {filename}\n")
+
+        return review_records
+
+    def execute_from_review_file(self, review_file, move_to_trash=False, hard_delete=False):
+        if not os.path.exists(review_file):
+            raise FileNotFoundError(f"Review file '{review_file}' does not exist.")
+
+        with open(review_file, 'r', encoding='utf-8') as f:
+            records = json.load(f)
+
+        targets = [r for r in records if r.get('proposed_action') == 'QUARANTINE']
+        print(f"\nFound {len(targets)} messages flagged for quarantine in review file.")
+
+        if hard_delete:
+            print("\n" + "!"*60)
+            print("WARNING: DESTRUCTIVE HARD-DELETE REQUESTED")
+            print("Messages will be permanently erased from Google servers.")
+            print("!"*60)
+            confirm = input("Type 'CONFIRM' to execute hard deletion: ").strip()
+            if confirm != "CONFIRM":
+                print("Hard deletion cancelled by user.")
                 return
 
-    def _quarantine_label(self) -> str:
-        if self._quarantine_label_id:
-            return self._quarantine_label_id
-        labels = self.service.users().labels().list(userId="me").execute().get("labels", [])
-        for label in labels:
-            if label.get("name") == LABEL_NAME:
-                self._quarantine_label_id = label["id"]
-                return self._quarantine_label_id
-        label = self.service.users().labels().create(
-            userId="me", body={"name": LABEL_NAME, "labelListVisibility": "labelShow", "messageListVisibility": "show"}
-        ).execute()
-        self._quarantine_label_id = label["id"]
-        return self._quarantine_label_id
-
-    def _apply_action(self, message_id: str, action: str, confirm_permanent_delete: bool) -> str:
-        if action == "quarantine":
-            self.service.users().messages().modify(
-                userId="me", id=message_id, body={"addLabelIds": [self._quarantine_label()], "removeLabelIds": ["INBOX"]}
-            ).execute()
-            return "quarantined"
-        if action == "trash":
-            self.service.users().messages().trash(userId="me", id=message_id).execute()
-            return "moved to trash"
-        if action == "purge":
-            if not self.config["allow_owner_purge"] or self.config["oauth_scope_mode"] != "owner_purge" or not confirm_permanent_delete:
-                raise PermissionError("Permanent deletion requires allow_owner_purge=true, oauth_scope_mode=owner_purge, and --confirm-permanent-delete.")
-            self.service.users().messages().delete(userId="me", id=message_id).execute()
-            return "permanently deleted"
-        raise ValueError(f"Unknown action: {action}")
-
-    def sweep(self, action: str | None = None, confirm_permanent_delete: bool = False, query: str = "in:inbox") -> dict[str, int]:
-        chosen_action = action or self.config["action_mode"]
-        if chosen_action not in VALID_ACTIONS:
-            raise ValueError("Unknown action mode.")
-        counts = {"scanned": 0, "candidates": 0, "changed": 0, "errors": 0}
-        for message_id in self._iter_message_ids(query, self.config["max_messages_per_folder"]):
-            counts["scanned"] += 1
+        executed = 0
+        for t in targets:
+            mid = t['id']
             try:
-                headers, labels = self._message(message_id)
-                verdict, reason = self.check_message(headers, labels)
-                if verdict != "CANDIDATE":
-                    continue
-                counts["candidates"] += 1
-                result = self._apply_action(message_id, chosen_action, confirm_permanent_delete)
-                counts["changed"] += 1
-                if self.config["logging"].get("include_message_metadata"):
-                    log(f"{result}: {headers.get('from', '')[:80]} | {headers.get('subject', '')[:120]} | {reason}")
-                else:
-                    log(f"{result}: message={message_id} | {reason}")
-            except Exception as error:
-                counts["errors"] += 1
-                log(f"message={message_id} was not changed: {error}")
-        return counts
+                res = self.execute_quarantine(mid, move_to_trash=move_to_trash, hard_delete=hard_delete)
+                executed += 1
+                log(f"  [{res.upper()}] {t.get('from', '')[:30]} | Subj: {t.get('subject', '')[:35]}")
+            except Exception as e:
+                log(f"  [ERROR] Failed on {mid}: {e}")
 
-    def stop_cold(self, identifier: str, action: str | None, confirm_permanent_delete: bool) -> dict[str, int]:
-        target_email = normalize_email(identifier)
-        target_domain = normalize_domain(identifier)
-        if target_email:
-            key, value = "blocklist_senders", target_email
-        elif target_domain:
-            key, value = "blocklist_domains", target_domain
-        else:
-            raise ValueError("Provide one valid email address or domain. Gmail search operators are not accepted.")
-        config = load_config()
-        if value not in config[key]:
-            config[key].append(value)
-            save_config(config)
-            self.config = config
-        return self.sweep(action=action, confirm_permanent_delete=confirm_permanent_delete, query="in:anywhere")
+        print(f"\nExecution Complete. {executed} items processed.")
 
-    def audit(self, maximum: int | None = None, query: str = "in:inbox") -> dict[str, int]:
-        counts: dict[str, int] = {"scanned": 0, "candidate": 0, "legitimate": 0, "safe": 0, "unsubscribe_candidates": 0, "errors": 0}
-        for message_id in self._iter_message_ids(query, maximum or self.config["max_messages_per_folder"]):
-            counts["scanned"] += 1
-            try:
-                headers, labels = self._message(message_id)
-                verdict, reason = self.check_message(headers, labels)
-                counts[verdict.casefold()] += 1
-                if headers.get("list-unsubscribe"):
-                    counts["unsubscribe_candidates"] += 1
-                if self.config["logging"].get("include_message_metadata"):
-                    print(f"[{verdict}] {headers.get('from', '')[:80]} | {headers.get('subject', '')[:120]} | {reason}")
-                else:
-                    print(f"[{verdict}] message={message_id} | {reason}")
-            except Exception as error:
-                counts["errors"] += 1
-                log(f"message={message_id} could not be audited: {error}")
-        return counts
+    def review_unsubscribes(self, max_results=50):
+        """Finds messages with List-Unsubscribe headers for manual user review only."""
+        print(f"\n=======================================================")
+        print(f"        UNSUBSCRIBE CONFIRMATION REVIEW                ")
+        print(f"=======================================================")
+        messages = self.fetch_messages_paginated(query="in:inbox", max_results=max_results)
 
+        unsub_list = []
+        for m in messages:
+            headers = {x['name'].lower(): x['value'] for x in m.get('payload', {}).get('headers', [])}
+            unsub_header = headers.get('list-unsubscribe')
+            if unsub_header:
+                unsub_list.append({
+                    "id": m.get('id'),
+                    "from": headers.get('from'),
+                    "subject": headers.get('subject'),
+                    "list_unsubscribe": unsub_header
+                })
 
-def install_scheduler(config: dict[str, Any]) -> None:
-    interval = config["sweep_interval_minutes"]
-    purge_args = " --confirm-permanent-delete" if config["action_mode"] == "purge" and config["allow_scheduled_purge"] else ""
-    if config["action_mode"] == "purge" and not config["allow_scheduled_purge"]:
-        raise PermissionError("Scheduled purge is disabled. Set allow_scheduled_purge=true only after testing a local owner configuration.")
-    if sys.platform != "win32":
-        raise NotImplementedError("Automated scheduling is currently supported only on Windows. Run the script directly on other systems.")
-    task_command = f'"{sys.executable}" "{Path(__file__).resolve()}" --once{purge_args}'
-    result = subprocess.run(
-        ["schtasks.exe", "/Create", "/TN", TASK_NAME, "/TR", task_command, "/SC", "MINUTE", "/MO", str(interval), "/F"],
-        capture_output=True, text=True, check=False,
+        print(f"Found {len(unsub_list)} emails with explicit List-Unsubscribe headers.\n")
+        for idx, u in enumerate(unsub_list, 1):
+            print(f"[{idx}] Sender:  {u['from']}")
+            print(f"    Subject: {u['subject']}")
+            print(f"    Header:  {u['list_unsubscribe']}")
+            print("    ---------------------------------------------------")
+        print("\nNote: Zero automatic unsubscribe requests are sent.")
+        print("To unsubscribe, copy the trusted vendor link or contact the vendor directly.\n")
+
+def main():
+    parser = argparse.ArgumentParser(
+        description=f"Gmail Guardian v{__version__}: Local Inbox Hygiene & Phishing Quarantine Engine"
     )
-    if result.returncode:
-        raise RuntimeError(result.stderr.strip() or result.stdout.strip() or "Task Scheduler rejected the task.")
-    print(f"Installed {TASK_NAME}: every {interval} minutes.")
+    parser.add_argument('--audit', action='store_true', help="Run non-destructive audit on Inbox (Default)")
+    parser.add_argument('--max', type=int, default=50, help="Maximum messages to scan (default: 50)")
+    parser.add_argument('--review-unsub', action='store_true', help="Review legitimate unsubscribe headers (confirmation-only)")
+    parser.add_argument('--execute', action='store_true', help="Execute actions from a generated review file")
+    parser.add_argument('--review-file', type=str, help="Path to audit review JSON file to execute")
+    parser.add_argument('--trash', action='store_true', help="Move quarantined items to Trash instead of labeling/archiving")
+    parser.add_argument('--hard-delete', action='store_true', help="Permanently destroy quarantined items (Requires --confirm-destructive)")
+    parser.add_argument('--confirm-destructive', action='store_true', help="Explicit confirmation for permanent deletion")
 
+    parser.add_argument('--block-domain', type=str, help="Add validated domain to blocklist")
+    parser.add_argument('--add-whitelist-domain', type=str, help="Add validated domain to safe whitelist")
+    parser.add_argument('--add-whitelist-email', type=str, help="Add validated email to safe whitelist")
+    parser.add_argument('--show-config', action='store_true', help="Display active configuration")
 
-def uninstall_scheduler() -> None:
-    if sys.platform != "win32":
-        raise NotImplementedError("No scheduler is managed on this platform.")
-    result = subprocess.run(["schtasks.exe", "/Delete", "/TN", TASK_NAME, "/F"], capture_output=True, text=True, check=False)
-    if result.returncode:
-        raise RuntimeError(result.stderr.strip() or result.stdout.strip() or "Task Scheduler could not remove the task.")
-    print(f"Removed {TASK_NAME}.")
-
-
-def main() -> int:
-    parser = argparse.ArgumentParser(description="Local, review-first inbox triage for Gmail.")
-    parser.add_argument("--audit", action="store_true", help="Audit without changing mail.")
-    parser.add_argument("--sweep", action="store_true", help="Apply the configured action to candidate messages.")
-    parser.add_argument("--once", action="store_true", help="Run one configured sweep for Task Scheduler.")
-    parser.add_argument("--action", choices=sorted(VALID_ACTIONS), help="Override the configured action for this run.")
-    parser.add_argument("--confirm-permanent-delete", action="store_true", help="Required with owner-enabled purge mode.")
-    parser.add_argument("--stop-cold", metavar="EMAIL_OR_DOMAIN", help="Add one validated sender or domain, then run an exact-match sweep.")
-    parser.add_argument("--install-scheduler", action="store_true", help="Install the managed Windows task.")
-    parser.add_argument("--uninstall-scheduler", action="store_true", help="Remove the managed Windows task.")
-    parser.add_argument("--show-config", action="store_true", help="Show the active local configuration.")
     args = parser.parse_args()
-    config = load_config()
+
+    cfg = load_config()
+
+    # Input validation handlers
+    if args.add_whitelist_domain:
+        dom = args.add_whitelist_domain.strip().lower().lstrip('@.')
+        if not is_valid_domain(dom):
+            print(f"[ERROR] Invalid domain format: '{args.add_whitelist_domain}'")
+            sys.exit(1)
+        if dom not in cfg.setdefault('whitelist_domains', []):
+            cfg['whitelist_domains'].append(dom)
+            save_config(cfg)
+            print(f"[CONFIG] Added '{dom}' to safe whitelist domains.")
+        return
+
+    if args.add_whitelist_email:
+        em = args.add_whitelist_email.strip().lower()
+        if not is_valid_email(em):
+            print(f"[ERROR] Invalid email format: '{args.add_whitelist_email}'")
+            sys.exit(1)
+        if em not in cfg.setdefault('whitelist_emails', []):
+            cfg['whitelist_emails'].append(em)
+            save_config(cfg)
+            print(f"[CONFIG] Added '{em}' to safe whitelist emails.")
+        return
+
+    if args.block_domain:
+        dom = args.block_domain.strip().lower().lstrip('@.')
+        if not is_valid_domain(dom):
+            print(f"[ERROR] Invalid domain format: '{args.block_domain}'")
+            sys.exit(1)
+        if dom not in cfg.setdefault('blocklist_domains', []):
+            cfg['blocklist_domains'].append(dom)
+            save_config(cfg)
+            print(f"[CONFIG] Added '{dom}' to blocklist domains.")
+        return
+
     if args.show_config:
-        print(json.dumps(config, indent=2, sort_keys=True))
-        return 0
-    if args.install_scheduler:
-        install_scheduler(config)
-        return 0
-    if args.uninstall_scheduler:
-        uninstall_scheduler()
-        return 0
-    engine = GuardianEngine(config=config)
-    if args.stop_cold:
-        result = engine.stop_cold(args.stop_cold, args.action, args.confirm_permanent_delete)
-    elif args.sweep or args.once:
-        result = engine.sweep(args.action, args.confirm_permanent_delete)
+        print(json.dumps(cfg, indent=2))
+        return
+
+    # Safety check for hard deletion
+    scopes = DEFAULT_SCOPES
+    if args.hard_delete:
+        if not args.confirm_destructive:
+            print("[ERROR] Hard-delete requires both '--hard-delete' AND '--confirm-destructive'.")
+            sys.exit(1)
+        scopes = DESTRUCTIVE_SCOPE
+
+    engine = GuardianEngine(scopes=scopes)
+
+    if args.review_unsub:
+        engine.review_unsubscribes(max_results=args.max)
+    elif args.execute:
+        if not args.review_file:
+            print("[ERROR] '--execute' requires '--review-file <path_to_json_file>'.")
+            sys.exit(1)
+        engine.execute_from_review_file(
+            args.review_file,
+            move_to_trash=args.trash,
+            hard_delete=args.hard_delete
+        )
     else:
-        result = engine.audit()
-    print(json.dumps(result, indent=2, sort_keys=True))
-    return 0
+        # Default behavior is always safe audit
+        engine.run_audit(max_results=args.max)
 
-
-if __name__ == "__main__":
-    raise SystemExit(main())
+if __name__ == '__main__':
+    main()

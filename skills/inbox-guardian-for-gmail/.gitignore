@@ -2,6 +2,8 @@ credentials.json
 token.json
 config.json
 guardian.log
+guardian_review_*.json
+guardian_unsubscribe_review_*.json
 __pycache__/
 tests/__pycache__/
 .venv/
