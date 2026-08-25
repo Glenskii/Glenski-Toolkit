@@ -9,6 +9,10 @@
 
 ---
 
+![Inbox Guardian for Gmail](assets/social-preview.png)
+
+---
+
 ![How the system eliminates spam](assets/how-the-system-eliminates-spam.png)
 
 ## Fair warning
@@ -44,8 +48,8 @@ Only a verified sender and a verified provider path can be considered for unsubs
 
 #### **macOS / Linux:**
 ```bash
-git clone https://github.com/your-username/gmail-guardian.git
-cd gmail-guardian
+git clone https://github.com/Glenskii/Glenski-Toolkit.git
+cd Glenski-Toolkit/skills/inbox-guardian-for-gmail
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
@@ -54,8 +58,8 @@ pip install -r requirements-dev.txt
 
 #### **Windows (PowerShell):**
 ```powershell
-git clone https://github.com/your-username/gmail-guardian.git
-cd gmail-guardian
+git clone https://github.com/Glenskii/Glenski-Toolkit.git
+cd Glenski-Toolkit/skills/inbox-guardian-for-gmail
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
