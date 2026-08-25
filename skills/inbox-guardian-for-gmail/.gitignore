@@ -1,0 +1,7 @@
+credentials.json
+token.json
+config.json
+guardian.log
+__pycache__/
+tests/__pycache__/
+.venv/

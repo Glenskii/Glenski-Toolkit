@@ -15,6 +15,7 @@ The toolkit is shaped by active project work, then converted into portable resou
 | [seo-aeo-geo-gbp](skills/seo-aeo-geo-gbp/) | Review search visibility, structured data, and public profile information using current evidence and no outcome promises. |
 | [save-context](skills/save-context/) | Create a durable, privacy-aware handoff before a session is compacted or transferred. |
 | [task-state-ledger](skills/task-state-ledger/) | Track active work and retain safe evidence references without treating files as automatic memory. |
+| [inbox-guardian-for-gmail](skills/inbox-guardian-for-gmail/) | Review a personal Gmail inbox with local rules, a quarantine-first default, and owner-approved cleanup options. |
 
 ## Public-safety standard
 

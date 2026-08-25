@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "action_mode": "quarantine",
+  "allow_owner_purge": false,
+  "allow_scheduled_purge": false,
+  "oauth_scope_mode": "modify",
+  "whitelist_domains": ["example.com", "github.com"],
+  "whitelist_emails": ["billing@example.com"],
+  "blocklist_domains": [],
+  "blocklist_senders": [],
+  "botnet_suspicious_tlds": [".biz", ".web.id", ".my.id", ".top", ".xyz"],
+  "spam_phishing_keywords": [
+    "last reminder",
+    "blocked your account",
+    "viruses found",
+    "antivirus expired",
+    "account is locked",
+    "unauthorized access"
+  ],
+  "sweep_interval_minutes": 15,
+  "max_messages_per_folder": 200,
+  "logging": {"include_message_metadata": false}
+}
