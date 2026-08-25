@@ -4,3 +4,9 @@ __pycache__/
 
 # Local task-state ledger artifacts. These can contain operational evidence.
 .task-state/
+
+# Local Inbox Guardian OAuth, rules, and mailbox metadata
+skills/inbox-guardian-for-gmail/credentials.json
+skills/inbox-guardian-for-gmail/token.json
+skills/inbox-guardian-for-gmail/config.json
+skills/inbox-guardian-for-gmail/guardian.log
