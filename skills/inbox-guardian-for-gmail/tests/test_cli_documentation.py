@@ -10,6 +10,7 @@ SKILL_TEXT = (SKILL_DIR / "SKILL.md").read_text(encoding="utf-8")
 def test_skill_instructions_use_supported_cli_flags():
     expected = {
         "--execute",
+        "--setup",
         "--review-file",
         "--trash",
         "--review-unsub",
