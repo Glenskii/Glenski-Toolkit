@@ -1,8 +1,6 @@
 # Python Web App Security Audit
 
-**Part of:** [Glenski-Toolkit](https://github.com/Glenskii/Glenski-Toolkit)  
-**License:** [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)  
-**Tags:** `#glenski` `#vibe-security` `#owasp` `#pytest` `#fastapi` `#security`
+**Part of:** [Glenski-Toolkit](https://github.com/Glenskii/Glenski-Toolkit)\1**License:** [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)\1**Tags:** `#glenski` `#vibe-security` `#owasp` `#pytest` `#fastapi` `#security`
 
 ---
 

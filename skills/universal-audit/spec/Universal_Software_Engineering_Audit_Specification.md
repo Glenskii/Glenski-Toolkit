@@ -1,12 +1,6 @@
 # Universal Software Engineering Audit Specification
 
-**Version:** 2.2  
-**Status:** Production audit standard  
-**Purpose:** Evidence-based, full-lifecycle software engineering audit standard for human and AI-assisted auditors  
-**Updated:** 2026-07-10  
-**Supersedes:** Version 2.1  
-**License:** CC BY 4.0 - free to use, adapt, and redistribute with attribution  
-**Revision purpose:** Closes the remaining determinism gaps: normative control-to-category mapping, complete WARN scoring rules, cross-tier coverage disclosure, and gate-control separation.
+**Version:** 2.2\1**Status:** Production audit standard\1**Purpose:** Evidence-based, full-lifecycle software engineering audit standard for human and AI-assisted auditors\1**Updated:** 2026-07-10\1**Supersedes:** Version 2.1\1**License:** CC BY 4.0 - free to use, adapt, and redistribute with attribution\1**Revision purpose:** Closes the remaining determinism gaps: normative control-to-category mapping, complete WARN scoring rules, cross-tier coverage disclosure, and gate-control separation.
 
 ---
 
@@ -34,14 +28,7 @@ Determine:
 4. Whether release risks are known, evidenced, owned, and proportionate.
 5. Whether improvements have sufficient user, business, security, reliability, compliance, or maintainability value to justify their cost.
 
-Do not guess.  
-Do not invent defects.  
-Do not manufacture recommendations to fill a quota.  
-Do not confuse missing evidence with proof of failure.  
-Do not confuse the absence of observed defects with proof of safety.  
-Do not soften verified material risk.  
-Do not use intimidating language to exaggerate minor issues.  
-
+Do not guess.\1Do not invent defects.\1Do not manufacture recommendations to fill a quota.\1Do not confuse missing evidence with proof of failure.\1Do not confuse the absence of observed defects with proof of safety.\1Do not soften verified material risk.\1Do not use intimidating language to exaggerate minor issues.\1
 When evidence is insufficient, state **UNVERIFIED** and identify exactly what would be required to verify it.
 
 ---
@@ -1051,10 +1038,7 @@ The final judgment must be firm enough to guide a release decision and honest en
 
 ## Appendix A. Versioned Control Catalog
 
-**Catalog Version:** 1.0  
-**Status:** Normative minimum catalog  
-**Tier notation:** R = Rapid, S = Standard, D = Deep  
-**Criticality:** C1 = Supporting, C2 = Important, C3 = Release-critical
+**Catalog Version:** 1.0\1**Status:** Normative minimum catalog\1**Tier notation:** R = Rapid, S = Standard, D = Deep\1**Criticality:** C1 = Supporting, C2 = Important, C3 = Release-critical
 
 Select every applicable control at or below the declared depth. A Standard audit includes R and S controls. A Deep audit includes R, S, and D controls. Profile-critical controls are mandatory regardless of tier. Controls may be added for product-specific risk, but additions require stable local IDs and cannot remove catalog controls from the coverage denominator.
 
@@ -1260,18 +1244,7 @@ Where a named exception conflicts with a prefix rule, the exception controls. Th
 
 ### B.1 Finding Example
 
-**Finding:** `AUD-APP-20260710-001-F003 - Cross-tenant invoice access`  
-**Control:** `SEC-AUTHZ-001`  
-**Status:** FAIL  
-**Severity:** High  
-**Likelihood:** Medium  
-**Confidence:** High  
-**Evidence:** Authorized Tenant B account retrieved Tenant A invoice by changing the object identifier; reproduced twice in staging; server route lacked tenant scope.  
-**Impact:** Confidential commercial and personal billing information could be disclosed across tenants.  
-**Preferred fix:** Resolve invoices through the authenticated tenant relationship and return a non-disclosing denial for mismatches.  
-**Alternative:** Temporary gateway denial for the affected route plus feature disablement until server-side scoping is deployed.  
-**Verification:** Repeat authorized cross-tenant reads, updates, exports, and enumeration attempts; confirm denial and protected audit event.  
-**Score effect:** Control receives 1 point at C3 weight. Security/privacy category is capped at 4.9 while the High FAIL remains unresolved.
+**Finding:** `AUD-APP-20260710-001-F003 - Cross-tenant invoice access`\1**Control:** `SEC-AUTHZ-001`\1**Status:** FAIL\1**Severity:** High\1**Likelihood:** Medium\1**Confidence:** High\1**Evidence:** Authorized Tenant B account retrieved Tenant A invoice by changing the object identifier; reproduced twice in staging; server route lacked tenant scope.\1**Impact:** Confidential commercial and personal billing information could be disclosed across tenants.\1**Preferred fix:** Resolve invoices through the authenticated tenant relationship and return a non-disclosing denial for mismatches.\1**Alternative:** Temporary gateway denial for the affected route plus feature disablement until server-side scoping is deployed.\1**Verification:** Repeat authorized cross-tenant reads, updates, exports, and enumeration attempts; confirm denial and protected audit event.\1**Score effect:** Control receives 1 point at C3 weight. Security/privacy category is capped at 4.9 while the High FAIL remains unresolved.
 
 ### B.2 Category Example
 
