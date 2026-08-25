@@ -6,7 +6,7 @@ license: CC-BY-4.0
 
 # PYTHON WEB APP SECURITY AUDIT
 
-**Purpose:** A runnable security check for Python web applications built with AI coding tools.
+**Purpose:** A runnable security check for Python web applications built through rapid development workflows.
 **Use with:** FastAPI, Flask, Django, and similar Python web applications that can run through ASGI.
 **License:** CC BY 4.0. Share freely, credit appreciated.
 **Tags:** `#glenski` `#vibe-security` `#owasp` `#fastapi` `#security` `#pytest`
@@ -17,7 +17,7 @@ license: CC-BY-4.0
 
 Vibe-coded apps ship fast. Security does not ship with them by default.
 
-AI coding tools generate working code. They do not generate secure code.
+Rapid development tools can generate working code. They do not guarantee secure code.
 The gap between "it works" and "it is safe" is where real applications get
 compromised. This suite closes that gap with deterministic, runnable tests
 covering the full OWASP attack surface.
