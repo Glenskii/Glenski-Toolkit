@@ -30,9 +30,10 @@ Do not set a scheduled purge unless the owner has tested rules in audit and quar
 
 ## Commands
 
-Run the commands from the skill folder after creating a local virtual environment, completing the OAuth setup described in [README.md](README.md), and copying `config.example.json` to `config.json`.
+Run the commands from the skill folder after creating a local virtual environment and completing the OAuth setup described in [README.md](README.md). The guided setup creates `config.json` from the bundled example when it is missing.
 
 ```powershell
+python guardian.py --setup
 python guardian.py
 python guardian.py --execute --review-file guardian_review_YYYYMMDD_HHMMSS.json
 python guardian.py --execute --review-file guardian_review_YYYYMMDD_HHMMSS.json --trash

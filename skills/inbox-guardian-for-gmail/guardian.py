@@ -140,6 +140,29 @@ class GmailAuth:
 
         return build('gmail', 'v1', credentials=creds)
 
+
+def run_setup():
+    """Create local configuration, complete OAuth, and verify the Gmail account."""
+    load_config()
+
+    if not os.path.exists(CREDENTIALS_FILE):
+        print("\n[SETUP] Gmail Guardian needs your Google OAuth desktop client file.")
+        print("1. Open https://console.cloud.google.com/")
+        print("2. Create or select a project, then enable the Gmail API.")
+        print("3. Create an OAuth client of type Desktop app.")
+        print("4. Download the client file, rename it credentials.json, and place it here:")
+        print(f"   {os.path.abspath(CREDENTIALS_FILE)}")
+        print("5. Run this setup command again.\n")
+        return 1
+
+    print("\n[SETUP] Opening your browser for Google OAuth if approval is needed...")
+    service = GmailAuth.get_service(scopes=DEFAULT_SCOPES)
+    profile = service.users().getProfile(userId='me').execute()
+    account = profile.get('emailAddress', 'the selected Gmail account')
+    print(f"[SETUP] Connected to {account}.")
+    print("[SETUP] Ready. Run 'python guardian.py' for a non-destructive inbox audit.\n")
+    return 0
+
 class GuardianEngine:
     def __init__(self, service=None, scopes=DEFAULT_SCOPES):
         self.config = load_config()
@@ -438,6 +461,7 @@ def main():
     parser.add_argument('--audit', action='store_true', help="Run non-destructive audit on Inbox (Default)")
     parser.add_argument('--max', type=int, default=50, help="Maximum messages to scan (default: 50)")
     parser.add_argument('--review-unsub', action='store_true', help="Review legitimate unsubscribe headers (confirmation-only)")
+    parser.add_argument('--setup', action='store_true', help="Create local config, complete Google OAuth, and verify the selected Gmail account")
     parser.add_argument('--execute', action='store_true', help="Execute actions from a generated review file")
     parser.add_argument('--review-file', type=str, help="Path to audit review JSON file to execute")
     parser.add_argument('--trash', action='store_true', help="Move quarantined items to Trash instead of labeling/archiving")
@@ -490,6 +514,9 @@ def main():
     if args.show_config:
         print(json.dumps(cfg, indent=2))
         return
+
+    if args.setup:
+        sys.exit(run_setup())
 
     # Safety check for hard deletion
     scopes = DEFAULT_SCOPES

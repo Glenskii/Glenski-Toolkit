@@ -84,18 +84,23 @@ pip install -r requirements-dev.txt
 
 ---
 
-### 3. Configuration
+### 3. Run Guided Local Setup
 
-Initialize your local configuration:
+From the skill folder, run:
+
 ```bash
-# macOS / Linux:
-cp config.example.json config.json
-
-# Windows:
-copy config.example.json config.json
+python guardian.py --setup
 ```
 
-Customize `config.json` with your business domains and whitelist rules:
+The setup command creates `config.json` from the bundled example when needed, opens Google OAuth in your browser, saves `token.json` locally after approval, and confirms the Gmail account that connected. It does not scan, label, move, or delete mail.
+
+If `credentials.json` is missing, the command prints the exact Google Cloud steps and the folder where the file belongs.
+
+---
+
+### 4. Review Local Configuration
+
+The guided setup creates `config.json`. Review and customize it with your business domains and whitelist rules:
 ```json
 {
   "whitelist_domains": [
@@ -119,7 +124,7 @@ Customize `config.json` with your business domains and whitelist rules:
 ## 💻 Usage & Workflows
 
 ### 1. Run an Inbox Audit (Default / Dry Run)
-On first run, this opens your browser for Google OAuth using your own `credentials.json`. After approval, it saves your local `token.json`, inspects recent messages, prints classification decisions, and writes a review JSON file. It does not move, label, or delete mail:
+After guided setup is complete, this inspects recent messages, prints classification decisions, and writes a review JSON file. It does not move, label, or delete mail:
 ```bash
 python guardian.py
 ```
