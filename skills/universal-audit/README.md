@@ -2,7 +2,7 @@
 
 **A formal, evidence-based software engineering audit skill for AI-assisted auditors.**
 
-![glenski-universal-audit](assets/og-card.png)
+![Universal Audit](assets/og-card.svg)
 
 Built on the **Universal Software Engineering Audit Specification v2.2**, a full-lifecycle
 standard covering product fitness, security, architecture, data, supply chain, reliability,

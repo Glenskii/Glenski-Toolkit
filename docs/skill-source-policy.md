@@ -11,5 +11,6 @@ The marketplace repository is a distribution mirror. It must not receive indepen
 3. Copy the approved package to the marketplace mirror without reducing its instruction or support material.
 4. Compare the mirrored package with the approved source before submission.
 5. Submit the exact immutable source URL and retain the production readback.
+6. Run `python scripts/verify_public_docs.py` and open every skill folder through the GitHub web view before calling the public release complete.
 
 No public skill may be reduced to satisfy a listing, a display panel, or a packaging shortcut. If a platform needs shorter card copy, create that copy separately and preserve the full skill package.
