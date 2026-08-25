@@ -11,9 +11,9 @@
 
 Structured data must accurately represent visible page content. Validate syntax and check for duplicate or contradictory markup before release. Eligibility or a valid test result does not guarantee a rich result.
 
-## AI-search rule
+## Answer-engine rule
 
-Do not claim that special markup, files, or tactics guarantee inclusion in an AI-generated result. Apply the same fundamentals used for ordinary search: crawlable pages, helpful and accurate content, clear site structure, and truthful structured data. Verify any platform-specific claim against current official documentation.
+Do not claim that special markup, files, or tactics guarantee inclusion in an answer-engine result. Apply the same fundamentals used for ordinary search: crawlable pages, helpful and accurate content, clear site structure, and truthful structured data. Verify any platform-specific claim against current official documentation.
 
 ## Local-profile rule
 

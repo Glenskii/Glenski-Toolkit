@@ -10,7 +10,7 @@
 
 Vibe-coded apps ship fast. Security does not ship with them.
 
-AI coding tools generate working code. They do not generate secure code. The gap between "it works" and "it is safe" is where real applications get compromised. Credential stuffing, IDOR exploitation, debug pages in production, and stack traces leaking database URLs are not exotic attacks. They are the first things an attacker checks on any app that looks AI-generated.
+Rapid development tools can generate working code. They do not guarantee secure code. The gap between "it works" and "it is safe" is where real applications get compromised. Credential stuffing, IDOR exploitation, debug pages in production, and stack traces leaking database URLs are not exotic attacks. They are the first things an attacker checks on a rapidly assembled application.
 
 This suite closes that gap with a deterministic, runnable test suite covering the full OWASP attack surface. Drop it into your project, configure your routes, and run it before you ship.
 
@@ -170,7 +170,7 @@ The timing oracle test is a heuristic. Production timing analysis requires load 
 
 Tests authorization boundaries. This is the highest-value test file for vibe-coded apps.
 
-IDOR (Broken Object Level Authorization) is the number one API vulnerability class. AI-generated CRUD endpoints almost universally skip ownership checks. This file tests horizontal escalation (user A accessing user B's data), vertical escalation (regular user accessing admin functions), and mass assignment (injecting role/admin flags via request body).
+IDOR (Broken Object Level Authorization) is the number one API vulnerability class. Rapidly assembled CRUD endpoints often skip ownership checks. This file tests horizontal escalation (user A accessing user B's data), vertical escalation (regular user accessing admin functions), and mass assignment (injecting role/admin flags via request body).
 
 Covers: IDOR via sequential ID enumeration, UUID format enforcement, admin route access control, role parameter injection via query string and body, mass assignment on registration endpoint.
 
