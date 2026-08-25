@@ -68,7 +68,7 @@ pip install -r requirements-dev.txt
 
 ---
 
-### 2. Google Cloud OAuth Setup (2 Minutes)
+### 2. Google Cloud OAuth Setup
 
 1. Open the [Google Cloud Console](https://console.cloud.google.com/).
 2. Create a new project (e.g. `Gmail-Guardian`).
@@ -119,7 +119,7 @@ Customize `config.json` with your business domains and whitelist rules:
 ## 💻 Usage & Workflows
 
 ### 1. Run an Inbox Audit (Default / Dry Run)
-Inspects recent messages, prints classification decisions, and writes a review JSON file:
+On first run, this opens your browser for Google OAuth using your own `credentials.json`. After approval, it saves your local `token.json`, inspects recent messages, prints classification decisions, and writes a review JSON file. It does not move, label, or delete mail:
 ```bash
 python guardian.py
 ```
