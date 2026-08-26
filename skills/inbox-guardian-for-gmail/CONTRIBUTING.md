@@ -1,15 +1,15 @@
 # Contributing to Gmail Guardian
 
-Thank you for your interest in contributing! We welcome bug fixes, documentation improvements, and test coverage additions.
+Thank you for your interest in improving Gmail Guardian. We welcome bug fixes, documentation updates, and new unit tests.
 
 ---
 
-## 🛠️ Development Setup
+## Development Setup
 
 1. **Clone the Repository:**
    ```bash
-   git clone https://github.com/your-username/gmail-guardian.git
-   cd gmail-guardian
+   git clone https://github.com/Glenskii/Glenski-Toolkit.git
+   cd Glenski-Toolkit/skills/inbox-guardian-for-gmail
    ```
 
 2. **Create a Virtual Environment:**
@@ -18,7 +18,7 @@ Thank you for your interest in contributing! We welcome bug fixes, documentation
    source .venv/bin/activate   # On Windows: .venv\Scripts\Activate.ps1
    ```
 
-3. **Install Dependencies:**
+3. **Install Requirements:**
    ```bash
    pip install -r requirements.txt
    pip install -r requirements-dev.txt
@@ -26,23 +26,19 @@ Thank you for your interest in contributing! We welcome bug fixes, documentation
 
 ---
 
-## 🧪 Running Tests
+## Running Tests
 
-We maintain strict unit test coverage for classification precedence, sanitizer functions, and API error resilience:
+We maintain complete unit test coverage for classification logic, input sanitization, and API error handling:
 
 ```bash
-# Run all unit tests
 pytest tests/ -v
-
-# Run tests with coverage report
-pytest --cov=guardian --cov=guardian_sanitizer tests/
 ```
 
 ---
 
-## 📐 Pull Request Guidelines
+## Guidelines for Pull Requests
 
-1. **Safety First**: Never implement automatic destructive deletion as a default behavior. Quarantine and review must remain the standard flow.
-2. **Strict Sanitization**: Never pass unsanitized strings directly into Gmail query parameters.
-3. **Test Coverage**: All new features or rule additions must be accompanied by unit tests in `tests/`.
-4. **Semantic Versioning**: Releases follow SemVer format (`MAJOR.MINOR.PATCH`).
+1. **Safety First**: Never make permanent deletion the default behavior. Quarantine and review must remain the standard flow.
+2. **Input Validation**: Never pass unvalidated text directly into search queries.
+3. **Clear Writing**: Avoid excessive jargon or marketing claims. Do not use em dashes in documentation. Use straightforward, readable English.
+4. **Test Coverage**: Include unit tests for any new filter rules or code changes.

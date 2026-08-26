@@ -20,13 +20,13 @@ def mock_engine():
 def test_unicode_normalization():
     styled_math_bold = "𝐥𝐚𝐬𝐭 𝐫𝐞𝐦𝐢𝐧𝐝𝐞𝐫"
     assert normalize_text(styled_math_bold) == "last reminder"
-
+    
     italic_text = "𝘊𝘭𝘰𝘶𝘥 𝘈𝘤𝘤𝘰𝘶𝘯𝘵 𝘓𝘰𝘤𝘬𝘦𝘥"
     assert normalize_text(italic_text) == "cloud account locked"
 
 def test_starred_and_sent_precedence(mock_engine):
     headers = {"from": "spammer@evil-spammer.com", "subject": "crypto viruses found"}
-
+    
     verdict, reason = mock_engine.classify_message(headers, labels=["STARRED"])
     assert verdict == "SAFE"
     assert "Starred" in reason

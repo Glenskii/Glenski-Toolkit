@@ -14,10 +14,10 @@ def mock_service():
 
 def test_default_quarantine_action(mock_service):
     engine = GuardianEngine(service=mock_service)
-
+    
     result = engine.execute_quarantine("msg_001", move_to_trash=False, hard_delete=False)
     assert result == "quarantined"
-
+    
     # Ensure modify was called with addLabelIds and removeLabelIds
     mock_service.users().messages().modify.assert_called_with(
         userId='me',
@@ -27,14 +27,14 @@ def test_default_quarantine_action(mock_service):
 
 def test_move_to_trash_action(mock_service):
     engine = GuardianEngine(service=mock_service)
-
+    
     result = engine.execute_quarantine("msg_002", move_to_trash=True, hard_delete=False)
     assert result == "trashed"
     mock_service.users().messages().trash.assert_called_with(userId='me', id='msg_002')
 
 def test_hard_delete_action(mock_service):
     engine = GuardianEngine(service=mock_service)
-
+    
     result = engine.execute_quarantine("msg_003", move_to_trash=False, hard_delete=True)
     assert result == "hard_deleted"
     mock_service.users().messages().delete.assert_called_with(userId='me', id='msg_003')
