@@ -16,15 +16,15 @@ Subdomains match a configured domain. Lookalike domains do not. For example, `ma
 
 ## Actions
 
-Quarantine is the default action. It preserves the message while moving it out of the Inbox. Trash remains reversible through Gmail. Purge is not a public default because it is irreversible.
+Audit is the default action. It creates a local review file and does not change mail. Quarantine is a reviewed action that preserves the message while moving it out of the Inbox. Trash remains reversible through Gmail. Permanent deletion is not a public default because it is irreversible.
 
-The owner must enable purge in local configuration, select the owner-purge OAuth mode, and supply the confirmation flag on the command. Scheduled purge requires a fourth local setting.
+Permanent deletion requires `--hard-delete`, `--confirm-destructive`, the broader Gmail scope, and a typed confirmation. It must never be scheduled.
 
 ## Data handling
 
-The utility stores its OAuth token, configuration, and log beside the script. These files can expose mailbox access or mail metadata. Keep them out of version control and support requests.
+The utility stores its OAuth token, configuration, log, review files, local reputation database, and activity history beside the script. These files can expose mailbox access or mail metadata. Keep them out of version control and support requests.
 
-Message subject and sender logging is off by default. An owner may enable it locally when troubleshooting, then should protect or remove the resulting log.
+The local activity history records sender and subject excerpts for reviewed actions so the dashboard can display recent activity. The reputation database records correspondents and domains found in Sent and Starred mail. Both are local, ignored by Git, and should be protected like mailbox data.
 
 ## Unsubscribe boundary
 
@@ -32,4 +32,4 @@ Message subject and sender logging is off by default. An owner may enable it loc
 
 ## Testing boundary
 
-The bundled tests check decision rules with a fake Gmail service. They do not prove that OAuth, Gmail label operations, Task Scheduler, or a real mailbox will behave as expected. Test on a sacrificial mailbox before enabling scheduled changes.
+The bundled tests check decision rules with a fake Gmail service. They do not prove that OAuth, Gmail label operations, an operating-system schedule, or a real mailbox will behave as expected. Test on a sacrificial mailbox before enabling scheduled audits.

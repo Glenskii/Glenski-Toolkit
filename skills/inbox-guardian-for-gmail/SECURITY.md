@@ -2,10 +2,11 @@
 
 ## Privacy Statement
 
-Gmail Guardian is local software that runs entirely on your own computer.
+Inbox Guardian for Gmail is local software that runs on your own computer.
 - All email analysis, rule checking, and token management happen on your machine.
-- No analytics, logs, or email contents are sent to external services or third-party servers.
-- The tool communicates only with the official Google Gmail API at `https://gmail.googleapis.com` using your own Google Cloud credentials.
+- No analytics or telemetry are sent to a developer-operated service.
+- The tool communicates with the official Google Gmail API at `https://gmail.googleapis.com` through the mailbox owner's Google Cloud OAuth client.
+- Local activity history can retain sender and subject excerpts for reviewed actions in `guardian_stats.json`. The local reputation database can retain trusted sender addresses and domains. Both files are ignored by Git.
 
 ---
 
@@ -18,11 +19,17 @@ Spam messages often change the visible sender name to imitate trusted brands whi
 To avoid quarantining important messages, the tool applies a clear order of checks:
 1. **Protected Mail**: Any message that you star, send, or save as a draft is always marked safe.
 2. **Whitelist Priority**: Any sender address or domain in your allowed list always takes priority over keyword filters.
-3. **Reputation Tracking**: The tool keeps a local record of people you email. Verified contacts are never quarantined.
+3. **Reputation Tracking**: The tool keeps a local record of people you email. These local contacts receive trusted-sender precedence. This is a convenience rule, not an identity verification service.
 4. **Audit First**: The default action is an audit dry-run. It writes a review file so you can verify results before any labels change.
 
 ### 3. Minimal Access Permissions
-By default, the tool requests only the `https://www.googleapis.com/auth/gmail.modify` permission. This allows reading message headers, adding the quarantine label, and removing the inbox label. It does not request administrative access over your Google account.
+By default, the tool requests only the `https://www.googleapis.com/auth/gmail.modify` permission. This allows reading message headers, applying labels, archiving messages, and moving messages to Gmail Trash. It does not grant administrative access to the Google account.
+
+Permanent deletion is not part of the default scope. It requests the broader `https://mail.google.com/` scope only when the owner selects `--hard-delete` and `--confirm-destructive`, then types a second confirmation before action.
+
+### 4. Unsubscribe Boundary
+
+`List-Unsubscribe` headers are treated as untrusted review material. The tool shows the header but does not follow its links, send a request, or decide that the sender is legitimate. Use a known vendor site or Gmail's own unsubscribe interface when you choose to unsubscribe.
 
 ---
 

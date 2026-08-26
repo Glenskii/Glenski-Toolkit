@@ -20,7 +20,6 @@ import json
 import base64
 import argparse
 import datetime
-import subprocess
 import unicodedata
 from guardian_sanitizer import (
     is_valid_domain,
@@ -36,7 +35,7 @@ from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
-__version__ = "0.1.0"
+__version__ = "1.0.1"
 
 DEFAULT_SCOPES = ['https://www.googleapis.com/auth/gmail.modify']
 DESTRUCTIVE_SCOPE = ['https://mail.google.com/']
@@ -165,10 +164,22 @@ class GmailAuth:
 
         return build('gmail', 'v1', credentials=creds)
 
+def print_oauth_setup_instructions():
+    print("\nOAuth setup required:")
+    print("1. Open https://console.cloud.google.com/ and create or choose a project.")
+    print("2. Enable the Gmail API under APIs & Services > Library.")
+    print("3. Configure the OAuth consent screen, then create a Desktop app OAuth client.")
+    print(f"4. Download the client file, rename it to '{os.path.basename(CREDENTIALS_FILE)}', and place it in:")
+    print(f"   {SCRIPT_DIR}")
+    print("5. Run this command again. Your browser will open for owner approval.\n")
+
+
 def run_setup(scopes=DEFAULT_SCOPES):
     if not os.path.exists(CREDENTIALS_FILE):
-        print(f"Missing '{CREDENTIALS_FILE}'. Download your OAuth desktop client file from Google Cloud Console.")
+        print(f"Missing '{CREDENTIALS_FILE}'.")
+        print_oauth_setup_instructions()
         return 1
+    load_config()
     try:
         service = GmailAuth.get_service(scopes=scopes)
         profile = service.users().getProfile(userId="me").execute()
