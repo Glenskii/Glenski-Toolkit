@@ -1,11 +1,19 @@
 # Gmail Guardian (v0.1.0)
 
+![Inbox Guardian for Gmail](assets/social-preview.png)
+
 > A local tool that cleans spam, stops spoofed mail, and quarantines suspicious messages in Gmail.
 > It runs on your own computer, uses minimal Google permissions, and never sends your data to third parties.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
-[![Tests](https://img.shields.io/badge/tests-19%20passed-brightgreen.svg)]()
+[![Tests](https://img.shields.io/badge/tests-22%20passed-brightgreen.svg)]()
+
+---
+
+## System Architecture
+
+![How the system eliminates spam](assets/how-the-system-eliminates-spam.png)
 
 ---
 
@@ -82,44 +90,50 @@ To allow the script to connect to your Gmail:
 
 ## How to Use the Tool
 
-### 1. Open the Visual Dashboard
+### 1. Verify Connection and Account
+Check that your OAuth credentials are valid and confirm the active account:
+```bash
+python guardian.py --setup
+```
+
+### 2. Open the Visual Dashboard
 To generate and view your status report in your web browser:
 ```bash
 python guardian.py --dashboard
 ```
 
-### 2. Index Your Trusted Contacts
+### 3. Index Your Trusted Contacts
 Scan your Sent and Starred messages to register your frequent contacts:
 ```bash
 python guardian.py --seed-reputation
 ```
 
-### 3. Print a 24-Hour Summary
+### 4. Print a 24-Hour Summary
 To see a quick one-line summary in your terminal:
 ```bash
 python guardian.py --summary
 ```
 
-### 4. Run an Inbox Audit (Dry Run)
+### 5. Run an Inbox Audit (Dry Run)
 Inspect your recent emails, view classifications, and write a review file:
 ```bash
 python guardian.py
 ```
 This generates a file named `guardian_review_YYYYMMDD_HHMMSS.json`.
 
-### 5. Apply Quarantine from a Review File
+### 6. Apply Quarantine from a Review File
 Move flagged items to the `Guardian/Quarantine` label based on your audit:
 ```bash
 python guardian.py --execute --review-file guardian_review_20260826_080000.json
 ```
 
-### 6. Move Flagged Items to Trash
+### 7. Move Flagged Items to Trash
 If you prefer moving flagged items directly to Trash:
 ```bash
 python guardian.py --execute --review-file guardian_review_20260826_080000.json --trash
 ```
 
-### 7. Review Legitimate Unsubscribe Headers
+### 8. Review Legitimate Unsubscribe Headers
 Display messages that contain standard unsubscribe headers:
 ```bash
 python guardian.py --review-unsub
