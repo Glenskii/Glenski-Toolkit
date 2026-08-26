@@ -2,14 +2,15 @@
 """
 Gmail Guardian (v0.1.0)
 -----------------------
-Local-first inbox organization and heuristic spam/phishing quarantine engine.
+Local-first inbox organization, autonomous relay harvesting & heuristic quarantine engine.
 
 Core Architectural Principles:
 1. Least Privilege: Uses `gmail.modify` by default (read, label, archive, trash).
 2. Quarantine by Default: Moves suspicious emails to `Guardian/Quarantine` label.
-3. Review-First Audit: Audit mode is the default and generates an actionable review file.
-4. Safe Unsubscribe: Confirmation-only review flow for unsubscribe headers (zero auto-clicks).
-5. Sanitized Queries: Strict validation for all user inputs, domains, and email addresses.
+3. Review-First Audit: Audit mode is default and generates an actionable review file.
+4. Autonomous Relay Harvesting: Automatically learns rogue sending domains on detection.
+5. SQLite VIP Reputation: Auto-indexes trusted correspondents to prevent false positives.
+6. Visual Reporting Dashboard: Generates a sleek dark-mode interactive HTML control center.
 """
 
 import os
@@ -27,6 +28,8 @@ from guardian_sanitizer import (
     sanitize_query_token,
     extract_clean_address_and_domain
 )
+from reputation_manager import ReputationManager
+from stats_tracker import StatsTracker
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
@@ -35,15 +38,15 @@ from googleapiclient.errors import HttpError
 
 __version__ = "0.1.0"
 
-# Standard least-privilege scope
 DEFAULT_SCOPES = ['https://www.googleapis.com/auth/gmail.modify']
 DESTRUCTIVE_SCOPE = ['https://mail.google.com/']
 
-CREDENTIALS_FILE = 'credentials.json'
-TOKEN_FILE = 'token.json'
-CONFIG_FILE = 'config.json'
-CONFIG_EXAMPLE_FILE = 'config.example.json'
-LOG_FILE = 'guardian.log'
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+CREDENTIALS_FILE = os.path.join(SCRIPT_DIR, 'credentials.json')
+TOKEN_FILE = os.path.join(SCRIPT_DIR, 'token.json')
+CONFIG_FILE = os.path.join(SCRIPT_DIR, 'config.json')
+CONFIG_EXAMPLE_FILE = os.path.join(SCRIPT_DIR, 'config.example.json')
+LOG_FILE = os.path.join(SCRIPT_DIR, 'guardian.log')
 
 if hasattr(sys.stdout, 'reconfigure'):
     sys.stdout.reconfigure(encoding='utf-8', errors='replace')
@@ -54,6 +57,9 @@ if sys.platform == 'win32':
         ctypes.windll.kernel32.SetThreadExecutionState(0x80000000)  # ES_CONTINUOUS
     except Exception:
         pass
+
+reputation = ReputationManager()
+stats = StatsTracker()
 
 def load_config():
     """Loads configuration with strict fallback."""
@@ -80,7 +86,7 @@ def load_config():
         "blocklist_domains": [],
         "blocklist_senders": [],
         "trusted_unsub_domains": ["substack.com", "medium.com", "github.com", "linkedin.com"],
-        "suspicious_sender_tlds": [".biz", ".web.id", ".my.id", ".top", ".xyz", ".at", ".us", ".me"],
+        "suspicious_sender_tlds": [".biz", ".web.id", ".my.id", ".top", ".xyz", ".at", ".us", ".me", ".info"],
         "quarantine_keywords": [
             "last reminder", "blocked your account", "cloud_account", "viruses found",
             "antivirus expired", "photos and videos will be", "account is locked", "unauthorized access"
@@ -108,6 +114,25 @@ def normalize_text(text: str) -> str:
     if not text:
         return ""
     return unicodedata.normalize('NFKD', text).encode('ascii', 'ignore').decode('ascii').lower()
+
+def auto_harvest_relay(rp_header):
+    """Automatically learns and stores root sending domains of identified spam."""
+    _, _, dom = extract_clean_address_and_domain(rp_header)
+    if not dom or len(dom) < 4 or '.' not in dom:
+        return None
+    
+    cfg = load_config()
+    whitelist = [w.lower() for w in cfg.get("whitelist_domains", [])]
+    if any(dom == w or dom.endswith('.' + w) for w in whitelist + ["google.com", "gmail.com", "github.com", "stripe.com"]):
+        return None
+
+    blocklist = cfg.setdefault("blocklist_domains", [])
+    if dom not in blocklist:
+        blocklist.append(dom)
+        save_config(cfg)
+        log(f"  🧬 [AUTONOMOUS HARVEST] Learned and blocklisted rogue relay domain: '{dom}'")
+        return dom
+    return None
 
 class GmailAuth:
     @staticmethod
@@ -140,28 +165,19 @@ class GmailAuth:
 
         return build('gmail', 'v1', credentials=creds)
 
-
-def run_setup():
-    """Create local configuration, complete OAuth, and verify the Gmail account."""
-    load_config()
-
+def run_setup(scopes=DEFAULT_SCOPES):
     if not os.path.exists(CREDENTIALS_FILE):
-        print("\n[SETUP] Gmail Guardian needs your Google OAuth desktop client file.")
-        print("1. Open https://console.cloud.google.com/")
-        print("2. Create or select a project, then enable the Gmail API.")
-        print("3. Create an OAuth client of type Desktop app.")
-        print("4. Download the client file, rename it credentials.json, and place it here:")
-        print(f"   {os.path.abspath(CREDENTIALS_FILE)}")
-        print("5. Run this setup command again.\n")
+        print(f"Missing '{CREDENTIALS_FILE}'. Download your OAuth desktop client file from Google Cloud Console.")
         return 1
-
-    print("\n[SETUP] Opening your browser for Google OAuth if approval is needed...")
-    service = GmailAuth.get_service(scopes=DEFAULT_SCOPES)
-    profile = service.users().getProfile(userId='me').execute()
-    account = profile.get('emailAddress', 'the selected Gmail account')
-    print(f"[SETUP] Connected to {account}.")
-    print("[SETUP] Ready. Run 'python guardian.py' for a non-destructive inbox audit.\n")
-    return 0
+    try:
+        service = GmailAuth.get_service(scopes=scopes)
+        profile = service.users().getProfile(userId="me").execute()
+        email = profile.get("emailAddress", "unknown")
+        print(f"Connected to {email}")
+        return 0
+    except Exception as e:
+        print(f"Setup failed: {e}")
+        return 1
 
 class GuardianEngine:
     def __init__(self, service=None, scopes=DEFAULT_SCOPES):
@@ -199,6 +215,9 @@ class GuardianEngine:
             return None
 
     def is_safe_sender(self, from_header, return_path):
+        if reputation.is_trusted(from_header, return_path):
+            return True
+
         _, from_email, from_domain = extract_clean_address_and_domain(from_header)
         _, rp_email, rp_domain = extract_clean_address_and_domain(return_path)
 
@@ -238,16 +257,16 @@ class GuardianEngine:
         from_h = headers.get('from', '')
         rp = headers.get('return-path', '')
         raw_subj = headers.get('subject', '')
-
-        # 1. Highest Precedence: Starred, Sent, Drafts
+        
+        # 1. Starred, Sent, Drafts
         if 'STARRED' in labels:
             return "SAFE", "Starred message (User protected)"
         if 'SENT' in labels or 'DRAFT' in labels:
             return "SAFE", "Sent / Draft communication"
 
-        # 2. Whitelist Precedence
+        # 2. Whitelist & Reputation Precedence
         if self.is_safe_sender(from_h, rp):
-            return "SAFE", "Whitelisted domain or email"
+            return "SAFE", "Whitelisted or VIP trusted correspondent"
 
         # 3. Explicit Blocklist
         if self.is_blocked_sender(from_h, rp):
@@ -272,10 +291,9 @@ class GuardianEngine:
         return "LEGITIMATE", "Standard communication"
 
     def fetch_messages_paginated(self, query="in:inbox", max_results=100):
-        """Fetches messages handling pagination tokens and errors gracefully."""
         messages = []
         page_token = None
-
+        
         while len(messages) < max_results:
             batch_size = min(50, max_results - len(messages))
             try:
@@ -285,7 +303,7 @@ class GuardianEngine:
                     maxResults=batch_size,
                     pageToken=page_token
                 ).execute()
-
+                
                 msg_ids = res.get('messages', [])
                 for m in msg_ids:
                     try:
@@ -293,30 +311,27 @@ class GuardianEngine:
                             userId='me',
                             id=m['id'],
                             format='metadata',
-                            metadataHeaders=['From', 'Return-Path', 'Subject', 'Date', 'List-Unsubscribe', 'List-Unsubscribe-Post']
+                            metadataHeaders=['From', 'Return-Path', 'Subject', 'Date', 'List-Unsubscribe', 'List-Unsubscribe-Post', 'Authentication-Results']
                         ).execute()
                         messages.append(full)
                     except HttpError as he:
                         log(f"[WARN] Failed to fetch message metadata {m['id']}: {he}")
-
+                
                 page_token = res.get('nextPageToken')
                 if not page_token:
                     break
             except HttpError as e:
                 log(f"[ERROR] Gmail API query failed for '{query}': {e}")
                 break
-
+                
         return messages
 
-    def execute_quarantine(self, msg_id, move_to_trash=False, hard_delete=False):
-        """
-        Executes quarantine action.
-        Default: Adds Guardian/Quarantine label and removes INBOX label.
-        Optional: move_to_trash=True moves to Trash.
-        Destructive: hard_delete=True permanently destroys message.
-        """
+    def execute_quarantine(self, msg_id, move_to_trash=False, hard_delete=False, from_h="", subj="", reason="", rp_h=""):
+        harvested = auto_harvest_relay(rp_h)
+
         if hard_delete:
             self.service.users().messages().delete(userId='me', id=msg_id).execute()
+            stats.record_neutralization(from_h, subj, f"HARD_DELETE ({reason})", harvested)
             return "hard_deleted"
 
         label_name = self.config.get("quarantine_label_name", "Guardian/Quarantine")
@@ -333,14 +348,16 @@ class GuardianEngine:
                 except Exception:
                     pass
             self.service.users().messages().trash(userId='me', id=msg_id).execute()
+            stats.record_neutralization(from_h, subj, f"TRASH ({reason})", harvested)
             return "trashed"
 
-        # Default Quarantine: Label and archive (remove from INBOX)
+        # Default Quarantine
         body = {'removeLabelIds': ['INBOX']}
         if label_id:
             body['addLabelIds'] = [label_id]
 
         self.service.users().messages().modify(userId='me', id=msg_id, body=body).execute()
+        stats.record_neutralization(from_h, subj, f"QUARANTINE ({reason})", harvested)
         return "quarantined"
 
     def run_audit(self, max_results=50, output_review_file=True):
@@ -348,7 +365,7 @@ class GuardianEngine:
         print(f"        GMAIL GUARDIAN INBOX AUDIT (DRY RUN)           ")
         print(f"=======================================================")
         print(f"Scanning up to {max_results} recent messages in Inbox...")
-
+        
         messages = self.fetch_messages_paginated(query="in:inbox", max_results=max_results)
         if not messages:
             print("Inbox is empty or no messages returned.")
@@ -418,21 +435,33 @@ class GuardianEngine:
         for t in targets:
             mid = t['id']
             try:
-                res = self.execute_quarantine(mid, move_to_trash=move_to_trash, hard_delete=hard_delete)
+                res = self.execute_quarantine(
+                    mid,
+                    move_to_trash=move_to_trash,
+                    hard_delete=hard_delete,
+                    from_h=t.get('from', ''),
+                    subj=t.get('subject', ''),
+                    reason=t.get('reason', ''),
+                    rp_h=t.get('return_path', '')
+                )
                 executed += 1
                 log(f"  [{res.upper()}] {t.get('from', '')[:30]} | Subj: {t.get('subject', '')[:35]}")
             except Exception as e:
                 log(f"  [ERROR] Failed on {mid}: {e}")
 
         print(f"\nExecution Complete. {executed} items processed.")
+        try:
+            from guardian_dashboard import generate_dashboard_html
+            generate_dashboard_html()
+        except Exception:
+            pass
 
     def review_unsubscribes(self, max_results=50):
-        """Finds messages with List-Unsubscribe headers for manual user review only."""
         print(f"\n=======================================================")
         print(f"        UNSUBSCRIBE CONFIRMATION REVIEW                ")
         print(f"=======================================================")
         messages = self.fetch_messages_paginated(query="in:inbox", max_results=max_results)
-
+        
         unsub_list = []
         for m in messages:
             headers = {x['name'].lower(): x['value'] for x in m.get('payload', {}).get('headers', [])}
@@ -456,18 +485,21 @@ class GuardianEngine:
 
 def main():
     parser = argparse.ArgumentParser(
-        description=f"Gmail Guardian v{__version__}: Local Inbox Hygiene & Phishing Quarantine Engine"
+        description=f"Gmail Guardian v{__version__}: Local Inbox Hygiene, Autonomous Harvesting & Dashboard"
     )
+    parser.add_argument('--setup', action='store_true', help="Verify authentication and confirm connected account")
     parser.add_argument('--audit', action='store_true', help="Run non-destructive audit on Inbox (Default)")
     parser.add_argument('--max', type=int, default=50, help="Maximum messages to scan (default: 50)")
+    parser.add_argument('--dashboard', action='store_true', help="Generate and open the visual reporting dashboard")
+    parser.add_argument('--summary', action='store_true', help="Print 24-hour defense telemetry summary")
+    parser.add_argument('--seed-reputation', action='store_true', help="Auto-index trusted correspondents from Sent and Starred messages")
     parser.add_argument('--review-unsub', action='store_true', help="Review legitimate unsubscribe headers (confirmation-only)")
-    parser.add_argument('--setup', action='store_true', help="Create local config, complete Google OAuth, and verify the selected Gmail account")
     parser.add_argument('--execute', action='store_true', help="Execute actions from a generated review file")
     parser.add_argument('--review-file', type=str, help="Path to audit review JSON file to execute")
     parser.add_argument('--trash', action='store_true', help="Move quarantined items to Trash instead of labeling/archiving")
     parser.add_argument('--hard-delete', action='store_true', help="Permanently destroy quarantined items (Requires --confirm-destructive)")
     parser.add_argument('--confirm-destructive', action='store_true', help="Explicit confirmation for permanent deletion")
-
+    
     parser.add_argument('--block-domain', type=str, help="Add validated domain to blocklist")
     parser.add_argument('--add-whitelist-domain', type=str, help="Add validated domain to safe whitelist")
     parser.add_argument('--add-whitelist-email', type=str, help="Add validated email to safe whitelist")
@@ -475,9 +507,20 @@ def main():
 
     args = parser.parse_args()
 
+    if args.setup:
+        sys.exit(run_setup())
+
+    if args.dashboard:
+        from guardian_dashboard import main as dash_main
+        dash_main()
+        return
+
+    if args.summary:
+        print("\n" + stats.get_24h_summary() + "\n")
+        return
+
     cfg = load_config()
 
-    # Input validation handlers
     if args.add_whitelist_domain:
         dom = args.add_whitelist_domain.strip().lower().lstrip('@.')
         if not is_valid_domain(dom):
@@ -515,10 +558,6 @@ def main():
         print(json.dumps(cfg, indent=2))
         return
 
-    if args.setup:
-        sys.exit(run_setup())
-
-    # Safety check for hard deletion
     scopes = DEFAULT_SCOPES
     if args.hard_delete:
         if not args.confirm_destructive:
@@ -527,6 +566,10 @@ def main():
         scopes = DESTRUCTIVE_SCOPE
 
     engine = GuardianEngine(scopes=scopes)
+
+    if args.seed_reputation:
+        reputation.seed_from_mailbox(engine.service)
+        return
 
     if args.review_unsub:
         engine.review_unsubscribes(max_results=args.max)
@@ -540,7 +583,6 @@ def main():
             hard_delete=args.hard_delete
         )
     else:
-        # Default behavior is always safe audit
         engine.run_audit(max_results=args.max)
 
 if __name__ == '__main__':

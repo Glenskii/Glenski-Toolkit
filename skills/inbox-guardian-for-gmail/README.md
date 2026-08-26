@@ -1,52 +1,44 @@
-# 🛡️ Gmail Guardian (v0.1.0)
+# Gmail Guardian (v0.1.0)
 
-> **Local-first inbox organization and heuristic phishing/spam quarantine engine for Gmail.**
-> Built with least-privilege OAuth scopes, review-first safety controls, and zero third-party telemetry.
+> A local tool that cleans spam, stops spoofed mail, and quarantines suspicious messages in Gmail.
+> It runs on your own computer, uses minimal Google permissions, and never sends your data to third parties.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
-[![Tests](https://img.shields.io/badge/tests-15%20passed-brightgreen.svg)]()
+[![Tests](https://img.shields.io/badge/tests-19%20passed-brightgreen.svg)]()
 
 ---
 
-![Inbox Guardian for Gmail](assets/social-preview.png)
+## What This Tool Does
+
+Gmail Guardian helps you take back control of your inbox. It targets persistent spam, fake security warnings, and spoofed senders while protecting your genuine contacts.
+
+Key features include:
+
+1. **Minimal Permissions**: The tool requests only the `gmail.modify` permission by default. It can read, label, and archive messages without taking full control of your Google account.
+2. **Quarantine by Default**: Flagged messages receive the `Guardian/Quarantine` label and move out of your Inbox. You can review and restore any message at any time in Gmail.
+3. **Automatic Relay Learning**: When the tool detects spam, it checks the hidden sending server address and automatically adds that domain to your blocklist.
+4. **Trusted Contact Protection**: It scans your Sent and Starred messages to build a local list of trusted people. Emails from these contacts are never blocked or moved.
+5. **Visual Control Dashboard**: You can open a simple, clear status page in your web browser to see what was caught, view recent activity, and check your rules.
+6. **Review Mode by Default**: When you run the tool without extra options, it performs an audit. It writes a review file so you can inspect proposed actions before anything changes.
+7. **Safe Unsubscribe Checks**: It lists valid unsubscribe links for you to review manually. It never clicks links automatically, which prevents spammers from confirming that your address is active.
+8. **Font Normalization**: Spammers often use fancy math symbols or bold fonts to sneak past standard filters. The tool converts these styled characters back into standard text before scanning.
 
 ---
 
-![How the system eliminates spam](assets/how-the-system-eliminates-spam.png)
+## Requirements
 
-## Fair warning
-
-This is an active personal inbox defence system, not a gentle inbox tidy-up. It can silently cold-block repeat hostile senders and permanently delete messages that meet the owner's configured botnet and spoofing rules. Start with audit mode, protect legitimate mail through allowlists, and test the rules before enabling destructive actions.
-
-Only a verified sender and a verified provider path can be considered for unsubscribe. Unknown, spoofed, or suspicious mail receives no click, request, or reply. An actual unsubscribe tells a verified provider that the mailbox is active, which is why this path must never be used for unverified senders.
+- Python 3.9 or higher
+- A personal Gmail or Google Workspace account
+- A free Google Cloud OAuth client credentials file (`credentials.json`)
 
 ---
 
-## ⚡ Core Technical Principles
+## Installation and Setup
 
-1. **Least-Privilege Security**: Operates using `https://www.googleapis.com/auth/gmail.modify` by default (read, label, archive). Does not require full mailbox takeover scopes for standard quarantine operations.
-2. **Quarantine by Default**: Flagged messages are tagged with the `Guardian/Quarantine` label and archived out of `INBOX`. Messages are preserved for review and never destroyed by default.
-3. **Review-First Workflow**: Running the tool with no arguments defaults to `--audit` (dry-run) and outputs a structured JSON review file for inspection before taking action.
-4. **Confirmation-Only Unsubscribe**: Displays verified `List-Unsubscribe` headers for manual review without automatically firing network requests to unverified senders.
-5. **Unicode Normalization**: Uses `NFKD` normalization to canonicalize mathematical styled fonts (e.g. `𝐥𝐚𝐬𝐭 𝐫𝐞𝐦𝐢𝐧𝐝𝐞𝐫` ➔ `last reminder`) often used to circumvent simple keyword checks.
-6. **Strict Input Sanitization**: Validates all email addresses and domains against strict RFC specifications; never interpolates raw input into search queries.
+### 1. Download and Set Up
 
----
-
-## 📋 Prerequisites
-
-- **Python 3.9+**
-- A **Gmail / Google Workspace account**
-- A **Google Cloud OAuth 2.0 Desktop Client ID** (`credentials.json`)
-
----
-
-## 🚀 Installation
-
-### 1. Clone & Set Up Virtual Environment
-
-#### **macOS / Linux:**
+#### On macOS and Linux:
 ```bash
 git clone https://github.com/Glenskii/Glenski-Toolkit.git
 cd Glenski-Toolkit/skills/inbox-guardian-for-gmail
@@ -54,133 +46,120 @@ python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 pip install -r requirements-dev.txt
+cp config.example.json config.json
 ```
 
-#### **Windows (PowerShell):**
+#### On Windows (PowerShell):
 ```powershell
 git clone https://github.com/Glenskii/Glenski-Toolkit.git
-cd Glenski-Toolkit/skills/inbox-guardian-for-gmail
+cd Glenski-Toolkit\skills\inbox-guardian-for-gmail
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 pip install -r requirements-dev.txt
+copy config.example.json config.json
 ```
 
 ---
 
-### 2. Google Cloud OAuth Setup
+### 2. Google Cloud Setup (Takes About 2 Minutes)
+
+To allow the script to connect to your Gmail:
 
 1. Open the [Google Cloud Console](https://console.cloud.google.com/).
-2. Create a new project (e.g. `Gmail-Guardian`).
-3. Navigate to **APIs & Services > Library**, search for **Gmail API**, and click **Enable**.
-4. Navigate to **APIs & Services > OAuth consent screen**:
-   - Select User Type: **External** (or Internal for Workspace organizations).
-   - Set App name and your support email.
-   - Under **Test users**, add your own Gmail address.
-5. Navigate to **APIs & Services > Credentials**:
-   - Click **Create Credentials > OAuth client ID**.
-   - Select Application type: **Desktop app**.
-   - Download the credentials, rename the file to `credentials.json`, and place it in the project root directory.
+2. Create a new project named `Gmail-Guardian`.
+3. In the left menu, open **APIs & Services**, select **Library**, search for **Gmail API**, and click **Enable**.
+4. Open **APIs & Services**, select **OAuth consent screen**:
+   - Choose **External** (or Internal for Workspace organizations).
+   - Enter an app name and your email address.
+   - Under **Test users**, add your Gmail address.
+5. Open **APIs & Services**, select **Credentials**:
+   - Click **Create Credentials** and choose **OAuth client ID**.
+   - Select **Desktop app** as the application type.
+   - Download the file, rename it to `credentials.json`, and place it in this project folder.
 
 ---
 
-### 3. Run Guided Local Setup
+## How to Use the Tool
 
-From the skill folder, run:
-
+### 1. Open the Visual Dashboard
+To generate and view your status report in your web browser:
 ```bash
-python guardian.py --setup
+python guardian.py --dashboard
 ```
 
-The setup command creates `config.json` from the bundled example when needed, opens Google OAuth in your browser, saves `token.json` locally after approval, and confirms the Gmail account that connected. It does not scan, label, move, or delete mail.
-
-If `credentials.json` is missing, the command prints the exact Google Cloud steps and the folder where the file belongs.
-
----
-
-### 4. Review Local Configuration
-
-The guided setup creates `config.json`. Review and customize it with your business domains and whitelist rules:
-```json
-{
-  "whitelist_domains": [
-    "yourdomain.com",
-    "google.com",
-    "github.com",
-    "linkedin.com"
-  ],
-  "whitelist_emails": [
-    "partner@example.com"
-  ],
-  "blocklist_domains": [
-    "unwanted-pitch.com"
-  ],
-  "quarantine_label_name": "Guardian/Quarantine"
-}
+### 2. Index Your Trusted Contacts
+Scan your Sent and Starred messages to register your frequent contacts:
+```bash
+python guardian.py --seed-reputation
 ```
 
----
+### 3. Print a 24-Hour Summary
+To see a quick one-line summary in your terminal:
+```bash
+python guardian.py --summary
+```
 
-## 💻 Usage & Workflows
-
-### 1. Run an Inbox Audit (Default / Dry Run)
-After guided setup is complete, this inspects recent messages, prints classification decisions, and writes a review JSON file. It does not move, label, or delete mail:
+### 4. Run an Inbox Audit (Dry Run)
+Inspect your recent emails, view classifications, and write a review file:
 ```bash
 python guardian.py
 ```
-*Output: Generates `guardian_review_YYYYMMDD_HHMMSS.json`.*
+This generates a file named `guardian_review_YYYYMMDD_HHMMSS.json`.
 
-### 2. Execute Quarantine from a Review File
-Applies the `Guardian/Quarantine` label and archives flagged items:
+### 5. Apply Quarantine from a Review File
+Move flagged items to the `Guardian/Quarantine` label based on your audit:
 ```bash
-python guardian.py --execute --review-file guardian_review_20260825_090000.json
+python guardian.py --execute --review-file guardian_review_20260826_080000.json
 ```
 
-### 3. Move Flagged Items to Trash (Optional)
+### 6. Move Flagged Items to Trash
+If you prefer moving flagged items directly to Trash:
 ```bash
-python guardian.py --execute --review-file guardian_review_20260825_090000.json --trash
+python guardian.py --execute --review-file guardian_review_20260826_080000.json --trash
 ```
 
-### 4. Review Legitimate Unsubscribe Headers
-Inspects marketing emails with valid `List-Unsubscribe` headers for manual action (zero auto-clicks):
+### 7. Review Legitimate Unsubscribe Headers
+Display messages that contain standard unsubscribe headers:
 ```bash
 python guardian.py --review-unsub
 ```
 
-### 5. Manage Whitelists & Blocklists
+---
+
+## Automated Background Schedule (Sleep-Safe)
+
+You can set up your operating system to run quick sweeps automatically without keeping a program open in the background. This allows your monitors and laptop screens to sleep normally.
+
+### Install the Scheduled Task:
 ```bash
-# Add a trusted domain to whitelist
-python guardian.py --add-whitelist-domain "clientcompany.com"
+python guardian.py --install-scheduler
+```
+- On Windows, this creates a task in Windows Task Scheduler.
+- On macOS and Linux, this adds an entry to your user crontab.
 
-# Add a trusted email
-python guardian.py --add-whitelist-email "vip@example.com"
-
-# Block a specific domain
-python guardian.py --block-domain "unsolicited-coldoutreach.com"
+### Remove the Scheduled Task:
+```bash
+python guardian.py --uninstall-scheduler
 ```
 
 ---
 
-## 🧪 Testing
+## Running Tests
 
-Run the automated test suite:
+To verify that the rules and functions pass all unit tests:
 ```bash
 pytest tests/ -v
 ```
 
 ---
 
-## 🔒 Security & Privacy
+## Security and Privacy
 
-For detailed information on our threat model, least-privilege scoping, and token revocation steps, see [SECURITY.md](SECURITY.md).
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Please review [CONTRIBUTING.md](CONTRIBUTING.md) for development guidelines and coding standards.
+All message processing and rule checks happen directly on your computer. Your emails, tokens, and configuration files are never sent to external servers. For technical details on the security model, see [SECURITY.md](SECURITY.md).
 
 ---
 
-## 📄 License
+## License
+
 Released under the [MIT License](LICENSE). Copyright (c) 2026 Glen E. Grant.
