@@ -1,13 +1,13 @@
-# Gmail Guardian (v0.1.0)
+# Inbox Guardian for Gmail (v1.0.2)
 
 ![Inbox Guardian for Gmail](assets/social-preview.png)
 
-> A local tool that cleans spam, stops spoofed mail, and quarantines suspicious messages in Gmail.
-> It runs on your own computer, uses minimal Google permissions, and never sends your data to third parties.
+> Local Gmail inbox review with owner-approved spam rules, audit-first quarantine, and clear recovery paths.
+> It runs on your computer and connects only to Gmail through your own Google Cloud OAuth client.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
-[![Tests](https://img.shields.io/badge/tests-22%20passed-brightgreen.svg)]()
+[![Tests](https://img.shields.io/badge/tests-pytest-brightgreen.svg)]()
 
 ---
 
@@ -23,14 +23,13 @@ Gmail Guardian helps you take back control of your inbox. It targets persistent 
 
 Key features include:
 
-1. **Minimal Permissions**: The tool requests only the `gmail.modify` permission by default. It can read, label, and archive messages without taking full control of your Google account.
-2. **Quarantine by Default**: Flagged messages receive the `Guardian/Quarantine` label and move out of your Inbox. You can review and restore any message at any time in Gmail.
-3. **Automatic Relay Learning**: When the tool detects spam, it checks the hidden sending server address and automatically adds that domain to your blocklist.
-4. **Trusted Contact Protection**: It scans your Sent and Starred messages to build a local list of trusted people. Emails from these contacts are never blocked or moved.
-5. **Visual Control Dashboard**: You can open a simple, clear status page in your web browser to see what was caught, view recent activity, and check your rules.
-6. **Review Mode by Default**: When you run the tool without extra options, it performs an audit. It writes a review file so you can inspect proposed actions before anything changes.
-7. **Safe Unsubscribe Checks**: It lists valid unsubscribe links for you to review manually. It never clicks links automatically, which prevents spammers from confirming that your address is active.
-8. **Font Normalization**: Spammers often use fancy math symbols or bold fonts to sneak past standard filters. The tool converts these styled characters back into standard text before scanning.
+1. **Least-Privilege Access**: The default Gmail scope can read message headers, label messages, archive them, and move them to Trash. It does not grant administrative account access.
+2. **Audit Before Action**: A normal run writes a local review file. Nothing changes in Gmail until the owner executes that reviewed file.
+3. **Recoverable Quarantine**: Reviewed candidates receive the `Guardian/Quarantine` label and leave the Inbox. The owner can restore them in Gmail.
+4. **Local Sender Learning**: When a reviewed action is applied, the tool can add the related return-path domain to the local blocklist. Trusted contacts built from Sent and Starred mail take precedence over matching rules.
+5. **Local Dashboard**: A browser dashboard reads local activity data and rules. It does not host the dashboard or send it to a third-party service.
+6. **Header Review Only**: The tool can display `List-Unsubscribe` headers for inspection. It does not follow links, send unsubscribe requests, or treat a header as proof that a sender is legitimate.
+7. **Text Normalization**: It converts styled Unicode text to a plain form before comparing configured rules.
 
 ---
 
@@ -70,21 +69,17 @@ copy config.example.json config.json
 
 ---
 
-### 2. Google Cloud Setup (Takes About 2 Minutes)
+### 2. Google Cloud Setup
 
 To allow the script to connect to your Gmail:
 
-1. Open the [Google Cloud Console](https://console.cloud.google.com/).
-2. Create a new project named `Gmail-Guardian`.
-3. In the left menu, open **APIs & Services**, select **Library**, search for **Gmail API**, and click **Enable**.
-4. Open **APIs & Services**, select **OAuth consent screen**:
-   - Choose **External** (or Internal for Workspace organizations).
-   - Enter an app name and your email address.
-   - Under **Test users**, add your Gmail address.
-5. Open **APIs & Services**, select **Credentials**:
-   - Click **Create Credentials** and choose **OAuth client ID**.
-   - Select **Desktop app** as the application type.
-   - Download the file, rename it to `credentials.json`, and place it in this project folder.
+Follow the complete [Google OAuth setup guide](docs/google-oauth-setup.md). Place your downloaded Desktop app client file beside `guardian.py` as `credentials.json`, then run:
+
+```bash
+python guardian.py --setup
+```
+
+The setup command creates local configuration if needed, opens the owner's browser for Google consent, stores the resulting local token with private file permissions where supported, and confirms the connected mailbox. It does not scan, label, move, or delete mail.
 
 ---
 
@@ -133,29 +128,19 @@ If you prefer moving flagged items directly to Trash:
 python guardian.py --execute --review-file guardian_review_20260826_080000.json --trash
 ```
 
-### 8. Review Legitimate Unsubscribe Headers
-Display messages that contain standard unsubscribe headers:
+### 8. Review Unsubscribe Headers
+Display messages that contain `List-Unsubscribe` headers:
 ```bash
 python guardian.py --review-unsub
 ```
 
 ---
 
-## Automated Background Schedule (Sleep-Safe)
+## Scheduled Audits
 
-You can set up your operating system to run quick sweeps automatically without keeping a program open in the background. This allows your monitors and laptop screens to sleep normally.
+This release does not install or remove operating-system schedules. After a successful `--setup`, you can schedule the standard audit command through Windows Task Scheduler, macOS `launchd`, or Linux cron. Read the [scheduled audit guide](docs/scheduled-runs.md) before enabling it.
 
-### Install the Scheduled Task:
-```bash
-python guardian.py --install-scheduler
-```
-- On Windows, this creates a task in Windows Task Scheduler.
-- On macOS and Linux, this adds an entry to your user crontab.
-
-### Remove the Scheduled Task:
-```bash
-python guardian.py --uninstall-scheduler
-```
+Scheduled runs should remain audit-only. Each generated review file is signed, expires after 24 hours, and is rechecked against current mailbox metadata before an owner runs a quarantine or Trash command.
 
 ---
 
@@ -168,9 +153,9 @@ pytest tests/ -v
 
 ---
 
-## Security and Privacy
+## Local Data and Privacy
 
-All message processing and rule checks happen directly on your computer. Your emails, tokens, and configuration files are never sent to external servers. For technical details on the security model, see [SECURITY.md](SECURITY.md).
+The tool stores its OAuth token, configuration, review files, local reputation database, and activity history beside the skill. Activity history can contain sender and subject excerpts for reviewed actions. These files are ignored by Git and should not be copied into support requests. The only network service used by the tool is the official Gmail API through the mailbox owner's OAuth client. Read [SECURITY.md](SECURITY.md) and the detailed [safety model](docs/safety-model.md).
 
 ---
 
