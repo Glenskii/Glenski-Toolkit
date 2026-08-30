@@ -27,3 +27,16 @@ def test_docs_do_not_advertise_unsupported_scheduler_commands():
     readme = (SKILL_DIR / "README.md").read_text(encoding="utf-8")
     assert "--install-scheduler" not in readme
     assert "--uninstall-scheduler" not in readme
+
+
+def test_public_package_has_no_owner_specific_domains():
+    forbidden = (
+        "glen" + "egrant.com",
+        "mail" + "mindz.app",
+        "watermark" + "gienie.com",
+    )
+    for path in SKILL_DIR.rglob("*"):
+        if not path.is_file() or path.suffix in {".png", ".svg", ".pyc", ".db"}:
+            continue
+        text = path.read_text(encoding="utf-8", errors="ignore").lower()
+        assert not any(value in text for value in forbidden), path

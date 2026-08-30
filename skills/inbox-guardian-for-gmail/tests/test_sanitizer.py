@@ -9,8 +9,8 @@ from guardian_sanitizer import (
 def test_valid_domains():
     assert is_valid_domain("google.com") is True
     assert is_valid_domain("sub.example.co.uk") is True
-    assert is_valid_domain("@glenegrant.com") is True
-    assert is_valid_domain("mailmindz.app") is True
+    assert is_valid_domain("@sample-studio.ca") is True
+    assert is_valid_domain("example-app.dev") is True
     assert is_valid_domain("invalid_domain") is False
     assert is_valid_domain("http://google.com") is False
     assert is_valid_domain("") is False

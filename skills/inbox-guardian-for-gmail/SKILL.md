@@ -1,14 +1,14 @@
 ---
 name: inbox-guardian-for-gmail
-description: Review a personal Gmail inbox with local, owner-approved spam rules. Use for audit-first quarantine, Trash, repeated-evidence sender learning, and header review. Do not use for automatic unsubscribe requests or unreviewed mailbox actions.
+description: Run a local Gmail inbox defense workflow with owner-controlled review, quarantine, Trash, sender learning, and Windows background sweeps. Use for persistent spam, spoofing, botnet mail, or legitimate unsubscribe review. Do not use for automatic unsubscribe requests.
 license: MIT
 metadata:
-  version: 1.0.3
+  version: 1.1.0
 ---
 
 # Inbox Guardian for Gmail
 
-Use this skill to help an owner review a Gmail inbox with rules that stay on the owner's computer. The bundled utility audits messages, then applies only reviewed quarantine or Trash actions.
+Use this skill to help an owner control a Gmail inbox with rules that stay on the owner's computer. The bundled utility supports reviewed actions and an optional owner-installed Windows background service.
 
 ## Start with Scope
 
@@ -24,6 +24,7 @@ Use this skill to help an owner review a Gmail inbox with rules that stay on the
 - **Quarantine**: A reviewed execution adds the `Guardian/Quarantine` label and removes the Inbox label. The owner can review and restore mail at any time in Gmail.
 - **Trash**: This is the strongest action in this skill. It is an explicit owner choice and remains recoverable through Gmail's normal retention window.
 - **Learning**: Repeated, reviewed messages can promote an aligned sender domain into the local blocklist. Shared relays and one-off return paths are not promoted automatically. Owners can still explicitly block any validated domain.
+- **Purge**: The Windows background service can permanently remove only messages that match a direct local blocklist rule. It requires the owner to set both `action: purge` and `purge_blocklisted_messages: true` in the local service configuration. Read [docs/windows-background-service.md](docs/windows-background-service.md) first.
 
 ## Data and Unsubscribe Boundaries
 
@@ -69,3 +70,11 @@ Open the visual report in your web browser:
 ```bash
 python guardian.py --dashboard
 ```
+
+### 7. Run a Windows Background Sweep
+Only the mailbox owner should install the optional background service. It runs the configured local action with no visible terminal window:
+```powershell
+.\scripts\install-windows-task.ps1
+```
+
+Read [docs/windows-background-service.md](docs/windows-background-service.md) before installation. Do not use this workflow for another person's mailbox.
