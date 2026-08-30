@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Inbox Guardian for Gmail (v1.0.3)
+Inbox Guardian for Gmail (v1.1.0)
 -----------------------
 Local-first inbox organization, autonomous relay harvesting & heuristic quarantine engine.
 
@@ -40,7 +40,7 @@ from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
-__version__ = "1.0.3"
+__version__ = "1.1.0"
 
 DEFAULT_SCOPES = ['https://www.googleapis.com/auth/gmail.modify']
 

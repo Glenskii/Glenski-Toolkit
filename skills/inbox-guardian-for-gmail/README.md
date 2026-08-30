@@ -1,4 +1,4 @@
-# Inbox Guardian for Gmail (v1.0.3)
+# Inbox Guardian for Gmail (v1.1.0)
 
 ![Inbox Guardian for Gmail](assets/social-preview.png)
 
@@ -30,6 +30,7 @@ Key features include:
 5. **Local Dashboard**: A browser dashboard reads local activity data and rules. It does not host the dashboard or send it to a third-party service.
 6. **Header Review Only**: The tool can display `List-Unsubscribe` headers for inspection. It does not follow links, send unsubscribe requests, or treat a header as proof that a sender is legitimate.
 7. **Text Normalization**: It converts styled Unicode text to a plain form before comparing configured rules.
+8. **Windows Background Service**: The full GitHub build can run owner-configured sweeps through Windows Task Scheduler every 15 minutes without a visible console window or focus change.
 
 ---
 
@@ -136,11 +137,11 @@ python guardian.py --review-unsub
 
 ---
 
-## Scheduled Audits
+## Windows Background Service
 
-This release does not install or remove operating-system schedules. After a successful `--setup`, you can schedule the standard audit command through Windows Task Scheduler, macOS `launchd`, or Linux cron. Read the [scheduled audit guide](docs/scheduled-runs.md) before enabling it.
+After a successful `--setup`, the full GitHub build can run its configured local service silently through Windows Task Scheduler. It defaults to quarantine, preserves the dashboard and sender-learning workflow, and gives the owner separate Trash and direct-blocklist purge choices.
 
-Scheduled runs should remain audit-only. Each generated review file is signed, expires after 24 hours, retains only the minimum execution record, and is rechecked against current mailbox metadata before an owner runs a quarantine or Trash command.
+Read the [Windows background-service guide](docs/windows-background-service.md) before installing it. For a manual audit-only schedule on Windows, macOS, or Linux, read the [scheduled audit guide](docs/scheduled-runs.md).
 
 ---
 

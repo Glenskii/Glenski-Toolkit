@@ -15,12 +15,16 @@ REQUIRED_FILES = (
     "LICENSE",
     "SECURITY.md",
     "guardian.py",
+    "guardian_service.py",
     "guardian_storage.py",
     "requirements.txt",
     "docs/google-oauth-setup.md",
     "docs/safety-model.md",
     "docs/scheduled-runs.md",
+    "docs/windows-background-service.md",
     "references/operating-model.md",
+    "scripts/install-windows-task.ps1",
+    "scripts/run_silent.vbs",
 )
 PRIVATE_ARTIFACTS = (
     "credentials.json",
@@ -53,6 +57,7 @@ def main() -> None:
     skill_text = read("SKILL.md")
     readme = read("README.md")
     guardian = read("guardian.py")
+    service = read("guardian_service.py")
     ignored = read(".gitignore")
     license_text = read("LICENSE")
 
@@ -77,6 +82,9 @@ def main() -> None:
 
     if ".messages().delete(" in guardian:
         fail("guardian.py must not contain irreversible Gmail deletion")
+
+    if "purge_blocklisted_messages" not in service or 'verdict != "QUARANTINE_BLOCKLIST"' not in service:
+        fail("background purge must remain limited to direct blocklist matches")
 
     for relative_path in ("SKILL.md", "README.md", "SECURITY.md", "docs/google-oauth-setup.md"):
         if "—" in read(relative_path):

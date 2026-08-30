@@ -1,4 +1,4 @@
 interface:
   display_name: "Inbox Guardian for Gmail"
-  short_description: "Review personal inbox cleanup rules safely"
-  default_prompt: "Use $inbox-guardian-for-gmail to review this personal inbox configuration. Start with an audit and do not change mail until I approve the action."
+  short_description: "Defend a personal inbox with local owner rules"
+  default_prompt: "Use $inbox-guardian-for-gmail to review this personal inbox configuration. Start with an audit, then explain the local quarantine, Trash, or Windows service options before changing mail."

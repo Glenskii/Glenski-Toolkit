@@ -73,5 +73,14 @@
     "limited time deal"
   ],
   "quarantine_label_name": "Guardian/Quarantine",
-  "sweep_interval_minutes": 15
+  "sweep_interval_minutes": 15,
+  "scheduled_service": {
+    "action": "quarantine",
+    "queries": [
+      "in:inbox"
+    ],
+    "max_messages_per_query": 50,
+    "refresh_dashboard": true,
+    "purge_blocklisted_messages": false
+  }
 }
