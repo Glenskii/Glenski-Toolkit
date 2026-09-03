@@ -81,7 +81,7 @@
   "scheduled_service": {
     "action": "quarantine",
     "queries": [
-      "in:inbox"
+      "in:inbox newer_than:7d"
     ],
     "max_messages_per_query": 50,
     "refresh_dashboard": true,
