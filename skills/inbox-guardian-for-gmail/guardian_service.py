@@ -20,7 +20,7 @@ from guardian import GuardianEngine, log, stats
 VALID_ACTIONS = {"quarantine", "trash", "purge"}
 DEFAULT_OPTIONS = {
     "action": "quarantine",
-    "queries": ["in:inbox"],
+    "queries": ["in:inbox newer_than:7d"],
     "max_messages_per_query": 50,
     "refresh_dashboard": True,
     "purge_blocklisted_messages": False,
