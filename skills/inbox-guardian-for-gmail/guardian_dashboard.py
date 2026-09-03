@@ -104,6 +104,7 @@ def generate_dashboard_html():
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="refresh" content="15">
     <title>Gmail Guardian | Visual Control Center</title>
     <style>
         :root {{
@@ -386,21 +387,42 @@ def generate_dashboard_html():
         </div>
 
         <footer>
-            <div>Report Generated: {now_str}</div>
+            <div>Report Generated: {now_str} | <span id="countdown" style="color: var(--accent-green);">Auto-syncing in 15s</span></div>
             <div>Inbox Guardian for Gmail v1.0.2 • 100% Local-First Open Source</div>
         </footer>
     </div>
+    <script>
+        let timeLeft = 15;
+        const cd = document.getElementById('countdown');
+        setInterval(() => {{
+            timeLeft--;
+            if (timeLeft <= 0) {{
+                cd.textContent = 'Refreshing...';
+                window.location.reload();
+            }} else {{
+                cd.textContent = 'Auto-syncing in ' + timeLeft + 's';
+            }}
+        }}, 1000);
+    </script>
 </body>
 </html>
 """
     write_private_bytes(DASHBOARD_HTML, html_content.encode('utf-8'))
-    print(f"[DASHBOARD] Generated updated visual report: {DASHBOARD_HTML}")
+    if sys.stdout is not None:
+        try:
+            print(f"[DASHBOARD] Generated updated visual report: {DASHBOARD_HTML}")
+        except Exception:
+            pass
     return DASHBOARD_HTML
 
 def main():
     path = generate_dashboard_html()
     if "--open" in sys.argv or len(sys.argv) == 1:
-        print("[DASHBOARD] Opening in default browser...")
+        if sys.stdout is not None:
+            try:
+                print("[DASHBOARD] Opening in default browser...")
+            except Exception:
+                pass
         webbrowser.open(path)
 
 if __name__ == '__main__':

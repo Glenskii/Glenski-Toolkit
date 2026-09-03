@@ -131,7 +131,11 @@ def save_config(cfg):
 def log(msg):
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     line = f"[{timestamp}] {msg}\n"
-    print(line.strip(), flush=True)
+    if sys.stdout is not None:
+        try:
+            print(line.strip(), flush=True)
+        except Exception:
+            pass
     try:
         with open(LOG_FILE, "a", encoding="utf-8") as f:
             f.write(line)
@@ -411,6 +415,7 @@ class GuardianEngine:
                 res = self.service.users().messages().list(
                     userId='me',
                     q=query,
+                    includeSpamTrash=True,
                     maxResults=batch_size,
                     pageToken=page_token
                 ).execute()
