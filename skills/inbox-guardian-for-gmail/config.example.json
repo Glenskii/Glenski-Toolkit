@@ -6,7 +6,9 @@
     "linkedin.com",
     "stripe.com",
     "apple.com",
-    "resend.com"
+    "resend.com",
+    "meta.com",
+    "facebookmail.com"
   ],
   "whitelist_emails": [
     "youremail@gmail.com"
