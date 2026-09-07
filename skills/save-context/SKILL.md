@@ -1,274 +1,102 @@
 ---
 name: save-context
 description: >
-  Run this before /compact, before ending a long session, or when the user
-  says "save context", "save state", "I need to compact", "let's continue
-  this in a new session", or similar. Writes everything durable from the
-  current session to persistent storage BEFORE any compaction or session
-  handoff happens, so a fresh session or a different compatible tool picks
-  up with full continuity instead of re-deriving
-  context from scratch or losing it outright. Detects which agent/harness
-  is running and which persistence mechanism it actually has, then adapts.
-  This is a hard gate: do the write first, before responding to anything
-  else in the same turn. Never skip the write on the assumption it already
-  happened; verify from a real file read, not from memory of a prior turn.
+  Write a verified, secret-safe project handoff before compaction, a new
+  session, or a cross-tool handoff. Use when the user says "save context",
+  "save state", "I need to compact", "continue in a new session", or asks
+  to preserve decisions and next steps from substantial work.
 ---
 
-# Save Context, Pre-Compact and Pre-Handoff Memory Write
+# Save Context
 
-## Why this exists
+## Purpose
 
-`/compact` (or the equivalent in any harness) throws away the transcript
-and replaces it with a lossy summary the agent doesn't control. Durable
-storage persists across compaction and across brand-new sessions, loaded
-fresh every time regardless of what happened to the transcript. Anything
-not written before compaction is gone for good. This skill is the explicit
-trigger to do that write, so it never depends on the agent guessing whether
-"now" is a significant enough stopping point, or trusting its own sense
-that the write already happened.
+Create a concise, durable record of the current task before its working
+conversation is lost or transferred. The record must preserve the decisions
+and evidence that a future session cannot safely infer from the code alone.
 
-Two problems this solves:
+When this skill is explicitly invoked for a transition, write and verify the
+handoff before doing unrelated work in the same turn.
 
-1. **Moving to a new chat.** A fresh session has no transcript at all.
-   Without a deliberate write to somewhere durable, everything learned this
-   session is gone the moment it ends.
-2. **Compaction inside the same session.** `/compact` keeps the session
-   alive but discards the real transcript in favor of a lossy summary.
-   Anything not captured before that summary is written is unrecoverable,
-   even though the session technically "continues."
+## Choose a storage target
 
-## Hard rule: "already done" requires proof, not a feeling
+Inspect the current project before writing. Use the first target that is both
+present and appropriate:
 
-This skill has previously produced a false-negative bug: told to run on a
-session where nothing had been saved, it responded with something like
-"Already done, I ran this proactively at the end of my last turn," and
-skipped the write. There was no prior turn to run in. This must never
-happen again.
+1. A verified project memory or handoff file already used by the project.
+2. A platform-native project memory location, but only when it is available in
+   the active environment and can be read back.
+3. The portable fallback: `<project-root>/.agent-context/HANDOFF.md`.
 
-**Never claim the write already happened unless you can point to it.**
-Concretely, before saying anything resembling "already done" or "nothing
-new since last time":
+Do not treat `AGENTS.md`, a repository README, or a global instruction file as
+a session log unless it already points to a dedicated handoff location. Do not
+overwrite standing instructions to create one.
 
-1. Actually open the target persistence file (whichever one Step 1 below
-   resolves to) with a real read, not a recollection.
-2. Check whether it contains a dated section for *today's actual date* that
-   covers the specific work done *in this visible conversation*.
-3. If you cannot produce that file content as evidence in this turn, the
-   answer is no, it is not done. Do the write.
+State the selected target and why in the final report. If the project root is
+ambiguous, say so and ask for the target rather than writing somewhere guessed.
 
-A vague impression of "I probably already did this" is not evidence.
-Session boundaries are invisible to you from the inside; a fresh session
-has no prior turn, and a compacted session has no reliable memory of one
-either. Only a file you just read counts.
+## Write a useful dated entry
 
-## Step 1: Detect the environment and pick a persistence target
+Append to the selected handoff. Never replace earlier session records. Use the
+format in [references/handoff-format.md](references/handoff-format.md).
 
-Don't assume any one platform's memory system exists. Probe, in this
-order, and use the first one that matches:
+Capture only what a future worker needs:
 
-1. **A platform-native memory system**, if the current harness has one
-   (for example, an auto-loaded project memory index under the user's
-   config directory, structured as an index file plus per-topic notes
-   files). If present, use it: an indexed set of topic files referenced
-   from a top-level index. Use the full workflow in Step 2a.
+- completed work, including concrete files, changes, and verification;
+- decisions or deviations that need their reason preserved;
+- important failures and their root cause when known;
+- standing rules, constraints, or proven workarounds;
+- unresolved work, its blocker, and the next practical action.
 
-2. **An existing project instruction-file convention**, such as `AGENTS.md`.
-   Check for a repo-local instruction file at the project root, or its
-   global equivalent. That file is normally standing instructions,
-   not a session log, so don't overwrite it wholesale. Instead: look for
-   an existing dated-log section already in that file, or in a linked
-   notes file it references. If one exists, append to it. If none exists,
-   don't invent a new convention inside `AGENTS.md` itself; fall back to
-   the generic mechanism below instead, and only add a pointer to
-   `AGENTS.md` if the user asks for one.
+Use short, specific prose. Do not restate a full transcript or dump command
+output. Link to a durable local artifact when that is safer and more useful.
 
-3. **No recognized native memory system.** Use a generic, agent-agnostic
-   fallback: a single file at the project root, `.agent-context/HANDOFF.md`.
-   Create the directory and file if they don't exist. Keep this file plain
-   markdown, append-only, dated sections, with no assumption of any
-   particular tool reading it beyond "a compatible tool with file
-   access." This is the safest default because every agent that can read
-   the repo can read this file.
+## Prove that the handoff is current
 
-State which of these three was detected and why, in the final report
-(Step 4). Don't silently pick one; the report is how a future session
-knows which storage to check.
+Before saying a handoff is already complete, read the target file in the
+current run. It must explicitly cover the current task and its material work.
+The date alone is not enough.
 
-## Step 2a: Platform-native memory path
+If the proof is absent, append a new entry. Never rely on a recollection of a
+previous turn, an assumed background action, or a generic status message.
 
-### Identify the active project memory file
-Every active project should have its own topic file (for example,
-`project_<short-name>.md`). Find it via the index file. If none exists yet
-for this project, create one now; don't skip the write because a file
-doesn't exist yet.
+Read back the entry after writing. If the write or readback fails, report the
+failure plainly and do not claim the task is safe to compact or hand off.
 
-### Append a dated section, don't overwrite prior sections
-Head it `## YYYY-MM-DD: <short label for what this session covered>`.
-Cover, concretely, not vaguely:
+## Cross-tool handoffs
 
-- **What shipped.** Concrete outcomes, not "worked on X." Name the actual
-  files, features, or fixes. If it was deployed, say so and to where.
-- **Any deviation from what was literally asked, and why.** If the agent
-  declined a literal spec (a fake toggle, an unsafe pattern, an
-  already-satisfied request) and built something else instead, that
-  reasoning must survive. A fresh session re-reading only the code will
-  not recover *why* the deviation happened, and might "fix" it back to the
-  broken version.
-- **Bugs found and root-caused**, especially non-obvious ones. The fix is
-  visible in the diff; the *why it broke* usually isn't. Write that down.
-- **Standing rules reaffirmed or newly established this session.** Anything
-  the user corrected, confirmed, or that got discovered operationally
-  (a workaround for a broken CLI flag, a tool's actual behavior versus its
-  documented behavior) belongs here, not just in a general feedback note.
-- **What's explicitly pending or was punted**, so the next session doesn't
-  have to re-derive whether something's done. Say what and why it's not
-  done, not just that it isn't.
-- **Anything genuinely reusable across sessions or agents** (a workflow
-  pattern, a gotcha, a decision the user made). Also check whether it
-  belongs in its own topic file per the existing taxonomy, not just buried
-  in this session's dated section.
+Only create an additional portable repository handoff when the user asks to
+move the work to another compatible tool, or when the existing target is not
+available to that tool. Keep the native record when one exists. Do not create a
+GitHub issue, pull request comment, or external message unless the user asks.
 
-### Update the top-level index
-One-line pointer if this is a new topic file. Keep the index terse, it's
-always loaded into context, so it has to stay skimmable.
+## Protect sensitive information
 
-## Step 2b: Generic fallback path
+Treat every handoff as potentially visible to collaborators, backups, and
+version control.
 
-Same content requirements as Step 2a (what shipped, deviations and why,
-root-caused bugs, standing rules, what's pending, reusable gotchas), same
-dated-section format, just a flatter file with no index and no per-project
-taxonomy:
+Never write secrets or raw sensitive material, including API keys, passwords,
+OAuth codes, tokens, cookies, private keys, recovery codes, `.env` contents,
+or private customer data. Replace sensitive detail with a useful, safe summary,
+such as "OAuth authentication completed" or "a credential issue remains."
 
-```markdown
-## YYYY-MM-DD: <short label for what this session covered>
+Before creating or updating `.agent-context/HANDOFF.md`, check whether
+`.agent-context/` is ignored by the project. If it is not ignored, call that
+out in the final report. Do not change `.gitignore` unless the user asks.
 
-**Shipped:** ...
-**Deviations from spec:** ...
-**Bugs found / root cause:** ...
-**Standing rules established:** ...
-**Pending / punted:** ...
-```
+## Final report
 
-Append, never overwrite prior sections. If the file is new, add one line at
-the top explaining what it is: `<!-- Session handoff notes for this repo.
-Any agent working here should read this before starting and append before
-finishing a non-trivial session. -->`.
+Report these facts concisely:
 
-## Step 3: Cross-agent handoff, when explicitly requested
+1. storage target and why it was selected;
+2. file path written or confirmed;
+3. the major points captured;
+4. readback evidence;
+5. whether a cross-tool handoff was requested;
+6. the plain result: safe to compact, safe to switch sessions, or the exact
+   reason it is not safe.
 
-If the user says this session's work needs to hand off to a *different*
-compatible tool than the one currently running, the Step 2a memory-file write alone
-is usually not enough, since platform-native memory files are typically
-invisible to other agents. Explicitly:
-
-- If the target tool uses a different convention (such as a project
-  instruction file or `.agent-context/HANDOFF.md`) and it doesn't exist yet, create
-  it now in addition to (not instead of) the native memory write, with the
-  same session summary.
-- Ask whether the user also wants a GitHub issue or PR comment as the
-  handoff mechanism, if that's the established pattern for this project.
-  Check for an existing cross-agent handoff convention already in use on
-  this project before inventing a new one.
-- Don't assume the native memory write alone is sufficient for a
-  cross-agent handoff just because it succeeded.
-
-## Step 4: Final report, always structured, always explicit
-
-End every run of this skill with a short, structured report, not a vague
-"done!". Cover:
-
-1. **Environment detected:** which of the three targets in Step 1 was
-   used, and how it was detected (which file or path confirmed it).
-2. **Target file(s) written:** full path(s).
-3. **What was written:** one line per major point covered (shipped,
-   deviations, bugs, standing rules, pending), not a re-paste of the whole
-   section.
-4. **Verification:** confirm the write was read back, or that pre-existing
-   content proved a prior write already covered this session's work. Name
-   the evidence, don't assert.
-5. **Cross-agent handoff status:** whether Step 3 applied and what was
-   done, or "not requested" if it didn't come up.
-6. **Bottom line:** one sentence, such as "Safe to compact." or "Safe to
-   switch sessions." If something couldn't be written (permissions, no
-   detected target, ambiguous project root), say so plainly instead of
-   pretending it succeeded.
-
-## Security: what gets saved, what never does
-
-Save decisions, actions, blockers, file paths, commands run, and
-verification results. Never save secrets, raw credentials, cookie
-material, or private data dumps. That line is the whole rule; the rest of
-this section is how to hold it in practice.
-
-Every persistence target this skill writes to is plain text, and the
-generic fallback (`.agent-context/HANDOFF.md`) lives inside the project
-repo where it can be committed without anyone deciding that on purpose.
-Treat every target as potentially non-private, including the
-platform-native path, since sync, backup, and multi-agent sharing can all
-carry it further than the current machine.
-
-### Scan the summary before writing it, not after
-
-Before any content goes into the dated section, check it for:
-
-- API keys, tokens, OAuth codes, refresh tokens, session cookies, auth
-  headers
-- Private keys, passwords, recovery codes, seed phrases
-- Full browser cookie paths or copied cookie values
-- Client secrets, billing details, private customer data
-- `.env` contents or credentials copied from config files
-
-None of the above goes into the file, even if it already appeared earlier
-in the conversation and even if it seems like the exact detail that
-explains a fix.
-
-### Replace with a safe description, not a redaction placeholder
-
-Don't write `[REDACTED]` next to a fact that still implies the secret's
-shape or location. Replace the whole detail with a plain description of
-what happened instead:
-
-- "OAuth authentication completed" (not which token, not its value)
-- "A token was configured locally" (not the token, not the file it lives in
-  if that file is itself sensitive)
-- "Browser profile was selected" (not session or cookie detail)
-- "Credential issue remains pending" (not what the credential is or why
-  it's failing at the value level)
-
-If the operational detail genuinely can't be captured without exposing the
-secret, say that a credential-related step happened and stop there; a
-future session can ask the user directly rather than read it off disk.
-
-### Check before writing to a repo-local target
-
-Before writing to `.agent-context/HANDOFF.md` (or any other repo-local
-path), check whether the project has a `.gitignore` and whether that path
-is covered. If it is not ignored, warn the user before writing any
-operationally sensitive detail there, even a safely-described one, and
-mention the gap in the final report. Add the `.gitignore` entry yourself
-if asked; don't add it silently without saying so, since the user may want
-the file tracked on purpose.
-
-### If asked to save a secret anyway
-
-Don't silently comply. Flag that this file is not an appropriate place for
-it and ask for an intentionally private, commit-excluded location instead.
-
-## What not to do
-
-- Don't write a summary so compressed it loses the "why." A bullet list of
-  file names with no reasoning is not useful weeks from now.
-- Don't skip this because "nothing major happened." Even a short session
-  that fixed one subtle bug is worth one paragraph, especially if the root
-  cause wasn't obvious.
-- Don't wait for compaction to actually start before writing. By then the
-  detail needed to write it well is already gone. Write it before
-  responding to anything else once this skill is triggered.
-- Don't claim "already done" without the file-read evidence required
-  above. This is the specific bug this skill exists to never repeat.
-- Don't assume a platform-native memory path exists just because it might
-  in general; confirm it for the current project before using it, and fall
-  back cleanly if it's absent.
+Do not say "already done" without the file-read evidence above.
 
 ---
 
