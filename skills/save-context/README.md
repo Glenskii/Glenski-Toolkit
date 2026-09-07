@@ -1,61 +1,93 @@
-# save-context
+# Save Context
 
 ![Save Context icon](assets/icon-large.png)
 
-**Version:** 1.0 | **License:** CC BY 4.0
+**Version:** 1.1.0 | **License:** CC BY 4.0
 
-Stops a compatible coding tool from losing everything learned in a session when you compact or start a new chat. Detects the available persistence mechanism, writes a dated summary to the right place, then proves it did so with a structured report instead of a vague "done!".
+Save Context gives a long technical task a proper place to land. Before a
+session is compacted, closed, or handed to another tool, it writes a short,
+dated record of the work, decisions, evidence, and next action. The next
+session can start from the record instead of reconstructing the work from a
+lost transcript.
 
 ---
 
-## The problem
+## Why it matters
 
-Long agent sessions accumulate context that lives only in the transcript: why a spec was deviated from, what a non-obvious bug actually was, which workaround a broken tool needed. Two things destroy that:
+A conversation is useful while it is open, but it is not a reliable project
+record. A compacted thread may keep only a short summary. A new session starts
+without the reasoning, command results, and decisions that shaped the work.
 
-- **Compaction.** `/compact` (or the equivalent in any harness) replaces the real transcript with a lossy summary the agent doesn't control. Anything not written down first is gone.
-- **New sessions.** A fresh chat starts with nothing. Whatever the last session learned has to be re-derived from scratch, or it's lost outright.
-
-This skill is the explicit trigger to write durable notes before either of those happens, so continuity survives both.
+Save Context turns that temporary work into a small, readable handoff. It is
+for real project continuity, not a vague recap.
 
 ---
 
 ## What it does
 
-1. **Detects the environment.** Checks for a platform-native memory system first, then an existing project instruction-file convention. Falls back again to a generic `.agent-context/HANDOFF.md` file at the project root if neither is present.
-2. **Writes a dated, structured section**, not a vague recap: what shipped, any deviation from the literal spec and why, bugs found and root-caused, standing rules established, and what's still pending.
-3. **Handles cross-tool handoff** when explicitly requested, since native memory mechanisms are not always portable.
-4. **Reports what it did**, structured: environment detected, files written, verification evidence, and a plain bottom line ("Safe to compact" or an honest failure if something couldn't be written).
+1. **Finds the right place to save the handoff.** It uses an existing,
+   verified project memory or handoff convention when one is available. If
+   there is no usable convention, it creates the portable fallback
+   `.agent-context/HANDOFF.md` at the project root.
+2. **Writes the useful parts.** Each dated entry records what changed, key
+   decisions and reasons, evidence, unresolved work, and the next clear
+   action.
+3. **Prevents false completion.** It reads the target file before reporting
+   that a handoff already covers the current work. If that proof is missing,
+   it writes or updates the handoff.
+4. **Supports a deliberate cross-tool handoff.** When requested, it writes a
+   portable repository handoff in addition to any platform-specific notes.
+5. **Reports the result plainly.** The report names the storage location,
+   what was recorded, the readback evidence, and whether it is safe to move
+   on.
 
 ---
 
-## The bug this skill exists to prevent
+## A dependable handoff, not a promise
 
-An earlier version of this skill, run on a session where nothing had been saved, responded "Already done, I ran this proactively at the end of my last turn," and skipped the write. There was no prior turn. The current version has a hard rule against this: it can never claim a write already happened without actually reading the target file and finding today's dated section covering this session's actual work. No file, no claim of "already done."
+The skill does not assume a save happened because a prior turn sounded
+complete. It checks the actual target file in the current run. A handoff is
+only considered current when the file explicitly covers the work in progress.
+
+That small check is the point: no file-read evidence, no claim that context is
+safe to leave behind.
 
 ---
 
-## Security
+## Privacy and repository safety
 
-Saves decisions, actions, blockers, file paths, commands run, and verification results. Never saves secrets, raw credentials, cookie material, or private data dumps, even when they were visible earlier in the conversation. Sensitive detail gets replaced with a safe description ("OAuth authentication completed") instead of the actual value. Before writing to a repo-local fallback path, checks whether `.gitignore` covers it and warns if it doesn't. If asked to save a secret anyway, it refuses and asks for an intentionally private location instead.
+The handoff may include decisions, file paths, commands, verification results,
+and blockers. It never records credentials, tokens, cookies, private keys,
+raw personal data, or copied configuration secrets.
+
+Before writing the repository fallback, the skill checks whether the project
+ignores `.agent-context/`. If the folder is not ignored, it says so clearly.
+That leaves the owner in control of whether the handoff is private or tracked
+with the project.
 
 ---
 
-## Usage
+## Use it
 
-Trigger it explicitly:
+Ask for it directly:
 
-```
+```text
 save context
 ```
 
-Or let it fire proactively before `/compact`, before ending a session that did non-trivial work, or when handing off to a different agent. The skill's description is written to trigger on the natural phrases people already use for this ("I need to compact", "let's continue this in a new session").
+It is also appropriate before compaction, before closing a substantial task,
+or before a planned handoff to another compatible tool. It creates the
+fallback path on first use, so there is no separate setup step.
 
-No setup required for the generic fallback path (`.agent-context/HANDOFF.md`), it creates itself on first use. The platform-native path only activates if your harness already has that kind of memory system in place.
+For the entry format and the final report, see
+[the handoff format](references/handoff-format.md).
 
 ---
 
-## Part of the Glenski-Toolkit
+## Part of the Glenski Toolkit
 
-[github.com/Glenskii/Glenski-Toolkit](https://github.com/Glenskii/Glenski-Toolkit), skills for professional web development, creative production, and software quality.
+[github.com/Glenskii/Glenski-Toolkit](https://github.com/Glenskii/Glenski-Toolkit)
+contains practical, local-first tools for development, creative production,
+and software quality.
 
-Licensed [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+Licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
