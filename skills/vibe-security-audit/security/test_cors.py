@@ -1,5 +1,5 @@
 # ============================================================
-# test_cors.py — CORS origin restrictions and preflight handling
+# test_cors.py  -  CORS origin restrictions and preflight handling
 #
 # Prevents: cross-origin data theft, CSRF via CORS misconfiguration,
 # credential leakage to hostile origins.
@@ -28,7 +28,7 @@ async def test_hostile_origin_not_reflected(client):
     acao = res.headers.get("access-control-allow-origin", "")
 
     assert acao != "*", (
-        "Access-Control-Allow-Origin: * allows any origin — "
+        "Access-Control-Allow-Origin: * allows any origin  -  "
         "credentialed cross-origin requests possible"
     )
     assert HOSTILE_ORIGIN not in acao, (
@@ -45,7 +45,7 @@ async def test_cors_does_not_allow_null_origin(client):
     res = await client.get(PUBLIC, headers={"Origin": "null"})
     acao = res.headers.get("access-control-allow-origin", "")
     assert acao != "null", (
-        "CORS allows 'null' origin — sandboxed iframe CSRF possible"
+        "CORS allows 'null' origin  -  sandboxed iframe CSRF possible"
     )
 
 
@@ -83,7 +83,7 @@ async def test_credentials_not_allowed_with_wildcard(client):
 
     if acao == "*" and acac == "true":
         pytest.fail(
-            "CORS misconfiguration: Allow-Credentials: true with wildcard origin — "
+            "CORS misconfiguration: Allow-Credentials: true with wildcard origin  -  "
             "invalid and insecure"
         )
 

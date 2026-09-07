@@ -1,5 +1,5 @@
 # ============================================================
-# test_validation.py — Input boundary validation and hostile string rejection
+# test_validation.py  -  Input boundary validation and hostile string rejection
 #
 # Prevents: XSS via stored/reflected input, SQL injection,
 # null byte injection, type confusion attacks, oversized payload DoS,
@@ -14,6 +14,8 @@ from conftest import route
 
 LOGIN = route("TEST_AUTH_LOGIN_ROUTE", "/auth/login")
 REGISTER = route("TEST_AUTH_REGISTER_ROUTE", "/auth/register")
+
+pytestmark = pytest.mark.active_probe
 
 
 # ── XSS payload rejection ─────────────────────────────────────────────────────
@@ -35,7 +37,7 @@ XSS_PAYLOADS = [
 async def test_xss_payload_rejected_in_login(client, payload):
     """
     XSS payloads in login fields must not return 200.
-    Reflected XSS via login error messages is a common vibe-code vulnerability.
+    Reflected XSS via login error messages is a common application failure.
     """
     res = await client.post(LOGIN, json={
         "username": payload,
@@ -53,7 +55,7 @@ SQLI_PAYLOADS = [
     "' OR 1=1--",
     "admin'--",
     "' UNION SELECT 1,2,3--",
-    "'; DROP TABLE users;--",
+    "' OR EXISTS(SELECT 1)--",
     "1; SELECT * FROM users",
     "' AND SLEEP(5)--",
 ]
@@ -64,7 +66,7 @@ async def test_sqli_payload_rejected_in_login(client, payload):
     """
     SQL injection payloads must not authenticate the attacker.
     Classic ' OR '1'='1 bypasses apps that build queries with string concatenation.
-    AI-generated ORM code is usually safe, but raw query fallbacks are not.
+    Generated ORM code is usually safe, but raw query fallbacks are not.
     """
     res = await client.post(LOGIN, json={
         "username": payload,
@@ -72,7 +74,7 @@ async def test_sqli_payload_rejected_in_login(client, payload):
     })
     # Must not return 200 with a token
     assert res.status_code != 200 or "access_token" not in res.text, (
-        f"SQLi payload may have succeeded: {payload} — status {res.status_code}"
+        f"SQLi payload may have succeeded: {payload}  -  status {res.status_code}"
     )
 
 
@@ -142,7 +144,7 @@ async def test_boolean_username_rejected(client):
 
 @pytest.mark.asyncio
 async def test_empty_body_rejected(client):
-    """Empty JSON body must return 400/422 — not 500 (unhandled exception)."""
+    """Empty JSON body must return 400/422  -  not 500 (unhandled exception)."""
     res = await client.post(
         LOGIN,
         content="{}",
@@ -217,7 +219,7 @@ async def test_wrong_content_type_rejected(client):
 @pytest.mark.asyncio
 async def test_malformed_json_rejected(client):
     """
-    Malformed JSON must return 400 — not 500.
+    Malformed JSON must return 400  -  not 500.
     500 on bad JSON indicates unhandled exception, which may leak stack info.
     """
     res = await client.post(
@@ -226,7 +228,7 @@ async def test_malformed_json_rejected(client):
         headers={"Content-Type": "application/json"}
     )
     assert res.status_code in (400, 422), (
-        f"Malformed JSON returned {res.status_code} — may indicate unhandled exception"
+        f"Malformed JSON returned {res.status_code}  -  may indicate unhandled exception"
     )
 
 
@@ -235,7 +237,7 @@ async def test_malformed_json_rejected(client):
 @pytest.mark.asyncio
 async def test_extra_fields_not_stored_or_reflected(client):
     """
-    Extra fields in request body must be ignored — not stored or reflected.
+    Extra fields in request body must be ignored  -  not stored or reflected.
     Mass assignment vulnerability: attacker injects is_admin, role, credits, etc.
     """
     res = await client.post(LOGIN, json={

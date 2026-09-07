@@ -1,5 +1,5 @@
 # ============================================================
-# test_headers.py — Security header presence and directive quality
+# test_headers.py  -  Security header presence and directive quality
 #
 # Prevents: clickjacking, MIME sniffing, XSS via missing CSP,
 # HTTPS downgrade attacks, referrer leakage, browser feature abuse.
@@ -33,15 +33,15 @@ async def test_csp_present_and_strict(client):
 
     csp = headers["content-security-policy"].lower()
     assert "default-src" in csp, "CSP missing default-src directive"
-    assert "object-src" in csp, "CSP missing object-src — allows plugin exploitation"
-    assert "unsafe-inline" not in csp, "CSP allows unsafe-inline — XSS risk"
-    assert "unsafe-eval" not in csp, "CSP allows unsafe-eval — XSS risk"
+    assert "object-src" in csp, "CSP missing object-src  -  allows plugin exploitation"
+    assert "unsafe-inline" not in csp, "CSP allows unsafe-inline  -  XSS risk"
+    assert "unsafe-eval" not in csp, "CSP allows unsafe-eval  -  XSS risk"
 
 
 @pytest.mark.asyncio
 async def test_csp_on_error_response(client):
     """
-    CSP must apply to error pages — attackers target error flows for injection.
+    CSP must apply to error pages  -  attackers target error flows for injection.
     """
     res = await client.get(NOT_FOUND)
     assert "content-security-policy" in res.headers, "CSP missing on 404 response"
@@ -50,7 +50,7 @@ async def test_csp_on_error_response(client):
 @pytest.mark.asyncio
 async def test_csp_on_protected_route(client):
     """
-    Authenticated routes must also carry CSP — do not assume auth = security.
+    Authenticated routes must also carry CSP  -  do not assume auth = security.
     """
     res = await client.get(PROTECTED)
     assert "content-security-policy" in res.headers, "CSP missing on protected route"
@@ -61,13 +61,13 @@ async def test_csp_on_protected_route(client):
 @pytest.mark.asyncio
 async def test_x_frame_options(client):
     """
-    Prevents clickjacking — attacker embeds your app in an invisible iframe
+    Prevents clickjacking  -  attacker embeds your app in an invisible iframe
     and captures user clicks on UI elements (including auth buttons).
     """
     res = await client.get(PUBLIC)
     xfo = res.headers.get("x-frame-options", "").upper()
     assert xfo in ("DENY", "SAMEORIGIN"), (
-        f"X-Frame-Options is '{xfo}' — must be DENY or SAMEORIGIN"
+        f"X-Frame-Options is '{xfo}'  -  must be DENY or SAMEORIGIN"
     )
 
 
@@ -76,7 +76,7 @@ async def test_x_frame_options(client):
 @pytest.mark.asyncio
 async def test_x_content_type_options(client):
     """
-    Prevents MIME sniffing — browsers may execute content as a different type
+    Prevents MIME sniffing  -  browsers may execute content as a different type
     than declared, enabling script injection via uploaded files or API responses.
     """
     res = await client.get(PUBLIC)
@@ -110,10 +110,10 @@ async def test_referrer_policy(client):
 @pytest.mark.asyncio
 async def test_hsts_header_present(client):
     """
-    HSTS forces HTTPS — without it, clients can be downgraded to HTTP
+    HSTS forces HTTPS  -  without it, clients can be downgraded to HTTP
     by a man-in-the-middle attacker. Test checks header is present.
     NOTE: max-age below 1 year is considered insufficient.
-    Production validation requires actual HTTPS — run separately.
+    Production validation requires actual HTTPS  -  run separately.
     """
     res = await client.get(PUBLIC)
     hsts = res.headers.get("strict-transport-security", "")
@@ -125,7 +125,7 @@ async def test_hsts_header_present(client):
             if part.startswith("max-age="):
                 max_age = int(part.split("=")[1])
                 assert max_age >= 31536000, (
-                    f"HSTS max-age {max_age} is below 1 year — insufficient"
+                    f"HSTS max-age {max_age} is below 1 year  -  insufficient"
                 )
 
 
@@ -139,10 +139,10 @@ async def test_permissions_policy(client):
     """
     res = await client.get(PUBLIC)
     pp = res.headers.get("permissions-policy", "")
-    # Warn only — not all apps require this, but it should be deliberately set
+    # Warn only  -  not all apps require this, but it should be deliberately set
     if not pp:
         pytest.skip(
-            "Permissions-Policy not set — acceptable if no sensitive browser APIs used"
+            "Permissions-Policy not set  -  acceptable if no sensitive browser APIs used"
         )
 
 
@@ -166,7 +166,7 @@ async def test_security_headers_on_404(client, header):
 @pytest.mark.asyncio
 async def test_no_server_header_leakage(client):
     """
-    Server header can reveal framework and version — reduces attacker recon cost.
+    Server header can reveal framework and version  -  reduces attacker recon cost.
     It should be suppressed or obscured.
     """
     res = await client.get(PUBLIC)
@@ -182,9 +182,9 @@ async def test_no_server_header_leakage(client):
 @pytest.mark.asyncio
 async def test_no_x_powered_by(client):
     """
-    X-Powered-By leaks technology stack — suppress entirely.
+    X-Powered-By leaks technology stack  -  suppress entirely.
     """
     res = await client.get(PUBLIC)
     assert "x-powered-by" not in res.headers, (
-        "X-Powered-By header present — remove to reduce stack fingerprinting"
+        "X-Powered-By header present  -  remove to reduce stack fingerprinting"
     )
