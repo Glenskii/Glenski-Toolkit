@@ -1,5 +1,5 @@
 # ============================================================
-# test_auth.py — Authentication enforcement and enumeration resistance
+# test_auth.py  -  Authentication enforcement and enumeration resistance
 #
 # Prevents: unauthenticated access, token bypass, account enumeration,
 # credential stuffing enablement, session fixation.
@@ -14,6 +14,8 @@ REGISTER = route("TEST_AUTH_REGISTER_ROUTE", "/auth/register")
 PROTECTED = route("TEST_PROTECTED_ROUTE", "/api/me")
 ADMIN = route("TEST_ADMIN_ROUTE", "/api/admin")
 
+pytestmark = pytest.mark.active_probe
+
 
 # ── Unauthenticated access rejection ─────────────────────────────────────────
 
@@ -25,7 +27,7 @@ async def test_protected_route_rejects_unauthenticated(client):
     """
     res = await client.get(PROTECTED)
     assert res.status_code in (401, 403), (
-        f"Protected route returned {res.status_code} without auth — "
+        f"Protected route returned {res.status_code} without auth  -  "
         "auth middleware may not be applied"
     )
 
@@ -45,21 +47,21 @@ async def test_admin_route_rejects_unauthenticated(client):
 async def test_protected_route_rejects_invalid_token(client):
     """
     Malformed or expired tokens must be rejected.
-    Some frameworks silently accept garbage tokens — this catches that.
+    Some frameworks silently accept garbage tokens  -  this catches that.
     """
     res = await client.get(
         PROTECTED,
         headers={"Authorization": "Bearer this.is.not.a.valid.token"}
     )
     assert res.status_code in (401, 403), (
-        f"Invalid token accepted — returned {res.status_code}"
+        f"Invalid token accepted  -  returned {res.status_code}"
     )
 
 
 @pytest.mark.asyncio
 async def test_protected_route_rejects_empty_bearer(client):
     """
-    Empty Bearer token must be rejected — not treated as anonymous.
+    Empty Bearer token must be rejected  -  not treated as anonymous.
     """
     res = await client.get(
         PROTECTED,
@@ -91,7 +93,7 @@ async def test_protected_route_accepts_valid_token(auth_client):
     """
     res = await auth_client.get(PROTECTED)
     assert res.status_code == 200, (
-        f"Valid auth rejected on protected route — returned {res.status_code}"
+        f"Valid auth rejected on protected route  -  returned {res.status_code}"
     )
 
 
@@ -101,7 +103,7 @@ async def test_protected_route_accepts_valid_token(auth_client):
 async def test_login_unknown_user_does_not_reveal_existence(client):
     """
     Login failure for unknown user must return the same response as wrong password.
-    Different responses enable account enumeration — attackers map valid accounts
+    Different responses enable account enumeration  -  attackers map valid accounts
     before credential stuffing attacks.
     """
     unknown_res = await client.post(LOGIN, json={
@@ -115,7 +117,7 @@ async def test_login_unknown_user_does_not_reveal_existence(client):
 
     # Status codes must match
     assert unknown_res.status_code == wrong_pass_res.status_code, (
-        "Login returns different status codes for unknown user vs wrong password — "
+        "Login returns different status codes for unknown user vs wrong password  -  "
         "account enumeration possible"
     )
 
@@ -131,7 +133,7 @@ async def test_login_timing_consistency(client):
     """
     Response timing for unknown user vs wrong password should not differ
     significantly. Timing oracles enable enumeration even when bodies match.
-    This test is a heuristic — production timing analysis requires load testing.
+    This test is a heuristic  -  production timing analysis requires load testing.
     """
     import time
 
@@ -161,11 +163,11 @@ async def test_login_timing_consistency(client):
 @pytest.mark.asyncio
 async def test_login_rejects_missing_password(client):
     """
-    Login with no password must be rejected — not treated as anonymous session.
+    Login with no password must be rejected  -  not treated as anonymous session.
     """
     res = await client.post(LOGIN, json={"username": os.getenv("TEST_USERNAME")})
     assert res.status_code in (400, 422), (
-        f"Login accepted missing password — returned {res.status_code}"
+        f"Login accepted missing password  -  returned {res.status_code}"
     )
 
 
@@ -181,7 +183,7 @@ async def test_login_rejects_missing_username(client):
 @pytest.mark.asyncio
 async def test_login_rejects_empty_credentials(client):
     """
-    Empty string credentials must be rejected — not matched against empty DB values.
+    Empty string credentials must be rejected  -  not matched against empty DB values.
     """
     res = await client.post(LOGIN, json={"username": "", "password": ""})
     assert res.status_code in (400, 401, 422)
@@ -190,7 +192,7 @@ async def test_login_rejects_empty_credentials(client):
 @pytest.mark.asyncio
 async def test_login_rejects_null_credentials(client):
     """
-    Null credential values must be rejected — null handling bugs can bypass auth.
+    Null credential values must be rejected  -  null handling bugs can bypass auth.
     """
     res = await client.post(LOGIN, json={"username": None, "password": None})
     assert res.status_code in (400, 422)

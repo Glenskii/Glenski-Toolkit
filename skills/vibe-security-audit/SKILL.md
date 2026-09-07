@@ -1,139 +1,80 @@
 ---
-name: vibe-security-audit
-description: Audit or harden a Python ASGI application before release. Use for FastAPI, Flask ASGI, Django ASGI, and comparable services that need a defensive pytest review of authentication, authorization, input validation, headers, CORS, cookies, rate limits, errors, and configuration.
-license: CC-BY-4.0
+name: python-web-app-security-audit
+description: "Run defensive pre-release security tests for Python web applications. Use for FastAPI, Django, Flask, and ASGI services: the common interface between Python web apps and servers. Tests authentication, authorization, hostile input, headers, CORS, cookies, rate limits, errors, and configuration to return evidence-backed findings and clear test boundaries."
+license: MIT
+metadata:
+  version: 1.1.0
 ---
 
-# PYTHON WEB APP SECURITY AUDIT
+# Python Web App Security Audit
 
-**Purpose:** A runnable security check for Python web applications built through rapid development workflows.
-**Use with:** FastAPI, Flask, Django, and similar Python web applications that can run through ASGI.
-**License:** CC BY 4.0. Share freely, credit appreciated.
-**Tags:** `#glenski` `#vibe-security` `#owasp` `#fastapi` `#security` `#pytest`
+Run a configurable pytest suite against a local Python web application before release. It uses ASGI, the interface between a Python web app and its server, so the checks can exercise FastAPI, Django, Flask through an adapter, and comparable services without opening a public server.
 
----
+## Scope
 
-## THE PROBLEM THIS SOLVES
+The bundled checks cover authentication, authorization, input validation, response headers, CORS, cookies, rate limits, error handling, HTTP method handling, and unsafe configuration. Read [setup and boundaries](references/setup-and-boundaries.md), [framework adapters](references/framework-adapters.md), [route configuration](references/route-configuration.md), [fixture safety](references/fixture-safety.md), and [assertion catalog](references/assertion-catalog.md) before adapting the suite to an application.
 
-Vibe-coded apps ship fast. Security does not ship with them by default.
+Do not represent a passing run as a penetration test or proof of production security. The suite does not verify deployment TLS, a WAF, dependency vulnerabilities, external infrastructure, or controls it cannot reach through the configured test application.
 
-Rapid development tools can generate working code. They do not guarantee secure code.
-The gap between "it works" and "it is safe" is where real applications get
-compromised. This suite closes that gap with deterministic, runnable tests
-covering the full OWASP attack surface.
+## Prepare the suite
 
-**Plain-language scope:** This is for Python web apps. ASGI is the technical interface that lets the tests talk to FastAPI, Django, Flask through an ASGI adapter, and similar applications without starting a public server. It is not for Node, PHP, WordPress, native mobile, or desktop apps.
+1. Install the dependencies in the target project's isolated environment.
 
----
+   ```bash
+   pip install "pytest>=8" "pytest-asyncio>=0.24" "httpx>=0.27" python-dotenv
+   ```
 
-## WHAT THIS COVERS
+2. Copy the bundled suite into the target project without overwriting an existing security directory.
 
-| Area | Tests |
-|------|-------|
-| Security headers | CSP, X-Frame-Options, HSTS, Referrer-Policy, Permissions-Policy |
-| Authentication | Unauthenticated access, token validation, session handling |
-| Authorization | IDOR, privilege escalation, admin boundary enforcement |
-| Input validation | XSS, SQLi, null bytes, oversized payloads, type coercion |
-| Rate limiting | Threshold detection, 429 enforcement, abuse patterns |
-| Error sanitization | Stack trace leakage, debug pages, SQL fragments, env data |
-| CORS | Hostile origin rejection, preflight strictness |
-| Cookie security | HttpOnly, Secure, SameSite enforcement |
-| Method abuse | Unsupported HTTP method handling |
-| Config hardening | Debug mode, test route exposure, secret leakage |
+   ```bash
+   python scripts/prepare_security_suite.py C:\path\to\your-project
+   ```
 
----
+   The helper copies `security/`, `pytest.ini` when absent, and the `.env.test.template` file. It never creates a credentials file.
 
-## WHAT THIS DOES NOT REPLACE
+3. In the copied `security/` directory, copy `.env.test.template` to `.env.test`. Supply an app import path, routes, rate limit, permitted origin, and dedicated test credentials. Keep `.env.test` out of version control.
 
-- Manual penetration testing
-- WAF validation
-- Production HTTPS / TLS verification
-- Dependency vulnerability scanning (use `pip-audit` or `safety`)
-- DAST tooling (ZAP, Burp Suite)
+4. From the target project root, run the suite.
 
-Run this suite as your first line. Not your only line.
+   ```bash
+   pytest security/ -v
+   ```
 
-**Known gap:** this suite covers CORS and cookie flags but does not yet test anti-CSRF token flow (double-submit or synchronizer token). If your app mutates state via cookie-authenticated POST, add a CSRF token test and treat a green run here as necessary, not sufficient.
+## Operating rules
 
----
+1. Test actual application behavior, not framework defaults.
+2. Use dedicated test accounts and non-production data.
+3. Configure route variables before treating a failing default route as a defect.
+4. Inspect every failure before assigning a release gate.
+5. Keep application-layer findings separate from infrastructure findings.
+6. Report both verified results and test boundaries.
+7. Do not add checks that create accounts, alter records, or issue destructive database commands. This bundled suite is non-destructive.
 
-## QUICK START
+## Report the result
 
-### 1. Install dependencies
+Use [the report template](assets/security-audit-report-template.md), [release decision guide](docs/release-decision-guide.md), and [continuous integration guide](docs/continuous-integration-guide.md). For every finding, state the affected route or control, evidence, severity, recommended fix, and what was not tested. End with one of these release decisions:
 
-```bash
-pip install "pytest>=8" "pytest-asyncio>=0.24" "httpx>=0.27" python-dotenv
-```
+- **BLOCKED:** A confirmed issue must be fixed before release.
+- **REVIEW REQUIRED:** A material risk remains and needs an owner decision.
+- **PASS:** The configured checks found no blocking or review-level issue. This does not prove complete security.
 
-The suite depends on `asyncio_mode = auto` in the bundled `pytest.ini`. Without it, the async fixtures in `conftest.py` do not run and every test errors on collection. Keep `pytest.ini` alongside the `security/` folder.
-
-### 2. Copy the security/ folder into your project root
-
-The runnable suite is bundled in this skill folder: `security/` plus `pytest.ini`. Copy both into your project root.
-
-```
-your-project/
-├── your_app/
-│   └── main.py
-├── security/
-│   ├── .env.test
-│   ├── conftest.py
-│   ├── test_headers.py
-│   ├── test_validation.py
-│   ├── test_auth.py
-│   ├── test_authorization.py
-│   ├── test_rate_limit.py
-│   ├── test_errors.py
-│   ├── test_cors.py
-│   ├── test_cookies.py
-│   └── test_config.py
-└── pytest.ini
-```
-
-### 3. Configure your routes in .env.test
-
-See `.env.test` template in this package.
-
-### 4. Run
-
-```bash
-pytest security/ -v
-```
-
----
-
-## OPERATING RULES
-
-1. Do not trust framework defaults. Test actual behavior.
-2. Fail fast. Fail loud. A passing test suite with weak assertions is worse than no tests.
-3. Separate app-layer tests from deployment-layer tests.
-4. Test both authenticated and unauthenticated behavior on every protected route.
-5. Test both normal and error code paths.
-6. Auth, CORS, cookies, CSRF, IDOR, and rate limiting are first-class controls, not afterthoughts.
-7. Never assume in-memory ASGI tests prove production TLS or proxy correctness.
-8. Every assertion must check directive quality, not just header presence.
-9. Every test must have a comment explaining what attack it prevents.
-10. No false confidence. A green suite means the tested controls work. Nothing more.
-
----
-
-## FILE REFERENCE
+## Suite contents
 
 | File | Purpose |
-|------|---------|
-| `conftest.py` | Shared fixtures: client, auth tokens, env loading |
-| `test_headers.py` | Security header presence and directive quality |
-| `test_validation.py` | Input boundary, hostile strings, type coercion |
-| `test_auth.py` | Authentication enforcement, enumeration resistance |
-| `test_authorization.py` | IDOR, admin boundary, privilege escalation |
-| `test_rate_limit.py` | Abuse threshold, 429 enforcement |
-| `test_errors.py` | Error sanitization, stack trace leakage |
-| `test_cors.py` | Origin restrictions, preflight handling |
-| `test_cookies.py` | Cookie flag enforcement |
-| `test_config.py` | Debug mode, secret exposure, test route hardening |
+|---|---|
+| `security/conftest.py` | Application import, test client, authentication fixtures, and route helpers |
+| `security/test_headers.py` | Header presence and directive quality |
+| `security/test_validation.py` | Hostile input, malformed payloads, and type coercion |
+| `security/test_auth.py` | Authentication enforcement and enumeration resistance |
+| `security/test_authorization.py` | Object ownership, role boundaries, and mass assignment |
+| `security/test_rate_limit.py` | Threshold and 429 response checks |
+| `security/test_errors.py` | Error sanitization and internal detail leakage |
+| `security/test_cors.py` | Origin restrictions and preflight handling |
+| `security/test_cookies.py` | Cookie flag enforcement |
+| `security/test_config.py` | Debug exposure, method handling, and configuration checks |
 
----
+## Boundaries
 
-## REFERENCES
+This skill does not replace manual security assessment, dependency scanning, production HTTPS verification, WAF validation, or dynamic scanning. Add an application-specific CSRF test when state-changing requests use cookie authentication.
 
-Based on OWASP Top 10 (2021) and OWASP API Security Top 10 (2023).
+The bundled suite does not create accounts, delete records, or execute schema-changing database commands. Assess any registration or other write flow only in an application-owned test suite with a disposable database and explicit cleanup.

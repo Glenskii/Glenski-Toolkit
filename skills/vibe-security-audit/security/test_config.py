@@ -1,5 +1,5 @@
 # ============================================================
-# test_config.py — Config hardening, debug mode, secret exposure
+# test_config.py  -  Config hardening, debug mode, secret exposure
 #
 # Prevents: debug pages in production, test route exposure,
 # secret leakage via API responses, verbose server identification.
@@ -77,7 +77,7 @@ async def test_debug_route_not_accessible_in_production(client):
     # Should return 404 (not mounted) or 401/403 (guarded)
     # 200 or 500 indicates a debug route is live in production
     assert res.status_code in (401, 403, 404), (
-        f"Debug route returned {res.status_code} — "
+        f"Debug route returned {res.status_code}  -  "
         "test/debug routes must not be accessible in production"
     )
 
@@ -109,7 +109,7 @@ SECRET_PATTERNS = [
 async def test_no_secrets_in_public_response(client):
     """
     API responses must not contain secrets, connection strings,
-    or environment variable values. Vibe-coded apps sometimes
+    or environment variable values. Default application scaffolds sometimes
     return full config objects in debug responses.
     """
     res = await client.get(PUBLIC)
@@ -142,25 +142,25 @@ async def test_no_secrets_in_error_response(client):
 @pytest.mark.parametrize("method", ["TRACE", "CONNECT", "PATCH"])
 async def test_unsupported_methods_rejected(client, method):
     """
-    TRACE enables XST (Cross-Site Tracing) attacks — must be disabled.
-    CONNECT is a proxy method — must not be accepted by app servers.
+    TRACE enables XST (Cross-Site Tracing) attacks  -  must be disabled.
+    CONNECT is a proxy method  -  must not be accepted by app servers.
     PATCH on non-PATCH routes must return 405.
     """
     res = await client.request(method, PUBLIC)
     assert res.status_code in (404, 405), (
-        f"Method {method} returned {res.status_code} — expected 404 or 405"
+        f"Method {method} returned {res.status_code}  -  expected 404 or 405"
     )
 
 
 @pytest.mark.asyncio
 async def test_trace_method_rejected(client):
     """
-    TRACE method enables XST attacks — must return 405 explicitly.
+    TRACE method enables XST attacks  -  must return 405 explicitly.
     XST allows cookie theft even with HttpOnly via reflected TRACE response.
     """
     res = await client.request("TRACE", PUBLIC)
     assert res.status_code in (404, 405), (
-        f"TRACE method accepted — XST vulnerability possible. Status: {res.status_code}"
+        f"TRACE method accepted  -  XST vulnerability possible. Status: {res.status_code}"
     )
 
 
@@ -185,5 +185,5 @@ async def test_version_not_exposed_in_headers(client):
     for indicator in version_indicators:
         if indicator in server:
             pytest.fail(
-                f"Server header may contain version: '{server}' — suppress or obscure"
+                f"Server header may contain version: '{server}'  -  suppress or obscure"
             )

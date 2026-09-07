@@ -1,5 +1,5 @@
 # ============================================================
-# conftest.py — Shared fixtures for the vibe security audit suite
+# conftest.py  -  Shared fixtures for the Python web app security audit suite
 # All tests import from here. Do not duplicate fixtures elsewhere.
 # ============================================================
 
@@ -13,11 +13,33 @@ from dotenv import load_dotenv
 load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), ".env.test"))
 
 
+def active_probes_enabled() -> bool:
+    """Return whether the application owner authorized active probes."""
+    return os.getenv("TEST_ALLOW_ACTIVE_PROBES", "false").strip().lower() == "true"
+
+
+def pytest_configure(config):
+    config.addinivalue_line(
+        "markers",
+        "active_probe: sends repeated, malformed, or target-specific requests",
+    )
+
+
+@pytest.fixture(autouse=True)
+def require_active_probe_authorization(request):
+    """Skip active probes unless an isolated target was explicitly authorized."""
+    if request.node.get_closest_marker("active_probe") and not active_probes_enabled():
+        pytest.skip(
+            "Active probe disabled. Set TEST_ALLOW_ACTIVE_PROBES=true only for an "
+            "authorized isolated test environment."
+        )
+
+
 def load_app():
     """
     Dynamically import the ASGI app from APP_IMPORT_PATH.
     Format: module.path:app_variable
-    Fails loudly if env var is missing — no silent misconfiguration.
+    Fails loudly if env var is missing  -  no silent misconfiguration.
     """
     import_path = os.getenv("APP_IMPORT_PATH")
     if not import_path or ":" not in import_path:
@@ -57,13 +79,13 @@ async def auth_client():
         transport=ASGITransport(app=app),
         base_url="http://test"
     ) as ac:
-        # Obtain auth token — adjust payload keys to match your app
+        # Obtain auth token  -  adjust payload keys to match your app
         response = await ac.post(login_route, json={
             "username": os.getenv("TEST_USERNAME"),
             "password": os.getenv("TEST_PASSWORD"),
         })
         assert response.status_code == 200, (
-            f"Auth fixture login failed: {response.status_code} — "
+            f"Auth fixture login failed: {response.status_code}  -  "
             "check TEST_USERNAME / TEST_PASSWORD in .env.test"
         )
 

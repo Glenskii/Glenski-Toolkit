@@ -1,5 +1,5 @@
 # ============================================================
-# test_errors.py — Error sanitization and stack trace leakage
+# test_errors.py  -  Error sanitization and stack trace leakage
 #
 # Prevents: information disclosure via verbose error messages,
 # stack traces in production, debug pages, SQL/ORM query exposure,
@@ -78,7 +78,7 @@ async def test_404_does_not_leak_internals(client):
 @pytest.mark.asyncio
 async def test_500_error_returns_generic_message(client):
     """
-    500 responses must return a generic error — not a debug page.
+    500 responses must return a generic error  -  not a debug page.
     """
     res = await client.get(ERROR_SIM)
     if res.status_code == 500:
@@ -92,7 +92,7 @@ async def test_500_error_returns_generic_message(client):
 @pytest.mark.asyncio
 async def test_error_response_is_json_not_html_debug_page(client):
     """
-    API error responses must return JSON — not HTML debug pages.
+    API error responses must return JSON  -  not HTML debug pages.
     Django DEBUG=True returns full HTML debug pages with source code.
     """
     res = await client.get(ERROR_ROUTE)
@@ -102,7 +102,7 @@ async def test_error_response_is_json_not_html_debug_page(client):
         if "text/html" in content_type:
             body = res.text.lower()
             assert "traceback" not in body, (
-                "HTML error response contains traceback — DEBUG mode may be active"
+                "HTML error response contains traceback  -  DEBUG mode may be active"
             )
             assert "exception" not in body
 
@@ -110,7 +110,7 @@ async def test_error_response_is_json_not_html_debug_page(client):
 @pytest.mark.asyncio
 async def test_malformed_request_returns_clean_400(client):
     """
-    Malformed requests must return clean 400/422 — no internal details.
+    Malformed requests must return clean 400/422  -  no internal details.
     """
     res = await client.post(
         "/api/me",

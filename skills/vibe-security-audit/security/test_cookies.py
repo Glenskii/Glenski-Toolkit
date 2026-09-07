@@ -1,5 +1,5 @@
 # ============================================================
-# test_cookies.py — Cookie security flag enforcement
+# test_cookies.py  -  Cookie security flag enforcement
 #
 # Prevents: session hijacking via XSS (HttpOnly),
 # session theft over HTTP (Secure), CSRF via cross-site requests (SameSite).
@@ -40,11 +40,11 @@ async def test_session_cookie_httponly(client):
 
     set_cookie = res.headers.get("set-cookie", "")
     if not set_cookie:
-        pytest.skip("No Set-Cookie header — app may use token auth instead of cookies")
+        pytest.skip("No Set-Cookie header  -  app may use token auth instead of cookies")
 
     cookie = parse_set_cookie(set_cookie)
     assert "httponly" in cookie, (
-        "Session cookie missing HttpOnly flag — XSS can steal session token"
+        "Session cookie missing HttpOnly flag  -  XSS can steal session token"
     )
 
 
@@ -53,7 +53,7 @@ async def test_session_cookie_secure(client):
     """
     Secure flag prevents cookie transmission over HTTP.
     Without it, session tokens are transmitted in plaintext on non-HTTPS connections.
-    NOTE: In-memory ASGI tests run over HTTP — Secure flag must still be SET
+    NOTE: In-memory ASGI tests run over HTTP  -  Secure flag must still be SET
     even if not enforced by the test transport.
     """
     res = await client.post(LOGIN, json={
@@ -67,7 +67,7 @@ async def test_session_cookie_secure(client):
 
     cookie = parse_set_cookie(set_cookie)
     assert "secure" in cookie, (
-        "Session cookie missing Secure flag — cookie transmitted over HTTP"
+        "Session cookie missing Secure flag  -  cookie transmitted over HTTP"
     )
 
 
@@ -75,7 +75,7 @@ async def test_session_cookie_secure(client):
 async def test_session_cookie_samesite(client):
     """
     SameSite=Strict or Lax prevents CSRF via cross-site form submissions.
-    SameSite=None requires Secure and enables cross-site sends — use deliberately.
+    SameSite=None requires Secure and enables cross-site sends  -  use deliberately.
     """
     res = await client.post(LOGIN, json={
         "username": os.getenv("TEST_USERNAME"),
@@ -90,7 +90,7 @@ async def test_session_cookie_samesite(client):
     samesite = cookie.get("samesite", "")
 
     assert samesite in ("strict", "lax"), (
-        f"SameSite='{samesite}' — must be Strict or Lax to prevent CSRF. "
+        f"SameSite='{samesite}'  -  must be Strict or Lax to prevent CSRF. "
         "SameSite=None allows cross-site requests."
     )
 
@@ -99,7 +99,7 @@ async def test_session_cookie_samesite(client):
 async def test_no_sensitive_data_in_cookie_value(client):
     """
     Cookie values must not contain plaintext sensitive data.
-    Session identifiers should be opaque tokens — not JWTs with user data,
+    Session identifiers should be opaque tokens  -  not JWTs with user data,
     not serialized user objects, not role flags.
     """
     res = await client.post(LOGIN, json={
