@@ -1,6 +1,6 @@
 # Task State Ledger
 
-Version 1.1.1
+Version 1.2.0
 
 Big technical projects stretch over days. Details disappear, decisions get lost, and you end up digging through long terminal logs just to remember where things stand.
 
@@ -24,6 +24,24 @@ Task State Ledger puts the important facts in one readable file. It helps a pers
 - **Evidence node archiving:** Stores reviewed output logs in a local private directory using stable node IDs.
 - **Consistent handoffs:** Records the active state, decisions, blockers, and next action across sessions or tools.
 - **Plain Markdown readability:** Remains readable in plain text without external diagram dependencies or visual parsers.
+
+## Project memory (new in 1.2.0)
+
+An optional second layer for decisions that should outlast a single task. `scripts/memctl.py` manages three plain Markdown files in the repository: `ROADMAP.md` (Backlog, In Progress, Done), `PROJECT-LOG.md` (durable decisions, 4-line entries, newest at the bottom), and `docs/PROJECT-LOG-ARCHIVE.md` (append-only). The active log keeps the newest 15 entries and at most 6000 bytes; older entries move to the archive unchanged.
+
+```bash
+python scripts/memctl.py init            # creates missing files only, never overwrites
+python scripts/memctl.py log --title "..." --asked "..." --decided "..." --why "..." --shipped "..."
+python scripts/memctl.py rotate --dry-run
+python scripts/memctl.py status
+```
+
+Because it is plain Markdown, it works the same in Claude Code, Codex, and Antigravity. Committing these files is opt-in. Keep secrets, personal data, and client confidential material out, and git-ignore the files in repositories that may become public. Hooks are optional examples only: see [hooks](docs/hooks.md).
+
+## Changelog
+
+- 1.2.0: Added project memory (`memctl.py`, roadmap and project-log templates, hook examples, tests).
+- 1.1.1: Previous release.
 
 ## Operational constraints
 
@@ -76,6 +94,9 @@ Add `.task-state/` to `.gitignore`. Publish only a separate, reviewed summary wh
 - [Portable layout](references/portable-layout.md)
 - [Retrieval budget](references/retrieval-budget.md)
 - [Task-state template](templates/task-state-template.md)
+- [Project memory hooks](docs/hooks.md)
+- [Roadmap template](templates/roadmap-template.md)
+- [Project log template](templates/project-log-template.md)
 
 ## License
 

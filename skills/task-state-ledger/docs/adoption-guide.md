@@ -84,6 +84,14 @@ Blocker: Test credentials are not available.
 Next action: Obtain approved test access before active verification.
 ```
 
+## Project memory (optional)
+
+For decisions that outlast one task, `scripts/memctl.py` keeps `ROADMAP.md` and `PROJECT-LOG.md` in the repository, with older entries moved to `docs/PROJECT-LOG-ARCHIVE.md`. The task ledger stays short-lived and git-ignored; project memory is opt-in to commit and must hold no secrets, personal data, or client confidential material. Repositories that may become public should git-ignore it. See [hooks](hooks.md) for optional automation examples.
+
+```text
+Use $task-state-ledger to offer project memory setup for this repository. Do not create files until I agree.
+```
+
 ## Frequently asked questions
 
 ### Does this replace normal project documentation?
