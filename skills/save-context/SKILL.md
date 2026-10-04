@@ -100,4 +100,4 @@ Do not say "already done" without the file-read evidence above.
 
 ---
 
-Licensed under CC BY 4.0.
+Licensed under the MIT License.

@@ -78,5 +78,4 @@ No dependencies beyond the Python standard library.
 
 ## License
 
-Specification and skill: **CC BY 4.0**, free to use, adapt, and redistribute with attribution.
-`scripts/score.py`: MIT.
+Specification, skill, and scripts: MIT. See [LICENSE](LICENSE).

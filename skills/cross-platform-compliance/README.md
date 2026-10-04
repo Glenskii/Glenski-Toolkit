@@ -1,7 +1,7 @@
 # cross-platform-compliance
 
 **Version:** 2.2
-**License:** CC BY 4.0
+**License:** MIT
 
 Most website bugs do not show up while building on a desktop screen. A page can look finished in Chrome, then break on an iPhone because of viewport height behavior, tiny tap targets, hidden focus states, form inputs that trigger iOS zoom, Safari CSS differences, or simple horizontal overflow on narrow screens.
 

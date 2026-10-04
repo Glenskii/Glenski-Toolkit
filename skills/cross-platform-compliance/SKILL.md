@@ -1,7 +1,7 @@
 ---
 name: cross-platform-compliance
 description: "Automated QA runner for pre-release cross-platform validation. Inspect local code and preview targets for browser-engine inconsistencies, responsive reflow errors, touch interaction bugs, and accessibility failures. Produce evidence logs and a mandatory release gate: BLOCKED, REVIEW REQUIRED, or PASS."
-license: CC-BY-4.0
+license: MIT
 ---
 
 ## THE PROBLEM THIS SOLVES
