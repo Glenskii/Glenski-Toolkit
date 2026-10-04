@@ -1,6 +1,6 @@
 # Universal Software Engineering Audit Specification
 
-**Version:** 2.2\1**Status:** Production audit standard\1**Purpose:** Evidence-based, full-lifecycle software engineering audit standard for human and AI-assisted auditors\1**Updated:** 2026-07-10\1**Supersedes:** Version 2.1\1**License:** CC BY 4.0 - free to use, adapt, and redistribute with attribution\1**Revision purpose:** Closes the remaining determinism gaps: normative control-to-category mapping, complete WARN scoring rules, cross-tier coverage disclosure, and gate-control separation.
+**Version:** 2.2\1**Status:** Production audit standard\1**Purpose:** Evidence-based, full-lifecycle software engineering audit standard for human and AI-assisted auditors\1**Updated:** 2026-07-10\1**Supersedes:** Version 2.1\1**License:** MIT\1**Revision purpose:** Closes the remaining determinism gaps: normative control-to-category mapping, complete WARN scoring rules, cross-tier coverage disclosure, and gate-control separation.
 
 ---
 

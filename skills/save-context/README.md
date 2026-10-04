@@ -2,7 +2,7 @@
 
 ![Save Context icon](assets/icon-large.png)
 
-**Version:** 1.1.0 | **License:** CC BY 4.0
+**Version:** 1.1.0 | **License:** MIT
 
 Save Context gives a long technical task a proper place to land. Before a
 session is compacted, closed, or handed to another tool, it writes a short,
@@ -90,4 +90,4 @@ For the entry format and the final report, see
 contains practical, local-first tools for development, creative production,
 and software quality.
 
-Licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+Licensed under the MIT License. See [LICENSE](LICENSE).

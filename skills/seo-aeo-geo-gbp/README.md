@@ -42,4 +42,4 @@ The skill names the page, file, record, or query behind a finding whenever the e
 
 ## License
 
-CC BY 4.0. See the [Creative Commons license](https://creativecommons.org/licenses/by/4.0/).
+MIT. See [LICENSE](LICENSE).

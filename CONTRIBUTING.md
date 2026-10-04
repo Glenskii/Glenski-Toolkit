@@ -67,4 +67,4 @@ docs: update root README skills table
 
 ## License
 
-By contributing, you agree your additions are released under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+By contributing, you agree your additions are released under the [MIT License](LICENSE).
