@@ -10,7 +10,7 @@ never assumed. Spec Section 6 is normative.
 - Environment: local / development / staging / production / mixed
 - Access level: none / read-only / test-user / privileged test-user / administrator / infrastructure
 - Assurance objective: advisory / release decision / customer assurance / internal control / regulatory support / acquisition review
-- Risk profile: P1–P6, plus modifiers
+- Risk profile: P1-P6, plus modifiers
 - Time box:
 
 ## Product context

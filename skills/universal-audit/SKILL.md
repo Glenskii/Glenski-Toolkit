@@ -24,7 +24,7 @@ Core discipline, non-negotiable:
    for items you cannot establish yourself. Missing inputs go to **Audit Limitations**,
    never silently assumed.
 3. Declare: audit type, depth tier (rapid / standard / deep), environment, access level,
-   assurance objective, and risk profile (P1–P6, see `references/depth-and-profiles.md`).
+   assurance objective, and risk profile (P1-P6, see `references/depth-and-profiles.md`).
    If the operator did not specify depth, propose one with rationale and wait.
 4. Assign the audit ID: `AUD-[PRODUCT]-[YYYYMMDD]-[SEQ]`.
 5. Rules of Engagement: this skill defaults to **passive, read-only inspection**. No load
@@ -174,7 +174,7 @@ still challenged by an agent that is independent of both the hunt and this audit
 ## Re-Audit Mode
 
 If the operator supplies a prior audit ID or report, run spec Section 16 instead of a
-fresh Phase 1–3: verify each prior FAIL/WARN against its original reproduction, classify
+fresh Phase 1-3: verify each prior FAIL/WARN against its original reproduction, classify
 (OPEN / PARTIALLY REMEDIATED / REMEDIATED / ACCEPTED / REGRESSED / NOT REPRODUCIBLE),
 re-run all applicable C3 controls, recalculate from current evidence, and produce the
 delta table. Never carry a PASS forward without confirming its evidence still holds.

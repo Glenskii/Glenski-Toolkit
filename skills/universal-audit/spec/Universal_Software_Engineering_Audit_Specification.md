@@ -637,11 +637,11 @@ If a category is genuinely NOT APPLICABLE, redistribute its weight proportionall
 
 ### 13.2 Category Score Bands
 
-- **9.0–10.0:** Strong controls, extensively verified, no material unresolved weakness
-- **7.0–8.9:** Production-capable with bounded and manageable deficiencies
-- **5.0–6.9:** Material remediation required; assurance is incomplete or inconsistent
-- **3.0–4.9:** Major deficiencies affecting production confidence
-- **0.0–2.9:** Unacceptable control failure or pervasive critical risk
+- **9.0-10.0:** Strong controls, extensively verified, no material unresolved weakness
+- **7.0-8.9:** Production-capable with bounded and manageable deficiencies
+- **5.0-6.9:** Material remediation required; assurance is incomplete or inconsistent
+- **3.0-4.9:** Major deficiencies affecting production confidence
+- **0.0-2.9:** Unacceptable control failure or pervasive critical risk
 
 ### 13.3 Evidence Coverage
 

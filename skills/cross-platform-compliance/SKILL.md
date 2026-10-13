@@ -308,8 +308,8 @@ const hasOverflow = await page.evaluate(() =>
   document.documentElement.scrollWidth > window.innerWidth
 );
 ```
-- FAIL if true at V1–V3 (mobile viewports should never scroll horizontally)
-- WARN if true at V4–V5 (tablets)
+- FAIL if true at V1-V3 (mobile viewports should never scroll horizontally)
+- WARN if true at V4-V5 (tablets)
 
 **L2-2: Tap Target Size Scan**
 
@@ -412,7 +412,7 @@ Project: [name]
 Entry: [URL or file]
 Date: [date]
 Layer 1: [complete | partial - reason]
-Layer 2: [complete at V1–V6 | skipped - reason]
+Layer 2: [complete at V1-V6 | skipped - reason]
 =====================================================
 
 FAIL FINDINGS

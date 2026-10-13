@@ -15,7 +15,7 @@ is UNVERIFIED, not PASS.
 - **GOV-ROE-001**: written authorization on file covering targets, methods, limits.
 - **GOV-THREAT-001**: existing threat model, or run the spec 6.5 fallback: assets, actors,
   entry points, boundaries, top-5 abuse scenarios, existing controls.
-- **GOV-RISK-001 / GOV-TRACE-001**: risk register fields complete; sample 3–5 material
+- **GOV-RISK-001 / GOV-TRACE-001**: risk register fields complete; sample 3-5 material
   requirements and trace each to code and a test.
 
 ## SEC - Authentication, authorization, sessions
