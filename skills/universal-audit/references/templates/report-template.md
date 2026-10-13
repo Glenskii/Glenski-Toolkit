@@ -47,6 +47,14 @@
 <!-- Full twenty-field standard (spec Section 9) for every FAIL and WARN.
      Include NOTE/UNVERIFIED entries that materially affect interpretation. -->
 
+## 6b. Claims Examined and Disproved
+
+<!-- From rejected-claims.json. One line each: claim, the concrete fact that disproved it
+     (file:line), commit tested. No severity. Omit the section only if none exist. -->
+
+| Claim | Control | Disproved by | Commit |
+|---|---|---|---|
+
 ## 7. Verified Strengths
 
 <!-- Affirmatively verified controls only. No generic praise. -->

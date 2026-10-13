@@ -20,6 +20,7 @@ audits/AUD-MYAPP-20260710-001/
   selected-controls.json   # frozen coverage denominator
   evidence-ledger.json     # every material observation, sanitized
   findings.json            # twenty-field findings
+  rejected-claims.json     # concerns examined and disproved (never scored)
   score-sheet.json         # deterministic scores, caps, coverage, gates
   risk-register.json
   verification-log.json    # independent challenge outcomes
@@ -44,6 +45,22 @@ Release gates select the verdict. The numeric score alone never does.
   inflation, no "AI-generated code" accusations without provenance.
 - **Safe by default.** Passive read-only inspection unless written Rules of Engagement
   authorize more. Hard prohibitions that no authorization field overrides.
+
+## Security hunt companion
+
+For source targets the audit can import a run of the bundled `security-audit` hunt protocol
+(`vendor/security-audit/`, Cloudflare, MIT) as evidence for the security control families: confirmed records
+become FAIL findings, blocked ones become UNVERIFIED with no severity, disproved ones are
+kept as rejected claims. Details: `references/security-hunt-integration.md`.
+
+Scripts (stdlib only, run with `python -I`):
+
+| Script | Job |
+|---|---|
+| `scripts/score.py` | Deterministic scoring, caps, coverage, release gates |
+| `scripts/import-security-hunt.py` | Import a hunt run into the audit folder, idempotent |
+| `scripts/validate-audit-artifacts.py` | Schema, cross-reference, severity-rule and secret checks; `--release` enforces Phase 5 |
+| `scripts/reaudit-diff.py` | Classify prior findings by source change between two commits |
 
 ## Layout
 

@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Rejected Claim - candidate examined and disproved during an audit",
+  "description": "A concern that was raised, independently tested and refuted. Kept so the same claim is not re-raised, and so the report can show what was examined. Rejected claims carry no severity and never affect scoring.",
+  "type": "object",
+  "required": ["schema_version", "audit_id", "claim_id", "title", "claimed_issue", "reason_rejected", "source_ref", "origin"],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "audit_id": { "type": "string" },
+    "claim_id": { "type": "string", "pattern": "-X\\d{3}$" },
+    "title": { "type": "string", "maxLength": 120 },
+    "control_ids": { "type": "array", "items": { "type": "string" } },
+    "claimed_issue": { "type": "string" },
+    "reason_rejected": { "type": "string", "description": "The concrete fact that disproves the claim, with file:line where possible." },
+    "source_ref": { "type": "string", "description": "Commit the claim was tested against. A changed source path reopens the claim." },
+    "source_paths": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["file"],
+        "properties": { "file": { "type": "string" }, "line": { "type": ["integer", "null"] } }
+      }
+    },
+    "origin": { "enum": ["manual", "security-hunt", "challenge-pass"] },
+    "hunt_fingerprint": { "type": ["string", "null"] }
+  }
+}

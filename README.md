@@ -9,7 +9,7 @@ The toolkit is shaped by active project work, then converted into portable resou
 | Skill | Purpose |
 | --- | --- |
 | [cross-platform-compliance](skills/cross-platform-compliance/) | Check web frontends for browser-engine, responsive, touch, and accessibility issues before release. |
-| [universal-audit](skills/universal-audit/) | Run an evidence-based software audit with a clear release verdict and stated limits. |
+| [universal-audit](skills/universal-audit/) | Run an evidence-based software audit with a clear release verdict and stated limits. Bundles a source-level security hunt (vendored Cloudflare security-audit, MIT). |
 | [vibe-security-audit](skills/vibe-security-audit/) | Perform defensive release checks for FastAPI, Flask, and Django applications. |
 | [human-writer](skills/human-writer/) | Edit supplied copy for clarity and natural voice without changing its meaning. |
 | [seo-aeo-geo-gbp](skills/seo-aeo-geo-gbp/) | Review search visibility, structured data, and public profile information using current evidence and no outcome promises. |

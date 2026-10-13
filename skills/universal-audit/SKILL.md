@@ -31,9 +31,13 @@ Core discipline, non-negotiable:
    tests, no destructive actions, no auth bypass attempts, no tests against systems the
    operator does not own. Active testing requires the RoE template completed and explicit
    operator authorization recorded in the manifest.
-6. Gate controls: evaluate `GOV-SCOPE-001` and `GOV-ROE-001` first. If either cannot PASS,
+6. Threat model: read `references/threat-intel-2026.md` and use it as input to
+   `GOV-THREAT-001`. Its control overlay adds evidence demands to Phases 1 and 2.
+   If the target has a project audit plan (for example `docs/audit/AUDIT-PLAN.md`),
+   read that too.
+7. Gate controls: evaluate `GOV-SCOPE-001` and `GOV-ROE-001` first. If either cannot PASS,
    the engagement is advisory only - say so now, not in the report.
-7. Create the artifact directory: `audits/<audit-id>/` in the project root (or an
+8. Create the artifact directory: `audits/<audit-id>/` in the project root (or an
    operator-specified location).
 
 ## Phase 1 - Control Selection
@@ -65,6 +69,27 @@ evidence listed in the catalog or stronger. Practical guidance per family is in
 - For large targets, fan evidence collection out to subagents by control family, one
   ledger merged afterward. Deduplicate observations across families before Phase 3.
 
+### Phase 2b - Security hunt (source targets, code available)
+
+Controls prove a defence exists. A hunt looks for the hole nobody listed. For any audit
+with source access, run the bundled hunt protocol in `vendor/security-audit/PROTOCOL.md`
+(Cloudflare security-audit, MIT) as the evidence source for the security families
+(SEC-*, DATA-TENANT-001, SUP-*, CICD-*, AI-INJECT-001). Full procedure and the exact
+mapping: `references/security-hunt-integration.md`. In short:
+
+1. Map the tier to a hunt profile: Rapid -> `quick`, Standard -> `standard`, Deep -> `deep`.
+   Record the profile, scope and agent budget in `audit-manifest.json` limitations.
+2. Follow `vendor/security-audit/PROTOCOL.md` in full audit mode with its output directory
+   OUTSIDE the target repository. Run its validators (`vendor/security-audit/*.cjs`, Node).
+3. Import: `python -I scripts/import-security-hunt.py --hunt <hunt-run-dir> --audit-dir audits/<audit-id>`
+   confirmed -> FAIL finding, needs_validation -> UNVERIFIED (no severity), rejected ->
+   `rejected-claims.json`. Review every finding tagged `needs-control-review`.
+4. The hunt's own verification does NOT replace Phase 5: every imported Critical/High
+   still goes through the independent challenge.
+5. If the hunt could not execute target code (no OS sandbox, the usual case on Windows),
+   say so in Audit Limitations. Source-only hunt results stay valid, runtime-dependent ones
+   stay UNVERIFIED. Never present a quick or scoped hunt as exhaustive coverage.
+
 ## Phase 3 - Findings and Status
 
 1. Assign each selected control exactly one status: PASS / FAIL / WARN / NOTE /
@@ -76,6 +101,24 @@ evidence listed in the catalog or stronger. Practical guidance per family is in
    only when all four conditions hold.
 4. WARN may not carry Critical severity. A WARN - High on a C3 control must survive the
    Phase 5 challenge or be reclassified FAIL - High.
+5. **Rejected claims are recorded, not dropped.** A concern that was raised and then
+   disproved (by you, the hunt, or the Phase 5 challenge) goes into `rejected-claims.json`
+   with the concrete fact that disproved it, the commit, and its source paths. It carries
+   no severity, never affects scoring, and appears in the report under "Claims examined
+   and disproved". A changed source path reopens the claim.
+6. **Severity discipline for UNVERIFIED.** An UNVERIFIED finding states the exact missing
+   fact and a safe way to obtain it. It has no severity (`severity: null`), because a
+   blocked hypothesis is not a low-confidence vulnerability.
+7. Record `source_ref` and `source_paths` (files the finding depends on) on every finding
+   so the re-audit can tell, from the source, whether it still applies.
+8. Run the artifact validator before scoring:
+
+   ```
+   python -I scripts/validate-audit-artifacts.py audits/<audit-id>
+   ```
+
+   It checks schemas, cross references, the severity rules above and a secret scan over
+   every excerpt. Fix every ERROR first.
 
 ## Phase 4 - Scoring and Verdict
 
@@ -94,6 +137,8 @@ evidence listed in the catalog or stronger. Practical guidance per family is in
    DO NOT SHIP - from the script's gate evaluation plus the qualitative gates the script
    cannot check (critical-workflow verification, interim-control ownership). Justify the
    verdict against the gates line by line.
+3. UNVERIFIED security controls that a hunt could not resolve stay UNVERIFIED and are
+   named in the verdict. They are not rounded up to PASS and not rounded down to FAIL.
 
 ## Phase 5 - Independent Challenge
 
@@ -103,17 +148,26 @@ Medium/WARN, and every C3 PASS supporting approval, and recalculates the score s
 Deep tier: the challenge must be a genuinely independent agent or human review.
 
 Record each challenge outcome: UPHELD / MODIFIED / REJECTED / NEEDS MORE EVIDENCE, with
-rationale, in `verification-log.json`. Resolve differences transparently.
+rationale, in `verification-log.json`, and mirror it into each finding's
+`challenge_outcome`. A REJECTED outcome moves the finding to `rejected-claims.json`.
+Resolve differences transparently.
+
+Imported hunt findings (`origin: security-hunt`) were already verified by a fresh agent
+inside the hunt. That reduces, but does not remove, this phase: every Critical/High is
+still challenged by an agent that is independent of both the hunt and this audit's author.
 
 ## Phase 6 - Report and Release
 
 1. Render `report.md` from `references/templates/report-template.md`. Executive summary
    is seven sentences maximum.
 2. Confirm the twelve-point quality gate (spec 19.2). Any failure means the report is not
-   ready - fix it, do not ship it annotated.
+   ready - fix it, do not ship it annotated. Run
+   `python -I scripts/validate-audit-artifacts.py audits/<audit-id> --release`
+   first: it fails if any Critical/High finding has no challenge outcome.
 3. Final artifact set in `audits/<audit-id>/`: `audit-manifest.json`,
-   `selected-controls.json`, `evidence-ledger.json`, `findings.json`, `score-sheet.json`,
-   `risk-register.json`, `verification-log.json`, `report.md`.
+   `selected-controls.json`, `evidence-ledger.json`, `findings.json`, `rejected-claims.json`,
+   `score-sheet.json`, `risk-register.json`, `verification-log.json`, `report.md`
+   (plus `security-hunt-import-log.json` when a hunt was imported).
 4. Deliver the verdict, the top risks, and the coverage figures in the final message.
    Plain language, no alarmism, no softening.
 
@@ -124,6 +178,20 @@ fresh Phase 1–3: verify each prior FAIL/WARN against its original reproduction
 (OPEN / PARTIALLY REMEDIATED / REMEDIATED / ACCEPTED / REGRESSED / NOT REPRODUCIBLE),
 re-run all applicable C3 controls, recalculate from current evidence, and produce the
 delta table. Never carry a PASS forward without confirming its evidence still holds.
+
+Decide what is still current from the SOURCE, not from the report date:
+
+```
+python -I scripts/reaudit-diff.py --prior audits/<prior-id> --repo <repo> --out audits/<new-id>/reaudit-diff.json
+```
+
+- SOURCE_UNCHANGED finding: still carried forward, but re-confirm it on current evidence.
+- SOURCE_CHANGED finding: re-validate from scratch. A fix may have landed, or the code
+  around it moved.
+- SOURCE_UNKNOWN: treat as changed (older audit with no recorded source paths).
+- Rejected claim with unchanged source stays suppressed. With changed source it reopens
+  as new work. A prior `quick` or scoped hunt only contributes its own evidence, never an
+  implied "the rest is fine".
 
 ## Scope Control
 
