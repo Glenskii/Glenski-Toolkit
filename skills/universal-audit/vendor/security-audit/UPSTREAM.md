@@ -19,6 +19,9 @@ Vendored into universal-audit on 2026-10-12. Local changes are listed below.
   skill folders can be registered as a second skill by a host, and the Toolkit rule is one skill
   per folder.
 
+- 2026-10-13: em and en dashes in the vendored markdown replaced with plain hyphens to match the
+  Toolkit punctuation rule. Wording is otherwise unchanged.
+
 ## Integration
 
 Driven by the parent skill (see ../../references/security-hunt-integration.md).
