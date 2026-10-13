@@ -1,25 +1,25 @@
 # Human Writer
 
-Your draft may be clear in your head but flat on the page. It can become repetitive, over-polished, or packed with stock wording that does not sound like you.
+A skill that cleans up your own draft so it sounds like you again. Use it on posts, replies, emails, docs and READMEs before you send or publish them.
 
-Human Writer makes small editorial corrections while protecting your meaning, facts, structure, and voice. It is for improving a draft you already wrote, not for inventing new ideas or changing your point of view.
+It fixes stock wording, repeated transitions and padding. It does not add ideas or change your point.
 
 ## Use it for
 
-- Social posts, replies, emails, and comments before you send them.
-- README files, documentation, and release notes that need a cleaner human voice.
-- A read-only check when you want to know what feels canned without changing the draft.
+- Social posts, replies, emails and comments before you send them.
+- READMEs, docs and release notes that read too stiff.
+- A read-only check when you only want to know what sounds canned.
 
 ## How it works
 
-1. It reads the whole draft and identifies the writing habits that already make it yours.
-2. It removes or flags stock vocabulary, repetitive transitions, padded emphasis, forced lists, and unnecessary em dashes.
-3. It keeps the original claims intact. If a fact needs changing, it asks before touching it.
+1. It reads the whole draft and notes the habits that already make it yours.
+2. It removes or flags stock vocabulary, repeated transitions, padded emphasis, forced lists and needless em dashes.
+3. It leaves your claims alone. If a fact needs changing, it asks first.
 
-There are two modes:
+Two modes:
 
 - **Edit:** makes the smallest useful corrections and returns the revised draft.
-- **Detect:** identifies the patterns that weaken the writing without rewriting it.
+- **Detect:** names the patterns that weaken the writing and does not rewrite anything.
 
 ## Start prompt
 
@@ -33,14 +33,14 @@ For a read-only review:
 Use $human-writer in Detect mode. Show me the lines that feel canned or over-polished, but do not rewrite them.
 ```
 
-## What it will not do
+## What it won't do
 
-- Add arguments, examples, facts, or opinions that were not in your draft.
-- Silently correct an uncertain fact.
-- Flatten blunt, informal, funny, or distinctive writing just to make it sound generic.
-- Pretend that a detector can prove who wrote a piece of text.
+- Add arguments, examples, facts or opinions that were not in your draft.
+- Quietly correct a fact it is unsure about.
+- Flatten blunt, informal, funny or distinctive writing into something generic.
+- Claim that a detector can prove who wrote a piece of text.
 
-## Included material
+## What's in the folder
 
 - [Core instructions](SKILL.md)
 - [Editorial self-check](eval.md)

@@ -3,27 +3,27 @@
 **Version:** 2.2
 **License:** MIT
 
-Most website bugs do not show up while building on a desktop screen. A page can look finished in Chrome, then break on an iPhone because of viewport height behavior, tiny tap targets, hidden focus states, form inputs that trigger iOS zoom, Safari CSS differences, or simple horizontal overflow on narrow screens.
+A page can look finished in desktop Chrome and still fall apart on an iPhone. Viewport height quirks, tiny tap targets, missing focus states, inputs that trigger iOS zoom, Safari CSS differences and horizontal overflow on narrow screens all hide on a big monitor.
 
-`cross-platform-compliance` gives compatible development tools a structured way to catch those problems before a site ships. It audits real frontend code and, when a preview URL is available, renders the site at mobile, tablet, and desktop sizes to measure what users actually get.
+This skill audits your frontend code for those problems before you ship. If you give it a preview URL, it also renders the site at mobile, tablet and desktop sizes and measures what users actually get.
 
-Use this skill when you need to answer practical release questions:
+Use it to answer these questions:
 
-- Will the desktop layout still work on phones and tablets?
-- Are there Safari, iOS, Android, Firefox, or Edge risks hiding in the CSS or JavaScript?
-- Are buttons, links, forms, modals, and navigation usable on touch devices?
-- Are accessibility basics such as labels, focus states, and zoom support intact?
-- Should this page ship, or is it blocked by mobile/browser issues?
+- Will the desktop layout hold up on phones and tablets?
+- Is there Safari, iOS, Android, Firefox or Edge risk in the CSS or JavaScript?
+- Do buttons, links, forms, modals and navigation work by touch?
+- Are labels, focus states and zoom support intact?
+- Should this page ship, or is mobile or browser breakage blocking it?
 
-The benefit is a release-style verdict instead of vague advice. Findings are grouped as `FAIL`, `WARN`, `NOTE`, or `PASS`, and every audit ends with `BLOCKED`, `REVIEW REQUIRED`, or `PASS`.
+You get a verdict, not vague advice. Findings are graded `FAIL`, `WARN`, `NOTE` or `PASS`, and every audit ends with `BLOCKED`, `REVIEW REQUIRED` or `PASS`.
 
-Layer 1 works as a normal portable skill with no install required. Layer 2 is optional and uses Playwright for rendered browser checks, screenshots, computed styles, and axe accessibility scanning.
+There are two layers. Layer 1 is a static code audit and needs no install. Layer 2 is optional: it uses Playwright for rendered browser checks, screenshots, computed styles and an axe accessibility scan.
 
 ## Compatibility
 
-This folder uses a portable `SKILL.md`, bundled scripts, and optional compatibility metadata. The core workflow does not depend on a named client.
+The folder holds a portable `SKILL.md`, bundled scripts and optional compatibility metadata. The core workflow does not depend on any one client.
 
-## What It Checks
+## What it checks
 
 | Area | Layer 1 Static Audit | Layer 2 Rendered Audit |
 |---|---|---|
@@ -35,7 +35,7 @@ This folder uses a portable `SKILL.md`, bundled scripts, and optional compatibil
 | Accessibility | focus styles, accessible names, modal focus trap | axe scan, rendered focus check |
 | Desktop/tablet | `100vw`, tablet breakpoints, mouse-only events, sticky issues | tablet and desktop profiles |
 
-## Severity Gate
+## Severity gate
 
 | Tier | Meaning | Gate |
 |---|---|---|
@@ -44,21 +44,21 @@ This folder uses a portable `SKILL.md`, bundled scripts, and optional compatibil
 | NOTE | Advisory or manual follow-up | No gate effect |
 | PASS | Checked and clean | No action |
 
-Default process behavior:
+Default process behaviour:
 
-- FAIL findings fail the Playwright process after all checks complete.
-- WARN findings produce `REVIEW REQUIRED` but do not fail the process.
+- FAIL findings fail the Playwright process once all checks have finished.
+- WARN findings give `REVIEW REQUIRED` but do not fail the process.
 - Set `COMPLIANCE_FAIL_ON_WARN=1` to fail CI on WARN findings too.
 
-## Layer 1 Usage
+## Layer 1: static audit
 
-No install required. Use the skill against real source files or pasted code:
+No install. Point it at real source files or paste code:
 
 ```text
 Use $cross-platform-compliance to audit this website for mobile and browser compatibility.
 ```
 
-## Layer 2 Option A: Install In The Target Project
+## Layer 2, option A: install in the target project
 
 ```bash
 npm install --save-dev @playwright/test @axe-core/playwright
@@ -85,9 +85,9 @@ $env:AUDIT_PATHS='/,/register/,/thanks/'
 npx playwright test --reporter=list --workers=1
 ```
 
-## Layer 2 Option B: Temporary Harness
+## Layer 2, option B: temporary harness
 
-Use the bundled wrapper to avoid adding Playwright to the target project:
+The bundled wrapper keeps Playwright out of the target project:
 
 ```powershell
 .\scripts\run-layer2-audit.ps1 -BaseUrl http://localhost:4173 -Paths "/,/register/,/thanks/"
@@ -105,7 +105,7 @@ Strict CI mode:
 .\scripts\run-layer2-audit.ps1 -BaseUrl http://localhost:4173 -Paths "/" -FailOnWarn
 ```
 
-## Environment Options
+## Environment options
 
 ```text
 BASE_URL=http://localhost:4173
@@ -123,12 +123,12 @@ COMPLIANCE_REPORT_PATH=./compliance-report.json
 
 - Screenshots: `./compliance-screenshots/`
 - JSON report: `./compliance-report.json`
-- Console summary with final gate: `BLOCKED`, `REVIEW REQUIRED`, or `PASS`
+- Console summary with the final gate: `BLOCKED`, `REVIEW REQUIRED` or `PASS`
 
-## Important Limit
+## Limit
 
-Playwright Chromium, Firefox, and WebKit improve engine coverage, but they do not replace real iOS Safari and Android hardware sign-off. Treat Layer 2 as an automated release gate for known patterns, not as a guarantee that every device-specific rendering issue is caught.
+Playwright's Chromium, Firefox and WebKit widen engine coverage, but they do not replace sign-off on real iOS Safari and Android hardware. Layer 2 is an automated gate for known patterns. It will not catch every device-specific rendering bug.
 
-## Part Of The Glenski Toolkit
+## Part of the Glenski Toolkit
 
 [github.com/Glenskii/Glenski-Toolkit](https://github.com/Glenskii/Glenski-Toolkit)

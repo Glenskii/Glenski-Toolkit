@@ -1,13 +1,15 @@
 # Search Evidence Audit
 
-Search advice is easy to give and hard to prove. This skill reviews a website or public business presence using visible evidence, supplied data, and current official guidance. It separates confirmed findings from sensible next steps and does not promise rankings, traffic, rich results, or answer-engine inclusion.
+This skill audits a website or public business presence for search visibility. Use it when you want findings you can check, not guesses. Every result is labelled by how well it is backed, and nothing here promises rankings, traffic, rich results, or answer-engine inclusion.
+
+It works from what it can see: the site itself, data you supply, and current official guidance. Confirmed findings stay separate from suggested next steps.
 
 ## Use it for
 
-- Technical search checks, including canonical URLs, robots directives, sitemaps, renderability, and internal links.
-- Page and structured-data reviews that compare declared markup with what visitors can actually see.
-- Local-profile accuracy checks based on details the owner has approved.
-- Search-result and answer-engine claims that need current, primary-source support.
+- Technical checks: canonical URLs, robots directives, sitemaps, renderability, internal links.
+- Page and structured-data reviews, comparing declared markup with what visitors can see.
+- Local-profile accuracy checks, using details the owner has approved.
+- Claims about search results or answer engines that need current primary-source support.
 
 ## Start prompt
 
@@ -15,27 +17,27 @@ Search advice is easy to give and hard to prove. This skill reviews a website or
 Use $seo-aeo-geo-gbp to review this site for search visibility. Start by confirming the target, market, available evidence, and limits. Label each result as verified, documented, recommendation, or unverified.
 ```
 
-## Evidence first
+## Evidence labels
 
-Every result uses one of four labels:
+Every result carries one of four labels:
 
 | Label | Meaning |
 | --- | --- |
 | `VERIFIED` | Directly observed in the reviewed site, source, crawl, export, or authorized data. |
 | `DOCUMENTED` | Supported by current official documentation. |
-| `RECOMMENDATION` | A practical next step where project-specific proof is incomplete. |
+| `RECOMMENDATION` | A next step where project-specific proof is incomplete. |
 | `UNVERIFIED` | Cannot be answered from the evidence available. |
 
-The skill names the page, file, record, or query behind a finding whenever the evidence permits it. If the target cannot be inspected, it explains what is missing instead of guessing.
+When the evidence allows, the skill names the page, file, record, or query behind a finding. If the target cannot be inspected, it says what is missing instead of guessing.
 
-## What it does not claim
+## What it does not do
 
-- A third-party score is not treated as a search-engine verdict.
-- A technical change is not presented as a ranking guarantee.
-- Private analytics, credentials, client records, and internal infrastructure do not belong in a public report.
-- Structured data is produced only from facts the owner has supplied or approved.
+- It does not treat a third-party score as a search-engine verdict.
+- It does not present a technical change as a ranking guarantee.
+- It keeps private analytics, credentials, client records, and internal infrastructure out of a public report.
+- It produces structured data only from facts the owner has supplied or approved.
 
-## Included material
+## Files
 
 - [Core instructions](SKILL.md)
 - [Evidence and report standard](references/search-evidence.md)

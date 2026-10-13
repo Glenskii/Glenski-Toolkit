@@ -2,8 +2,8 @@
 
 ![Inbox Guardian for Gmail](assets/social-preview.png)
 
-> Local Gmail inbox defense with owner-verified rules, audit-first holding pens, and safe recovery paths.
-> It runs locally on your computer and connects to Gmail through your personal Google Cloud OAuth client.
+> A Gmail spam and phishing filter that runs on your own computer. It holds suspicious mail for your review and never deletes anything from your inbox without your approval.
+> It connects to Gmail through your own Google Cloud OAuth client.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
@@ -11,27 +11,24 @@
 
 ---
 
-## System Architecture
+## How it works
 
 ![How the system eliminates spam](assets/how-the-system-eliminates-spam.png)
 
 ---
 
-## What This Tool Does
+## What it does
 
-Inbox Guardian protects your Gmail inbox from spam botnets, fake account warnings, and phishing attacks.
-The engine puts human safety first. It never deletes emails from your inbox without your approval.
+Inbox Guardian protects your Gmail inbox from spam botnets, fake account warnings and phishing. It puts your safety first: it never deletes email from your inbox without your approval.
 
-Key features include:
-
-1. **The Training Depot**: Instead of purging mail, the engine moves suspicious incoming messages into a dedicated holding folder named `Guardian/Review`. This folder acts as an interactive training depot. Messages held here never expire and are never automatically deleted. You can review held messages at your convenience.
-2. **Strict Seven-Day Scan Window**: Automated background sweeps are strictly capped to inspect incoming mail from the past seven days (`newer_than:7d`). The engine never scans older mailbox history.
-3. **Shared Cloud Infrastructure Firewall**: Spammers often abuse large cloud email providers. The engine includes a built-in safety firewall that protects major cloud networks. These include Amazon SES, SendGrid, Mailgun, Postmark, Mailchimp, Microsoft, Google, Meta, and Resend. The system will never harvest or block these shared delivery networks.
-4. **Auto-Harvest Relay Defense**: When an email in your trash is confirmed as a botnet attack, the engine traces the hidden return path. It finds the true root server domain, like rogue `.biz` or `.web.id` farms. It then blocks the entire botnet network permanently.
-5. **Two-Way Training Loop**: If you find good mail in your review folder, moving it to your inbox teaches the system to trust that sender. If you confirm a message is junk, the system learns the pattern to stop future attacks.
-6. **Live Auto-Refreshing Dashboard**: A clean browser control center gives you live status reports and active whitelist badges. The dashboard updates every fifteen seconds without page reloads.
-7. **Least-Privilege Security**: The default Gmail setup inspects headers, applies labels, and moves messages. It does not grant administrative access to your account.
-8. **Silent Windows Service**: The engine can run unattended sweeps every fifteen minutes through Windows Task Scheduler. It runs quietly in the background without opening console windows or stealing screen focus.
+1. **Holding folder.** It does not purge suspicious mail. It moves it into a folder named `Guardian/Review`. Messages held there never expire and are never deleted automatically. Review them when you like.
+2. **Seven-day scan window.** Background sweeps only look at mail from the past seven days (`newer_than:7d`). It never scans older mailbox history.
+3. **Shared sender protection.** Spammers often abuse big cloud email providers. Guardian will not harvest or block shared delivery networks: Amazon SES, SendGrid, Mailgun, Postmark, Mailchimp, Microsoft, Google, Meta and Resend.
+4. **Relay defense.** When a message in your trash is confirmed as a botnet attack, Guardian traces the hidden return path and finds the real root server domain, such as a rogue `.biz` or `.web.id` farm. It then blocks that whole network permanently.
+5. **Two-way training.** Move good mail from the review folder back to your inbox and Guardian learns to trust that sender. Confirm a message is junk and it learns the pattern.
+6. **Dashboard.** A browser page shows live status and active whitelist badges. It refreshes every fifteen seconds without reloading.
+7. **Least privilege.** The default Gmail setup reads headers, applies labels and moves messages. It does not give Guardian administrative access to your account.
+8. **Windows background service.** Windows Task Scheduler can run a sweep every fifteen minutes. It runs quietly, with no console windows and no stolen focus.
 
 ---
 
@@ -43,11 +40,11 @@ Key features include:
 
 ---
 
-## Installation and Setup
+## Installation and setup
 
-### 1. Download and Set Up
+### 1. Download and install
 
-#### On macOS and Linux:
+#### macOS and Linux
 ```bash
 git clone https://github.com/Glenskii/Glenski-Toolkit.git
 cd Glenski-Toolkit/skills/inbox-guardian-for-gmail
@@ -58,7 +55,7 @@ pip install -r requirements-dev.txt
 cp config.example.json config.json
 ```
 
-#### On Windows (PowerShell):
+#### Windows (PowerShell)
 ```powershell
 git clone https://github.com/Glenskii/Glenski-Toolkit.git
 cd Glenski-Toolkit\skills\inbox-guardian-for-gmail
@@ -71,91 +68,91 @@ copy config.example.json config.json
 
 ---
 
-### 2. Google Cloud Setup
+### 2. Google Cloud setup
 
-Follow the complete [Google OAuth setup guide](docs/google-oauth-setup.md). Place your downloaded Desktop app client file beside `guardian.py` as `credentials.json`, then run:
+Follow the [Google OAuth setup guide](docs/google-oauth-setup.md). Save the Desktop app client file you download beside `guardian.py` as `credentials.json`, then run:
 
 ```bash
 python guardian.py --setup
 ```
 
-The setup command initializes your configuration, opens your default browser for Google consent, stores your token with private permissions, and confirms your mailbox connection.
+Setup initializes your configuration, opens your default browser for Google consent, stores your token with private permissions and confirms the mailbox connection.
 
 ---
 
-## How to Use the Tool
+## Using it
 
-### 1. Verify Connection and Account
-Confirm that your OAuth credentials are valid and display the active account:
+### 1. Check the connection and account
+Confirm your OAuth credentials are valid and show the active account:
 ```bash
 python guardian.py --setup
 ```
 
-### 2. Open the Visual Dashboard
-Generate and open your real-time status report in your web browser:
+### 2. Open the dashboard
+Generate the live status report and open it in your browser:
 ```bash
 python guardian.py --dashboard
 ```
 
-### 3. Index Your Trusted Contacts
-Scan your Sent and Starred messages to populate your local VIP reputation database:
+### 3. Index your trusted contacts
+Scan your Sent and Starred messages to build your local VIP reputation database:
 ```bash
 python guardian.py --seed-reputation
 ```
 
-### 4. Print a 24-Hour Summary
-Display recent activity statistics directly in your terminal:
+### 4. Print a 24-hour summary
+Show recent activity in your terminal:
 ```bash
 python guardian.py --summary
 ```
 
-### 5. Run an Inbox Audit (Dry Run)
-Inspect your recent emails, review classifications, and generate a review file:
+### 5. Run an inbox audit (dry run)
+Inspect recent mail, review the classifications and write a review file:
 ```bash
 python guardian.py
 ```
-This generates an audit file named `guardian_review_YYYYMMDD_HHMMSS.json`.
+This writes an audit file named `guardian_review_YYYYMMDD_HHMMSS.json`.
 
-### 6. Apply Quarantine from a Review File
-Move audited candidates to your `Guardian/Review` holding folder based on your audit:
+### 6. Quarantine from a review file
+Move the audited candidates to your `Guardian/Review` holding folder:
 ```bash
 python guardian.py --execute --review-file guardian_review_20260826_080000.json
 ```
 
-### 7. Move Flagged Items to Trash
-If you prefer moving audited items directly to your standard Trash:
+### 7. Move flagged items to Trash
+To send audited items straight to your standard Trash instead:
 ```bash
 python guardian.py --execute --review-file guardian_review_20260826_080000.json --trash
 ```
 
-### 8. Review Unsubscribe Headers
-Inspect incoming messages that provide RFC unsubscribe headers:
+### 8. Review unsubscribe headers
+Inspect incoming messages that carry RFC unsubscribe headers:
 ```bash
 python guardian.py --review-unsub
 ```
 
 ---
 
-## Windows Background Service
+## Windows background service
 
-After completing setup, you can run the service silently through Windows Task Scheduler. The service defaults to safe quarantine in your `Guardian/Review` folder, maintains your live dashboard, and respects all cloud infrastructure firewalls.
+After setup, Windows Task Scheduler can run Guardian silently. The service defaults to safe quarantine in your `Guardian/Review` folder, keeps your dashboard current and respects the shared sender protection.
 
-Read the [Windows background-service guide](docs/windows-background-service.md) before installing the task. For a manual audit schedule on any platform, read the [scheduled audit guide](docs/scheduled-runs.md).
+Read the [Windows background-service guide](docs/windows-background-service.md) before you install the task. For a manual audit schedule on any platform, see the [scheduled audit guide](docs/scheduled-runs.md).
 
 ---
 
-## Running Tests
+## Running tests
 
-To verify that all safety rules and functions pass unit testing:
+To check that the safety rules and functions pass:
 ```bash
 pytest tests/ -v
 ```
 
 ---
 
-## Local Data and Privacy
+## Local data and privacy
 
-The tool stores its OAuth token, configuration, review files, SQLite reputation database, and activity history locally beside the skill. These private files are ignored by Git and must not be published. The only external connection used by the tool is the official Google Gmail API through your own private credentials. Read [SECURITY.md](SECURITY.md) and the detailed [safety model](docs/safety-model.md).
+Guardian keeps its OAuth token, configuration, review files, SQLite reputation database and activity history on your machine, beside the skill. Git ignores these private files, and you must not publish them. The only outside connection is the official Google Gmail API, through your own credentials. See [SECURITY.md](SECURITY.md) and the [safety model](docs/safety-model.md).
 
 ---
 

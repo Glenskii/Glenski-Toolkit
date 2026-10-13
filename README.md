@@ -1,40 +1,38 @@
 # Glenski Toolkit
 
-Open-source skills for building, reviewing, and releasing software with clear evidence and practical limits.
+Skills I use to build, review and ship software. Each one started as a fix for a problem in my own projects, then got cleaned up so anyone can drop it into their coding agent and use it.
 
-The toolkit is shaped by active project work, then converted into portable resources that work with compatible development tools. Each published skill is intended to be useful without access to a private environment, client account, or business profile.
+I'm Glen Grant, a Toronto developer and photographer. More about me at [profile.glenegrant.com](https://profile.glenegrant.com).
 
-## Maintained skills
+## The skills
 
-| Skill | Purpose |
+| Skill | What it does |
 | --- | --- |
-| [cross-platform-compliance](skills/cross-platform-compliance/) | Check web frontends for browser-engine, responsive, touch, and accessibility issues before release. |
-| [universal-audit](skills/universal-audit/) | Run an evidence-based software audit with a clear release verdict and stated limits. Bundles a source-level security hunt (vendored Cloudflare security-audit, MIT). |
-| [vibe-security-audit](skills/vibe-security-audit/) | Perform defensive release checks for FastAPI, Flask, and Django applications. |
-| [human-writer](skills/human-writer/) | Edit supplied copy for clarity and natural voice without changing its meaning. |
-| [seo-aeo-geo-gbp](skills/seo-aeo-geo-gbp/) | Review search visibility, structured data, and public profile information using current evidence and no outcome promises. |
-| [save-context](skills/save-context/) | Create a durable, privacy-aware handoff before a session is compacted or transferred. |
-| [task-state-ledger](skills/task-state-ledger/) | Track active work and retain safe evidence references without treating files as automatic memory. |
-| [inbox-guardian-for-gmail](skills/inbox-guardian-for-gmail/) | Review a personal Gmail inbox with local rules, a quarantine-first default, and owner-approved cleanup options. |
-
-## Public-safety standard
-
-Published skills contain generic workflows and fictional examples only. They do not include personal contact details, customer information, private infrastructure, credentials, analytics exports, or internal operations notes. Any platform policy or current search claim must be verified against the relevant primary source at the time of use.
+| [universal-audit](skills/universal-audit/) | A full software audit with scored evidence, a clear ship or don't-ship verdict, and a built-in security hunt. |
+| [vibe-security-audit](skills/vibe-security-audit/) | Safe pre-release security checks for FastAPI, Flask and Django apps. |
+| [cross-platform-compliance](skills/cross-platform-compliance/) | Catches the browser, phone and accessibility bugs that never show up on your desktop. |
+| [seo-aeo-geo-gbp](skills/seo-aeo-geo-gbp/) | Search visibility review that sticks to evidence and promises no rankings. |
+| [human-writer](skills/human-writer/) | Edits your draft so it sounds like you again, without changing what you said. |
+| [save-context](skills/save-context/) | Writes a handoff note before a long session is compacted or passed to another tool. |
+| [task-state-ledger](skills/task-state-ledger/) | One small status file so a long project can pick up where it stopped. |
+| [inbox-guardian-for-gmail](skills/inbox-guardian-for-gmail/) | Keeps junk out of a personal Gmail inbox, using local rules and holding mail for your review instead of deleting it. |
 
 ## Install
 
-Clone the repository, then copy the skill folder into the location your client recognizes. Most compatible coding agents support a project-level skills directory or their own user-level skills directory.
+Clone the repo and copy the skill folder you want into your agent's skills directory.
 
 ```bash
 git clone https://github.com/Glenskii/Glenski-Toolkit.git
 cp -r Glenski-Toolkit/skills/<skill-name> <your-agent-skills-directory>/<skill-name>
 ```
 
-Keep each skill folder intact so its supporting scripts and references remain available.
+Copy the whole folder. The scripts and references inside it are part of the skill.
 
-## Scope
+## What's in here
 
-This repository contains portable skills. Personal operating procedures, private project settings, and connected MCP services stay out of the public toolkit.
+Skills only, written to work without my private setup. No client details, credentials or internal notes. Anything that needs a live connection, like an MCP server, lives in [Glenski-MCPs](https://github.com/Glenskii/Glenski-MCPs).
+
+Skills that cite platform rules or search behavior tell you to check the official source on the day you use them.
 
 ## License
 

@@ -2,36 +2,40 @@
 
 Version 1.1.0
 
-Python Web App Security Audit runs defensive pre-release checks against a configured local application. It supports FastAPI, Django, Flask through an ASGI adapter, and other importable ASGI services.
+A pytest suite that runs pre-release security checks against your own Python web app, running locally. It works with FastAPI, Django, Flask (through an ASGI adapter), and any other importable ASGI service. It is for developers who want a repeatable check before they ship.
 
-The suite checks authentication, authorization, hostile input, security headers, CORS, cookies, rate limits, error handling, HTTP methods, and runtime configuration. It returns evidence-backed findings with stated test boundaries.
+It tests authentication, authorization, hostile input, security headers, CORS, cookies, rate limits, error handling, HTTP methods, and runtime configuration. Each finding states what was tested and where the test stopped.
 
-## Why use it
+## Why it exists
 
-Application teams often need repeatable security checks before release, but a generic scan cannot know which routes, accounts, limits, and ownership rules apply to a specific service. This skill provides configurable tests without treating defaults or skipped routes as a pass.
+A generic scanner does not know your routes, your accounts, your limits, or who owns which record. You tell this suite those things in its config. A default or a skipped route is never counted as a pass.
 
-## Included material
+## What is in the folder
 
 - A pytest suite for common application-layer controls.
-- A safe copy helper that does not overwrite an existing security directory.
-- Framework, route, fixture-safety, and assertion references.
+- A copy helper that will not overwrite an existing security directory.
+- References for frameworks, routes, fixture safety, and assertions.
 - A report template and release decision guidance.
-- Explicit rules that prohibit account creation, record changes, and destructive database commands.
+- Hard rules: no account creation, no record changes, no destructive database commands.
 
-## Start safely
+## How to run it
 
 1. Read [setup and boundaries](references/setup-and-boundaries.md).
 2. Install `requirements-security-audit.txt` after using the copy helper, or install this folder's [requirements](requirements.txt).
-3. Configure only routes, users, thresholds, and origins that exist in the target application.
-4. Use dedicated non-production accounts and an isolated environment.
-5. Keep `TEST_ALLOW_ACTIVE_PROBES=false` until the application owner authorizes active checks.
-6. Configure an explicit rate threshold and dedicated unowned target IDs before enabling active checks.
-7. Run `python -m pytest security/ -v` from the target project root.
-8. Read every failure before setting a release decision.
+3. Configure only the routes, users, thresholds, and origins that exist in your app.
+4. Use dedicated non-production accounts in an isolated environment.
+5. Leave `TEST_ALLOW_ACTIVE_PROBES=false` until the app owner authorizes active checks.
+6. Before you enable active checks, set an explicit rate threshold and dedicated target IDs that no one owns.
+7. Run `python -m pytest security/ -v` from the project root of the app you are testing.
+8. Read every failure before you make a release decision.
 
 ## What a result means
 
-`PASS` means the configured checks found no blocking or review-level issue. It does not prove full production security. `REVIEW REQUIRED` means an owner decision is needed. `BLOCKED` means a confirmed weakness must be corrected before release.
+`PASS`: the configured checks found nothing blocking and nothing that needs review. It does not prove the app is secure in production.
+
+`REVIEW REQUIRED`: the owner has to make a call.
+
+`BLOCKED`: a confirmed weakness. Fix it before release.
 
 ## Documentation
 
