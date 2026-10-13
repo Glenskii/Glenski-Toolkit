@@ -11,6 +11,10 @@
 
 ---
 
+> **Standalone copy.** The app on its own, without the rest of the Toolkit, is at [Glenskii/gmail-guardian](https://github.com/Glenskii/gmail-guardian). Changes land here first and are copied there.
+
+---
+
 ## How it works
 
 ![How the system eliminates spam](assets/how-the-system-eliminates-spam.png)
